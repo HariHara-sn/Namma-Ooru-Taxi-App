@@ -1,0 +1,20 @@
+[{
+  "_id": {
+    "$oid": "66233e666358c4fb752232ab"
+  },
+  "deviceId": {
+    "$oid": "66233cfe6358c4fb752232a7"
+  },
+  "userId": {
+    "$oid": "66233c3c6358c4fb752232a6"
+  },
+  "link": "undefined/liveshare?token=null",
+  "createdOn": {
+    "$numberLong": "1713585766304"
+  },
+  "expireOn": {
+    "$numberLong": "1721361766304"
+  },
+  "token": null,
+  "name": "Test Link"
+}]

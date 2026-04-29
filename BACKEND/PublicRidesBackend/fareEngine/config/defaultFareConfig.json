@@ -1,0 +1,574 @@
+{
+  "_id": {
+    "$oid": "687f0b35b2957d8ffd975d88"
+  },
+  "regionCode": "default",
+  "currency": "INR",
+  "vehicleTypes": {
+    "SEDAN": {
+      "baseFare": 60,
+      "timeCostPerMin": 2,
+      "waitTimeCostPerMin": 2,
+      "rangePricing": [
+        {
+          "minDistance": 0,
+          "maxDistance": 5,
+          "type": "km",
+          "value": 15
+        },
+        {
+          "minDistance": 5,
+          "maxDistance": 15,
+          "type": "km",
+          "value": 12
+        },
+        {
+          "minDistance": 15,
+          "maxDistance": 25,
+          "type": "km",
+          "value": 10
+        },
+        {
+          "minDistance": 25,
+          "maxDistance": null,
+          "type": "km",
+          "value": 8
+        }
+      ],
+      "minFare": 40,
+      "maxFare": 2500,
+      "fees": {
+        "platformFee": {
+          "type": "percentage",
+          "value": 10
+        },
+       
+        "convenienceFee": {
+          "type": "fixed",
+          "value": 5
+        }
+      },
+      "taxes": {
+        "gst": {
+          "type": "percentage",
+          "value": 5
+        }
+      }
+    },
+    "SUV": {
+      "baseFare": 80,
+      "timeCostPerMin": 3,
+      "waitTimeCostPerMin": 2.5,
+      "rangePricing": [
+        {
+          "minDistance": 0,
+          "maxDistance": 5,
+          "type": "km",
+          "value": 18
+        },
+        {
+          "minDistance": 5,
+          "maxDistance": 15,
+          "type": "km",
+          "value": 15
+        },
+        {
+          "minDistance": 15,
+          "maxDistance": 25,
+          "type": "km",
+          "value": 12
+        },
+        {
+          "minDistance": 25,
+          "maxDistance": null,
+          "type": "km",
+          "value": 10
+        }
+      ],
+      "minFare": 50,
+      "maxFare": 3000,
+      "fees": {
+        "platformFee": {
+          "type": "percentage",
+          "value": 12
+        },
+       
+        "convenienceFee": {
+          "type": "fixed",
+          "value": 8
+        },
+        "luxuryTax": {
+          "type": "percentage",
+          "value": 3
+        }
+      },
+      "taxes": {
+        "gst": {
+          "type": "percentage",
+          "value": 5
+        }
+      }
+    },
+    "HATCHBACK": {
+      "baseFare": 50,
+      "timeCostPerMin": 1.5,
+      "waitTimeCostPerMin": 1.5,
+      "rangePricing": [
+        {
+          "minDistance": 0,
+          "maxDistance": 5,
+          "type": "km",
+          "value": 12
+        },
+        {
+          "minDistance": 5,
+          "maxDistance": 15,
+          "type": "km",
+          "value": 10
+        },
+        {
+          "minDistance": 15,
+          "maxDistance": 25,
+          "type": "km",
+          "value": 8
+        },
+        {
+          "minDistance": 25,
+          "maxDistance": null,
+          "type": "km",
+          "value": 6
+        }
+      ],
+      "minFare": 35,
+      "maxFare": 2000,
+      "fees": {
+        "platformFee": {
+          "type": "percentage",
+          "value": 8
+        },
+       
+        "convenienceFee": {
+          "type": "fixed",
+          "value": 3
+        }
+      },
+      "taxes": {
+        "gst": {
+          "type": "percentage",
+          "value": 5
+        }
+      }
+    },
+    "BIKE": {
+      "baseFare": 30,
+      "timeCostPerMin": 1,
+      "waitTimeCostPerMin": 1,
+      "rangePricing": [
+        {
+          "minDistance": 0,
+          "maxDistance": 5,
+          "type": "km",
+          "value": 8
+        },
+        {
+          "minDistance": 5,
+          "maxDistance": 15,
+          "type": "km",
+          "value": 6
+        },
+        {
+          "minDistance": 15,
+          "maxDistance": 25,
+          "type": "km",
+          "value": 5
+        },
+        {
+          "minDistance": 25,
+          "maxDistance": null,
+          "type": "km",
+          "value": 4
+        }
+      ],
+      "minFare": 25,
+      "maxFare": 1500,
+      "fees": {
+        "platformFee": {
+          "type": "percentage",
+          "value": 5
+        },
+       
+        "convenienceFee": {
+          "type": "fixed",
+          "value": 2
+        }
+      },
+      "taxes": {
+        "gst": {
+          "type": "percentage",
+          "value": 5
+        }
+      }
+    },
+    "AUTO": {
+      "baseFare": 40,
+      "timeCostPerMin": 1.5,
+      "waitTimeCostPerMin": 1.5,
+      "rangePricing": [
+        {
+          "minDistance": 0,
+          "maxDistance": 5,
+          "type": "km",
+          "value": 10
+        },
+        {
+          "minDistance": 5,
+          "maxDistance": 15,
+          "type": "km",
+          "value": 8
+        },
+        {
+          "minDistance": 15,
+          "maxDistance": 25,
+          "type": "km",
+          "value": 6
+        },
+        {
+          "minDistance": 25,
+          "maxDistance": null,
+          "type": "km",
+          "value": 5
+        }
+      ],
+      "minFare": 30,
+      "maxFare": 1800,
+      "fees": {
+        "platformFee": {
+          "type": "percentage",
+          "value": 7
+        },
+       
+        "convenienceFee": {
+          "type": "fixed",
+          "value": 4
+        }
+      },
+      "taxes": {
+        "gst": {
+          "type": "percentage",
+          "value": 5
+        }
+      }
+    },
+    "ELECTRIC_SEDAN": {
+      "baseFare": 120,
+      "timeCostPerMin": 4,
+      "waitTimeCostPerMin": 3,
+      "rangePricing": [
+        {
+          "minDistance": 0,
+          "maxDistance": 5,
+          "type": "km",
+          "value": 25
+        },
+        {
+          "minDistance": 5,
+          "maxDistance": 15,
+          "type": "km",
+          "value": 20
+        },
+        {
+          "minDistance": 15,
+          "maxDistance": 25,
+          "type": "km",
+          "value": 18
+        },
+        {
+          "minDistance": 25,
+          "maxDistance": null,
+          "type": "km",
+          "value": 15
+        }
+      ],
+      "minFare": 80,
+      "maxFare": 5000,
+      "fees": {
+        "platformFee": {
+          "type": "percentage",
+          "value": 15
+        },
+       
+        "convenienceFee": {
+          "type": "fixed",
+          "value": 15
+        },
+        "luxuryTax": {
+          "type": "percentage",
+          "value": 5
+        }
+      },
+      "taxes": {
+        "gst": {
+          "type": "percentage",
+          "value": 5
+        }
+      }
+    }
+  },
+  "surge": {
+    "enabled": true,
+    "multipliers": [
+      {
+        "timeRange": {
+          "start": "07:00",
+          "end": "09:00"
+        },
+        "days": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday"
+        ],
+        "type": "multiplier",
+        "value": 1.5,
+        "zones": [
+          "business",
+          "airport"
+        ]
+      },
+      {
+        "timeRange": {
+          "start": "17:00",
+          "end": "19:00"
+        },
+        "days": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday"
+        ],
+        "type": "multiplier",
+        "value": 1.3,
+        "zones": [
+          "business",
+          "residential"
+        ]
+      },
+      {
+        "timeRange": {
+          "start": "22:00",
+          "end": "06:00"
+        },
+        "days": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday"
+        ],
+        "type": "fixed",
+        "value": 20,
+        "zones": [
+          "all"
+        ]
+      }
+    ]
+  },
+  "fees": {
+    "platformFee": {
+      "type": "percentage",
+      "value": 10
+    },
+  
+    "convenienceFee": {
+      "type": "fixed",
+      "value": 5
+    }
+  },
+  "dynamicFees": {
+    "serviceCharge": {
+      "type": "percentage",
+      "value": 2
+    },
+    "bookingFee": {
+      "type": "fixed",
+      "value": 10
+    },
+    "environmentalFee": {
+      "type": "fixed",
+      "value": 3
+    }
+  },
+  "dynamicTaxes": {
+    "stateTax": {
+      "type": "percentage",
+      "value": 1
+    },
+    "municipalTax": {
+      "type": "fixed",
+      "value": 2
+    },
+    "roadTax": {
+      "type": "percentage",
+      "value": 0.5
+    }
+  },
+  "dynamicCouponRules": [
+    {
+      "code": "LOYALTY_BONUS",
+      "type": "percentage",
+      "value": 15,
+      "maxDiscount": 100,
+      "minFare": 200,
+      "passengerField": "stats.totalTrips",
+      "condition": "stats.totalTrips >= 20",
+      "description": "Loyalty bonus for frequent riders",
+      "validFrom": "2024-01-01",
+      "validTo": "2025-12-31"
+    },
+    {
+      "code": "HIGH_SPENDER",
+      "type": "fixed",
+      "value": 50,
+      "maxDiscount": 50,
+      "minFare": 300,
+      "passengerField": "stats.totalSpent",
+      "condition": "stats.totalSpent >= 1000",
+      "description": "High spender reward",
+      "validFrom": "2024-01-01",
+      "validTo": "2025-12-31"
+    },
+    {
+      "code": "COMPLETION_BONUS",
+      "type": "fixed",
+      "value": 20,
+      "maxDiscount": 20,
+      "minFare": 100,
+      "passengerField": "stats.completedTrips",
+      "condition": "stats.completedTrips >= 10",
+      "description": "Completion bonus for reliable riders",
+      "validFrom": "2024-01-01",
+      "validTo": "2025-12-31"
+    },
+    {
+      "code": "HIGH_RATING",
+      "type": "percentage",
+      "value": 5,
+      "maxDiscount": 25,
+      "minFare": 100,
+      "passengerField": "stats.averageRating",
+      "condition": "stats.averageRating >= 4.5",
+      "description": "High rating reward",
+      "validFrom": "2024-01-01",
+      "validTo": "2025-12-31"
+    }
+  ],
+  "incentives": {
+    "driverIncentives": [
+      {
+        "type": "acceptance_rate",
+        "condition": ">= 90",
+        "bonus": 5
+      },
+      {
+        "type": "rating",
+        "condition": ">= 4.5",
+        "bonus": 10
+      },
+      {
+        "type": "tripCountToday",
+        "condition": ">= 10",
+        "bonus": 2
+      },
+      {
+        "type": "isTrusted",
+        "condition": "== 1",
+        "bonus": 5
+      },
+      {
+        "type": "liveStats.isOnline",
+        "condition": "== 1",
+        "bonus": 2
+      },
+      {
+        "type": "earnings.todayEarnings",
+        "condition": ">= 1000",
+        "bonus": 3
+      }
+    ],
+    "driverPenalties": [
+      {
+        "type": "acceptance_rate",
+        "condition": "< 70",
+        "penalty": 5
+      },
+      {
+        "type": "rating",
+        "condition": "< 3.0",
+        "penalty": 10
+      },
+      {
+        "type": "totalTripsRejected",
+        "condition": "> 20",
+        "penalty": 3
+      },
+      {
+        "type": "liveStats.isOnline",
+        "condition": "== 0",
+        "penalty": 2
+      }
+    ]
+  },
+  "cancellationPolicy": {
+    "freeCancellationWindow": 2,
+    "cancellationFees": [
+      {
+        "timeWindow": 5,
+        "fee": 20
+      },
+      {
+        "timeWindow": 10,
+        "fee": 10
+      },
+      {
+        "timeWindow": 15,
+        "fee": 5
+      },
+      {
+        "timeWindow": null,
+        "fee": 0
+      }
+    ]
+  },
+  "roundingRules": {
+    "enabled": true,
+    "strategy": "nearest",
+    "decimalPlaces": 2
+  },
+  "zones": {
+    "business": {
+      "type": "multiplier",
+      "value": 1.1,
+      "baseFare": 60
+    },
+    "airport": {
+      "type": "multiplier",
+      "value": 1.2,
+      "baseFare": 80
+    },
+    "residential": {
+      "type": "multiplier",
+      "value": 1,
+      "baseFare": 50
+    },
+    "all": {
+      "type": "fixed",
+      "value": 0.1,
+      "baseFare": 50
+    }
+  },
+  "isActive": true
+}

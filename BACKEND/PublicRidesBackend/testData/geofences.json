@@ -1,0 +1,26 @@
+[{
+  "_id": {
+    "$oid": "66233db26358c4fb752232aa"
+  },
+  "name": "Test Geofence",
+  "description": "Geofence for testing",
+  "type": "Circle",
+  "coordinates": {
+    "center": [
+      80.04596972046802,
+      12.858867874367395
+    ],
+    "radius": 22940.10556089813
+  },
+  "userId": "66233c3c6358c4fb752232a6",
+  "createdOn": 1713585586469,
+  "updatedOn": 1713585586469,
+  "boundary": {
+    "type": "Circle",
+    "center": [
+      80.04596972046802,
+      12.858867874367395
+    ],
+    "radius": 22940.10556089813
+  }
+}]

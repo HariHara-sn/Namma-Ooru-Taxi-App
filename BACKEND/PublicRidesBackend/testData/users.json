@@ -1,0 +1,35 @@
+[{
+  "_id": {
+    "$oid": "66233c3c6358c4fb752232a6"
+  },
+  "email": "vmtest@gmail.com",
+  "password": "U2FsdGVkX183mom2pXmQZ5rNmOJdCu8LVDMDeKMWczI=",
+  "name": "VirtualMazeTest",
+  "phone": "+917654678976",
+  "sharedDevices": [],
+  "devices": [
+    {
+      "$oid": "66233cfe6358c4fb752232a7"
+    },
+    {
+      "$oid": "66233d2e6358c4fb752232a8"
+    }
+  ],
+  "groups": [
+    {
+      "$oid": "66233d786358c4fb752232a9"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66295d59637d85ab502726bf"
+  },
+  "email": "test1@gmail.com",
+  "password": "U2FsdGVkX183mom2pXmQZ5rNmOJdCu8LVDMDeKMWczI=",
+  "name": "VirtualMazeTest1",
+  "phone": "+917654678971",
+  "sharedDevices": [],
+  "devices": [ ],
+  "groups": [ ]
+}]

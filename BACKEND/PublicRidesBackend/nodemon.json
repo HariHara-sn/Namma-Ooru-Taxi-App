@@ -1,0 +1,20 @@
+{
+  "watch": [
+    "Routes",
+    "Controllers",
+    "MiddleWares",
+    "Utils",
+    "graphql"
+  ],
+  "ext": "js,json",
+  "ignore": [
+    "logs/**",
+    "*/logs/**",
+    "**/*.log",
+    "ThirdPartyServices/**",
+    "**/*.rs",
+    "**/target/**",
+    "**/*.sqlite3",
+    "node_modules/**"
+  ]
+}

@@ -1,0 +1,47 @@
+[{
+  "_id": {
+    "$oid": "65f5484c942a2b8ceef0d0be"
+  },
+  "geofenceId": {
+    "$oid": "66233db26358c4fb752232aa"
+  },
+  "info": {
+    "serverTime": {
+      "$numberLong": "1710573644150"
+    }
+  },
+  "type": "geofenceIn",
+  "time": {
+    "$numberLong": "1712129628734"
+  },
+  "location": [
+    80.2697,
+    13.0233
+  ],
+  "deviceId": {
+    "$oid": "66233cfe6358c4fb752232a7"
+  }
+},{
+  "_id": {
+    "$oid": "65f5484c942a2b8ceef0d0bf"
+  },
+  "geofenceId": {
+    "$oid": "66233db26358c4fb752232aa"
+  },
+  "info": {
+    "serverTime": {
+      "$numberLong": "1710573644150"
+    }
+  },
+  "type": "geofenceOut",
+  "time": {
+    "$numberLong": "1712129628734"
+  },
+  "location": [
+    80.1879,
+    12.9924
+  ],
+  "deviceId": {
+    "$oid": "66233cfe6358c4fb752232a7"
+  }
+}]

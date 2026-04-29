@@ -1,0 +1,45 @@
+/user
+    -- POST -- /login -- Completed
+    -- POST -- /register -- Completed
+    -- GET -- /logout 
+    -- GET -- /getUserData
+
+
+/user/device
+    -- POST -- /add -- Completed
+    -- DELETE -- /delete -- Completed
+    -- POST -- /update -- Completed
+    -- GET -- /getAll -- Completed
+    -- GET -- /get -- Completed
+    -- POST -- /addGeofence -- Completed
+    -- DELETE -- /deleteGeofence -- Completed
+
+/user/group
+    -- POST -- /create -- Completed
+    -- DELETE -- /delete -- Completed
+    -- POST -- /addUser -- Completed
+    -- DELETE -- /deleteUser -- Completed
+    -- POST -- /updateUser -- Completed
+    -- POST -- /updateUserRole
+    -- POST -- /addDevice -- Completed
+    -- DELETE -- /deleteDevice -- Completed
+    -- POST -- /updateDevice
+    -- POST -- /addGeofence -- Completed
+    -- POST -- /deleteGeofence -- Completed
+
+/user/geofence
+    -- POST -- /add -- Completed
+    -- DELETE -- /delete -- Completed
+    -- POST -- /update
+    -- GET -- /get -- Completed
+    -- GET -- /getall -- Completed
+
+/user/alerts 
+    -- GET -- /get
+    -- POST -- /update
+
+/location
+    -- POST -- /save
+
+    graphql -- /graphql/location
+        -- getRecentLocations -- Completed

@@ -1,0 +1,273 @@
+
+Users -> to store user data
+
+    {
+        _id,
+        email,
+        phone,
+        name,
+        password,
+        lastLogin,
+        sharedDevices: [
+            deviceId
+        ],
+        devices: [
+            deviceId
+        ],
+        groups: [
+            groupId
+        ],
+        sharedGroups: [
+            groupId
+        ]
+    }
+
+
+deviceRequests
+    _id,
+    from,
+    to,
+    deviceId,
+    deviceInfo: {
+        name,
+        owner
+    },
+    status: invited/accepted/rejected,
+    expired: false/true,
+    link: ""
+
+
+devices
+    {
+        id,
+        userId,
+        name,
+        type, -- device/truck/car/bike/  --etc -- this is predefined
+        addedOn,
+        geoFences, -> Array of geofence IDS
+        imei,
+        deviceInfo: {
+            .....any extra details
+        },
+        groups: [ -> Groups in which these devices are shared
+
+        ],
+        sharedWith: [
+           userId
+        ],
+        status: "online/offline", -- Device online/offline status
+
+        tag: String, -> tag like - mybrother,wife , father etcc
+
+        groupGeofences -> array of geofence ids of groups where this device is added
+        location: {
+            type: "Point",
+            coordinates: [longitude, latitude],
+            
+        },
+        liveStats: {
+            speed: number,
+            battery: number,
+            lastLocationUpdatedOn: milliseconds, -- Last location update time
+            engineOn true/false
+        },
+
+        rideGroups: [rideGroupId]
+
+        totalOdometerReading: 0 
+        totalDistance:0
+        totalDuration:0,
+        activeDriver: {
+            _id,
+            createdOn
+        }
+    }
+
+groups -> to store groups -- groups can contain X number of users with different roles and X number of devices
+
+    {
+        _id,
+        name, --group name
+        description -- group description 
+        groupAdmin, -- Id of the admin user who created this group
+        users: [  -- array of user ids who belongs to this group including admin
+            {
+                userId, 
+                role -- roleId -- id of role in userGroupRoles collection
+                accepted --whether the added user accepted the invitation,
+                addedOn -- time which this user is added
+                updatedOn
+            }
+        ],
+        devices: [ -- array of device IDS which the group members can view and track
+            {
+                deviceId
+            }
+        ],
+        geofences: [ -- array of geofences which is added to the group
+            geofenceId
+        ]
+    }
+
+userGroupRoles -- predefined user roles who are within a group
+
+    {
+        _id,
+        roleName: admin/read_only/
+    }
+
+
+alerts
+    _id
+    deviceId -- id of the gps/mobile device
+    type -- geofenceIn/geofenceOut/overSpeed/harshBreaking/engineOn/engineOff/sosPress -- should be predefined
+    geofenceId, -- only for geofence_in and geofence_out,
+    time -- time in milliseconds
+    location -- []
+    info:{
+        speed, -- only for overspeed
+    },
+    readBy: [userIDS]
+
+geoFences -> to store all user created geofences
+    _id
+    userId,
+    createdOn,
+    lastUpdated,
+    name,
+    type, polygon/circle
+    coordinates: {
+        mongo Type polygon geometry -> 2D
+    },
+    calendar
+
+shareableLink
+    _id
+    deviceId
+    userId
+    link
+    "http://localhost:4000/liveshare?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX…"
+    createdOn
+    1712281392521
+
+
+Counter -> collection
+    which will only have single document
+    This s
+    {
+        _id,
+        mobileDeviceCount: 0,
+        gpsDeviceCount: 0,
+        geofenceCount: 0,
+        groupsCount: 0
+    }
+
+RideGroups
+    name
+    description
+    createdOn
+    createdBy: userId
+    passangers: [
+        {
+            id
+            createdOn
+        }
+    ]
+    vehicle: {
+        id
+        addedOn
+    }
+    routes: [routeId]
+    
+
+RideGroupRoutes
+{
+    _id,
+    rideGroupId,
+    name,
+    description,
+    routeType: (drop or pickup)
+    days: {
+        sunday:1
+        monday: 1,
+        tuesday: 1,
+        wednesday:1,
+        thursday: 1,
+        friday: 1,
+        saturday: 1,
+    }
+    startTime,
+    endTime,
+    startLocation,
+    endLocation,
+    stops: [
+        {
+            name,
+            passangers: [],
+            address,
+            location: [longitude, latitude],
+            arrivalTime: time
+        }
+    ],
+}
+
+Trips
+{
+    _id
+    rideGroupId,
+    routeId,
+    routeType
+    startTime,
+    endTime,
+    startLocation,
+    endLocation,
+    CreatedOn,
+    createdBy,
+    status // [planned, ongoing, completed, cancelled]
+    passengers [],
+    vehicleId { id, assignedAtMs },
+    driverId,
+    logs [
+        { event: passenger_boarded, userId, time }
+    ]
+}
+
+Passangers
+    name
+    phone
+    email
+    password
+    createdOn
+    createdBy
+    rideGroups: [id,id]
+    
+Drivers
+{
+    _id
+    name
+    phone
+    email
+    password
+    createdOn
+    createdBy
+    activeDevice: {
+        id
+        addedOn
+    }
+}
+
+driverSession
+{
+  _id
+  deviceId
+  deviceType
+  deviceName
+  driverId
+  driverName
+  allocatedBy
+  allocatedOn
+  updatedOn
+  startTime
+  endTime
+  status - active, completed, or terminated
+}

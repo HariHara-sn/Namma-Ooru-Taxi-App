@@ -1,0 +1,430 @@
+{
+  "info": {
+    "name": "Fare Engine API",
+    "description": "Complete API collection for the Fare Engine system with vehicle type support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "health"]
+        }
+      }
+    },
+    {
+      "name": "Get Available Vehicle Types",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/vehicle-types?regionCode=default",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "vehicle-types"],
+          "query": [
+            {
+              "key": "regionCode",
+              "value": "default"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Fare Range (All Vehicle Types)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/range?distance=10&duration=20&zone=residential&vehicleType=ALL&regionCode=default",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "range"],
+          "query": [
+            {
+              "key": "distance",
+              "value": "10"
+            },
+            {
+              "key": "duration",
+              "value": "20"
+            },
+            {
+              "key": "zone",
+              "value": "residential"
+            },
+            {
+              "key": "vehicleType",
+              "value": "ALL"
+            },
+            {
+              "key": "regionCode",
+              "value": "default"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Fare Range (SEDAN)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/range?distance=10&duration=20&zone=residential&vehicleType=SEDAN&regionCode=default",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "range"],
+          "query": [
+            {
+              "key": "distance",
+              "value": "10"
+            },
+            {
+              "key": "duration",
+              "value": "20"
+            },
+            {
+              "key": "zone",
+              "value": "residential"
+            },
+            {
+              "key": "vehicleType",
+              "value": "SEDAN"
+            },
+            {
+              "key": "regionCode",
+              "value": "default"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Fare Range (SUV)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/range?distance=10&duration=20&zone=residential&vehicleType=SUV&regionCode=default",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "range"],
+          "query": [
+            {
+              "key": "distance",
+              "value": "10"
+            },
+            {
+              "key": "duration",
+              "value": "20"
+            },
+            {
+              "key": "zone",
+              "value": "residential"
+            },
+            {
+              "key": "vehicleType",
+              "value": "SUV"
+            },
+            {
+              "key": "regionCode",
+              "value": "default"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Fare Range (BIKE)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/range?distance=10&duration=20&zone=residential&vehicleType=BIKE&regionCode=default",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "range"],
+          "query": [
+            {
+              "key": "distance",
+              "value": "10"
+            },
+            {
+              "key": "duration",
+              "value": "20"
+            },
+            {
+              "key": "zone",
+              "value": "residential"
+            },
+            {
+              "key": "vehicleType",
+              "value": "BIKE"
+            },
+            {
+              "key": "regionCode",
+              "value": "default"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Calculate Pre-Final Fare (Estimate)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"distance\": 10,\n  \"duration\": 20,\n  \"zone\": \"business\",\n  \"regionCode\": \"default\",\n  \"driverId\": \"driver123\",\n  \"coupons\": [\"FIRST_RIDE\"],\n  \"userId\": \"user123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/pre-final",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "pre-final"]
+        }
+      }
+    },
+    {
+      "name": "Calculate Final Fare (SEDAN)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"distance\": 10,\n  \"duration\": 20,\n  \"waitTime\": 5,\n  \"zone\": \"business\",\n  \"regionCode\": \"default\",\n  \"driverId\": \"driver123\",\n  \"coupons\": [\"FIRST_RIDE\"],\n  \"userId\": \"user123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/final",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "final"]
+        }
+      }
+    },
+    {
+      "name": "Calculate Final Fare (SUV)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"distance\": 10,\n  \"duration\": 20,\n  \"waitTime\": 5,\n  \"zone\": \"business\",\n  \"regionCode\": \"default\",\n  \"driverId\": \"driver123\",\n  \"coupons\": [\"FIRST_RIDE\"],\n  \"userId\": \"user123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/final",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "final"]
+        }
+      }
+    },
+    {
+      "name": "Calculate Final Fare (BIKE)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"distance\": 10,\n  \"duration\": 20,\n  \"waitTime\": 5,\n  \"zone\": \"business\",\n  \"regionCode\": \"default\",\n  \"driverId\": \"driver123\",\n  \"coupons\": [\"FIRST_RIDE\"],\n  \"userId\": \"user123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/final",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "final"]
+        }
+      }
+    },
+    {
+      "name": "Apply Coupon",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fare\": 200,\n  \"couponCode\": \"FIRST_RIDE\",\n  \"regionCode\": \"default\",\n  \"userId\": \"user123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/apply-coupon",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "apply-coupon"]
+        }
+      }
+    },
+    {
+      "name": "Get Cancellation Fee",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestedAt\": \"2024-01-15T10:00:00Z\",\n  \"cancelledAt\": \"2024-01-15T10:15:00Z\",\n  \"regionCode\": \"default\",\n  \"userId\": \"user123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/cancel",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "cancel"]
+        }
+      }
+    },
+    {
+      "name": "Get Available Coupons",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/coupons?fare=200&regionCode=default&userId=user123",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "coupons"],
+          "query": [
+            {
+              "key": "fare",
+              "value": "200"
+            },
+            {
+              "key": "regionCode",
+              "value": "default"
+            },
+            {
+              "key": "userId",
+              "value": "user123"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Driver Incentives",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/driver-incentives?driverId=driver123&regionCode=default",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "driver-incentives"],
+          "query": [
+            {
+              "key": "driverId",
+              "value": "driver123"
+            },
+            {
+              "key": "regionCode",
+              "value": "default"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Surge Multiplier",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/surge?zone=business&regionCode=default&time=2024-01-15T08:00:00Z",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "surge"],
+          "query": [
+            {
+              "key": "zone",
+              "value": "business"
+            },
+            {
+              "key": "regionCode",
+              "value": "default"
+            },
+            {
+              "key": "time",
+              "value": "2024-01-15T08:00:00Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Fare Configuration",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/fare/config/default",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "fare", "config", "default"]
+        }
+      }
+    },
+    {
+      "name": "Example - Test Fare Calculation (SEDAN)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/example/test-fare",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "example", "test-fare"]
+        }
+      }
+    },
+    {
+      "name": "Example - Test Driver Incentives",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/example/test-driver-incentives",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "example", "test-driver-incentives"]
+        }
+      }
+    },
+    {
+      "name": "Example - Test Surge Calculation",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/example/test-surge",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "example", "test-surge"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    }
+  ]
+} 
