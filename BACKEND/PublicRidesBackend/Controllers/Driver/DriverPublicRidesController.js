@@ -141,7 +141,7 @@ module.exports = function (CLASS) {
             } else {
                 otpResponse = {
                     otp: "112233",
-                    expiry: Date.now() + 2 * 60 * 1000,
+                    expiry: Date.now() + 2 * 60 * 1000,  // 2 minutes
                     status: 200
                 }
             }

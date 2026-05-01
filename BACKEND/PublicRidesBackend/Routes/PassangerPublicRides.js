@@ -13,6 +13,9 @@ const SOSController = require('../Controllers/SOS/SOSController');
 const sosController = new SOSController();
 const { withTiming } = require('../Utils/timingLogger');
 
+Router.get('/', (req, res) => {
+    res.send('Hello from Passanger Public Rides API - Backend HARIHARASUDHAN');
+});
 
 Router.post('/signup', withTiming(passangerController, passangerController.publicridesSignupCustomer))
 Router.post('/login', withTiming(passangerController, passangerController.publicridesLoginCustomer))
@@ -73,5 +76,11 @@ Router.post('/approveBill', CheckPassangerAuthenticated, withTiming(passangerCon
 Router.post('/markBillAsPaid', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.markBillAsPaid))
 Router.post('/uploadPaymentReceipt', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.uploadPaymentReceipt))
 Router.post('/updateNotificationPreferences', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.updateNotificationPreferences))
-
+Router.post('/manageGarage', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.manageGarageCreate))
+Router.get('/manageGarage', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.manageGarageList))
+Router.put('/manageGarage/:vehicleId', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.manageGarageUpdate))
+Router.delete('/manageGarage/:vehicleId', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.manageGarageDelete))
+Router.post('/actingDriver/onewayTrip', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.bookActingDriverOnewayTrip))
+Router.post('/actingDriver/roundTrip', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.bookActingDriverRoundTrip))
+Router.post('/actingDriver/outstationTrip', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.bookActingDriverOutstationTrip))
 module.exports = Router

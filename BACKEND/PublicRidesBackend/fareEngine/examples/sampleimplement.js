@@ -1,10 +1,14 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const { initializeFareEngine, getServices, updateCollectionMappings } = require('../index');
+const express = require("express");
+const mongoose = require("mongoose");
+const {
+  initializeFareEngine,
+  getServices,
+  updateCollectionMappings,
+} = require("../index");
 
 /**
  * 🚀 Fare Engine Integration Example
- * 
+ *
  * This example demonstrates how to integrate the fare engine into your existing Node.js project.
  * It includes both default collection mappings and custom collection mappings.
  */
@@ -25,27 +29,26 @@ class FareEngineService {
    */
   async initialize(mongoUri, customMappings = null) {
     try {
-      console.log('🚀 Initializing Fare Engine Service...');
+      console.log("🚀 Initializing Fare Engine Service...");
 
       // 1. Connect to MongoDB
       await mongoose.connect(mongoUri, {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
       });
-      console.log('✅ MongoDB connected');
+      console.log("✅ MongoDB connected");
 
       // 2. Register models (important for trip-based calculations)
-      require('../models/Trip');
-      require('../models/Driver');
-      require('../models/Vehicle');
-      require('../models/Passenger');
-      console.log('✅ Models registered');
-
+      require("../models/Trip");
+      require("../models/Driver");
+      require("../models/Vehicle");
+      require("../models/Passenger");
+      console.log("✅ Models registered");
 
       //example for existing connneciton
       // 3. Initialize fare engine
       await initializeFareEngine(mongoose.connection, customMappings);
-      console.log('✅ Fare engine initialized');
+      console.log("✅ Fare engine initialized");
 
       // 4. Get services
       const services = getServices();
@@ -55,15 +58,14 @@ class FareEngineService {
 
       // 5. Setup Express middleware
       this.setupMiddleware();
-      
+
       // 6. Setup routes
       this.setupRoutes();
 
       this.isInitialized = true;
-      console.log('✅ Fare Engine Service ready!');
-
+      console.log("✅ Fare Engine Service ready!");
     } catch (error) {
-      console.error('❌ Failed to initialize Fare Engine Service:', error);
+      console.error("❌ Failed to initialize Fare Engine Service:", error);
       throw error;
     }
   }
@@ -77,11 +79,17 @@ class FareEngineService {
 
     // CORS middleware
     this.app.use((req, res, next) => {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-      
-      if (req.method === 'OPTIONS') {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS",
+      );
+      res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+      );
+
+      if (req.method === "OPTIONS") {
         res.sendStatus(200);
       } else {
         next();
@@ -93,7 +101,7 @@ class FareEngineService {
       if (!this.isInitialized) {
         return res.status(503).json({
           success: false,
-          error: 'Fare engine service is initializing'
+          error: "Fare engine service is initializing",
         });
       }
       next();
@@ -105,202 +113,210 @@ class FareEngineService {
    */
   setupRoutes() {
     // Health check
-    this.app.get('/health', async (req, res) => {
+    this.app.get("/health", async (req, res) => {
       try {
         const health = await this.fareService.healthCheck();
         res.json(health);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // Get fare range estimate
     //for customer app
-    this.app.get('/api/fare/range', async (req, res) => {
+    this.app.get("/api/fare/range", async (req, res) => {
       try {
         const result = await this.fareService.getFareRange(req.query);
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
-    
     // Calculate pre-final fare (traditional)
-    this.app.post('/api/fare/pre-final', async (req, res) => {
+    this.app.post("/api/fare/pre-final", async (req, res) => {
       try {
         const result = await this.fareService.calculatePreFinalFare(req.body);
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
-   
     // ===== TRIP-BASED FARE CALCULATION (New Modular Approach) =====
-    
+
     // Calculate pre-final fare using tripId
-    this.app.post('/api/fare/trip/pre-final', async (req, res) => {
+    this.app.post("/api/fare/trip/pre-final", async (req, res) => {
       try {
-        const result = await this.fareService.calculatePreFinalFareFromTrip(req.body);
+        const result = await this.fareService.calculatePreFinalFareFromTrip(
+          req.body,
+        );
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // Calculate final fare using tripId
-      //for driver app
-    this.app.post('/api/fare/trip/final', async (req, res) => {
+    //for driver app
+    this.app.post("/api/fare/trip/final", async (req, res) => {
       try {
         const result = await this.fareService.calculateFareFromTrip(req.body);
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
-   
     // Get trip passengers
-    this.app.get('/api/fare/trip/passengers', async (req, res) => {
+    this.app.get("/api/fare/trip/passengers", async (req, res) => {
       try {
         const result = await this.fareService.getTripPassengers(req.query);
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // ===== ENHANCED COUPON SYSTEM =====
-    
+
     // Verify and apply coupon to trip
     //for customer app
-    this.app.post('/api/fare/trip/coupon/verify', async (req, res) => {
+    this.app.post("/api/fare/trip/coupon/verify", async (req, res) => {
       try {
         const result = await this.fareService.verifyAndApplyCoupon(req.body);
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // Get applied coupons for trip
-    this.app.get('/api/fare/trip/coupon/applied', async (req, res) => {
+    this.app.get("/api/fare/trip/coupon/applied", async (req, res) => {
       try {
         const result = await this.fareService.getAppliedCoupons(req.query);
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // Remove coupon from trip
-    this.app.delete('/api/fare/trip/coupon/remove', async (req, res) => {
+    this.app.delete("/api/fare/trip/coupon/remove", async (req, res) => {
       try {
         const result = await this.fareService.removeCouponFromTrip(req.body);
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // Get available coupons for trip
-    this.app.get('/api/fare/trip/coupon/available', async (req, res) => {
+    this.app.get("/api/fare/trip/coupon/available", async (req, res) => {
       try {
-        const result = await this.fareService.getAvailableCouponsForTrip(req.query);
+        const result = await this.fareService.getAvailableCouponsForTrip(
+          req.query,
+        );
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // ===== DYNAMIC COUPON SYSTEM =====
-    
+
     // Get available dynamic coupons for passenger
-      //for customer app
-    this.app.get('/api/fare/dynamic-coupons/available', async (req, res) => {
+    //for customer app
+    this.app.get("/api/fare/dynamic-coupons/available", async (req, res) => {
       try {
-        const result = await this.fareService.getAvailableDynamicCoupons(req.query);
+        const result = await this.fareService.getAvailableDynamicCoupons(
+          req.query,
+        );
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // Get all available coupons (static + dynamic) for passenger
-    this.app.get('/api/fare/dynamic-coupons/all', async (req, res) => {
+    this.app.get("/api/fare/dynamic-coupons/all", async (req, res) => {
       try {
         const result = await this.fareService.getAllAvailableCoupons(req.query);
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // Get valid passenger fields for dynamic coupon rules
-    this.app.get('/api/fare/dynamic-coupons/passenger-fields', async (req, res) => {
-      try {
-        const result = await this.fareService.getValidPassengerFields(req.query);
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({
-          success: false,
-          error: error.message
-        });
-      }
-    });
+    this.app.get(
+      "/api/fare/dynamic-coupons/passenger-fields",
+      async (req, res) => {
+        try {
+          const result = await this.fareService.getValidPassengerFields(
+            req.query,
+          );
+          res.json(result);
+        } catch (error) {
+          res.status(500).json({
+            success: false,
+            error: error.message,
+          });
+        }
+      },
+    );
 
     // Get dynamic coupon statistics for passenger
-    this.app.get('/api/fare/dynamic-coupons/stats', async (req, res) => {
+    this.app.get("/api/fare/dynamic-coupons/stats", async (req, res) => {
       try {
         const result = await this.fareService.getDynamicCouponStats(req.query);
         res.json(result);
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // ===== UTILITY ENDPOINTS =====
-    
+
     // // Get driver incentives
     // this.app.get('/api/fare/driver-incentives', async (req, res) => {
     //   try {
@@ -356,27 +372,27 @@ class FareEngineService {
     // });
 
     // Update collection mappings (runtime)
-    this.app.post('/api/fare/update-mappings', async (req, res) => {
+    this.app.post("/api/fare/update-mappings", async (req, res) => {
       try {
         updateCollectionMappings(req.body);
         res.json({
           success: true,
-          message: 'Collection mappings updated successfully'
+          message: "Collection mappings updated successfully",
         });
       } catch (error) {
         res.status(500).json({
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     });
 
     // Error handling middleware
     this.app.use((error, req, res, next) => {
-      console.error('Error:', error);
+      console.error("Error:", error);
       res.status(500).json({
         success: false,
-        error: 'Internal server error'
+        error: "Internal server error",
       });
     });
   }
@@ -388,20 +404,21 @@ class FareEngineService {
   start(port = 3001) {
     return new Promise((resolve, reject) => {
       try {
-        const server = this.app.listen(port, () => {
+        const server = this.app.listen(port, "0.0.0.0", () => {
           console.log(`🚀 Fare Engine Service running on port ${port}`);
           console.log(`📊 Health check: http://localhost:${port}/health`);
-          console.log(`📋 API Documentation: http://localhost:${port}/api/fare/config/default`);
+          console.log(
+            `📋 API Documentation: http://localhost:${port}/api/fare/config/default`,
+          );
           resolve(server);
         });
 
-        server.on('error', (error) => {
-          console.error('❌ Server error:', error);
+        server.on("error", (error) => {
+          console.error("❌ Server error:", error);
           reject(error);
         });
-
       } catch (error) {
-        console.error('❌ Failed to start server:', error);
+        console.error("❌ Failed to start server:", error);
         reject(error);
       }
     });
@@ -417,177 +434,187 @@ class FareEngineService {
 
 // Example usage functions
 async function exampleWithDefaultMappings() {
-  console.log('\n=== Example 1: Using Default Collection Mappings ===');
-  
+  console.log("\n=== Example 1: Using Default Collection Mappings ===");
+
   const service = new FareEngineService();
-  
+
   try {
     // Initialize with default mappings
-    await service.initialize('mongodb://localhost:27017/locationTracking');
-    
+    await service.initialize("mongodb://localhost:27017/locationTracking");
+
     // Start server
     await service.start(3001);
-    
-    console.log('✅ Service started with default mappings');
-    console.log('📋 Test endpoints:');
-    console.log('   - http://localhost:3001/health');
-    console.log('   - http://localhost:3001/api/fare/range?distance=10&duration=20&zone=residential&vehicleType=ALL&regionCode=default');
-    console.log('   - http://localhost:3001/api/fare/config/default');
-    
+
+    console.log("✅ Service started with default mappings");
+    console.log("📋 Test endpoints:");
+    console.log("   - http://localhost:3001/health");
+    console.log(
+      "   - http://localhost:3001/api/fare/range?distance=10&duration=20&zone=residential&vehicleType=ALL&regionCode=default",
+    );
+    console.log("   - http://localhost:3001/api/fare/config/default");
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error("❌ Error:", error);
   }
 }
 
 async function exampleWithCustomMappings() {
-  console.log('\n=== Example 2: Using Custom Collection Mappings ===');
-  
+  console.log("\n=== Example 2: Using Custom Collection Mappings ===");
+
   const service = new FareEngineService();
-  
+
   try {
     // Custom collection mappings for different database schema
     const customMappings = {
       driver: {
-        id: 'driver_id',           // Instead of 'driverId'
-        rating: 'driver_rating',   // Instead of 'rating'
-        tripCountToday: 'today_trips',
-        totalTripsAccepted: 'accepted_trips',
-        totalTripsRejected: 'rejected_trips',
-        isTrusted: 'trusted_status',
-        liveStats: 'online_status',
-        vehicleId: 'vehicle_id'
+        id: "driver_id", // Instead of 'driverId'
+        rating: "driver_rating", // Instead of 'rating'
+        tripCountToday: "today_trips",
+        totalTripsAccepted: "accepted_trips",
+        totalTripsRejected: "rejected_trips",
+        isTrusted: "trusted_status",
+        liveStats: "online_status",
+        vehicleId: "vehicle_id",
       },
       vehicle: {
-        id: 'vehicle_id',          // Instead of '_id'
-        type: 'vehicle_type',      // Instead of 'type'
-        driverId: 'driver_id'
+        id: "vehicle_id", // Instead of '_id'
+        type: "vehicle_type", // Instead of 'type'
+        driverId: "driver_id",
       },
       passenger: {
-        id: 'passenger_id',        // Instead of '_id'
-        userId: 'user_id'          // Instead of 'userId'
+        id: "passenger_id", // Instead of '_id'
+        userId: "user_id", // Instead of 'userId'
       },
       trip: {
-        id: 'trip_id',             // Instead of '_id'
-        driverId: 'driver_id',     // Instead of 'driverId'
-        vehicleId: 'vehicle_id',   // Instead of 'vehicleId'
-        userId: 'user_id',         // Instead of 'userId'
-        passengers: 'passenger_list' // Instead of 'passangers'
-      }
+        id: "trip_id", // Instead of '_id'
+        driverId: "driver_id", // Instead of 'driverId'
+        vehicleId: "vehicle_id", // Instead of 'vehicleId'
+        userId: "user_id", // Instead of 'userId'
+        passengers: "passenger_list", // Instead of 'passangers'
+      },
     };
-    
+
     // Initialize with custom mappings
-    await service.initialize('mongodb://localhost:27017/locationTracking', customMappings);
-    
+    await service.initialize(
+      "mongodb://localhost:27017/locationTracking",
+      customMappings,
+    );
+
     // Start server
     const server = await service.start(3001);
-    
-    console.log('✅ Service started with custom mappings');
-    console.log('📋 Test endpoints:');
-    console.log('   - http://localhost:3002/health');
-    console.log('   - http://localhost:3002/api/fare/range?distance=10&duration=20&zone=residential&vehicleType=ALL&regionCode=default');
-    console.log('   - http://localhost:3002/api/fare/config/default');
-    
+
+    console.log("✅ Service started with custom mappings");
+    console.log("📋 Test endpoints:");
+    console.log("   - http://localhost:3002/health");
+    console.log(
+      "   - http://localhost:3002/api/fare/range?distance=10&duration=20&zone=residential&vehicleType=ALL&regionCode=default",
+    );
+    console.log("   - http://localhost:3002/api/fare/config/default");
+
     // Keep the server running
-    console.log('\n🔄 Server is running. Press Ctrl+C to stop.');
-    
+    console.log("\n🔄 Server is running. Press Ctrl+C to stop.");
+
     // Handle graceful shutdown
-    process.on('SIGINT', async () => {
-      console.log('\n🛑 Shutting down server...');
+    process.on("SIGINT", async () => {
+      console.log("\n🛑 Shutting down server...");
       server.close();
       await mongoose.connection.close();
-      console.log('🔌 Database connection closed');
+      console.log("🔌 Database connection closed");
       process.exit(0);
     });
-    
+
     // Keep the process alive
     return new Promise(() => {
       // This promise never resolves, keeping the process alive
     });
-    
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error("❌ Error:", error);
     throw error;
   }
 }
 
 // Direct function usage examples
 async function directFunctionExamples() {
-  console.log('\n=== Example 3: Direct Function Usage ===');
-  
+  console.log("\n=== Example 3: Direct Function Usage ===");
+
   try {
     // Initialize fare engine
     await initializeFareEngine(mongoose.connection);
     const { FareService } = getServices();
-    
+
     // Example 1: Traditional fare calculation
-    console.log('\n💰 Traditional fare calculation...');
+    console.log("\n💰 Traditional fare calculation...");
     const traditionalFare = await FareService.calculateFinalFare({
       distance: 10,
       duration: 20,
       waitTime: 5,
-      zone: 'business',
-      driverId: 'DRIVER001',
-      coupons: ['FIRST_RIDE'],
-      userId: 'user123'
+      zone: "business",
+      driverId: "DRIVER001",
+      coupons: ["FIRST_RIDE"],
+      userId: "user123",
     });
-    console.log('Traditional Fare:', traditionalFare.success ? 'Success' : 'Failed');
-    
+    console.log(
+      "Traditional Fare:",
+      traditionalFare.success ? "Success" : "Failed",
+    );
+
     // Example 2: Trip-based fare calculation
-    console.log('\n🎯 Trip-based fare calculation...');
-    const Trip = require('../models/Trip');
+    console.log("\n🎯 Trip-based fare calculation...");
+    const Trip = require("../models/Trip");
     const sampleTrip = new Trip({
-      driverId: 'DRIVER001',
-      vehicleId: 'VEHICLE001',
-      userId: 'user123',
-      passangers: ['user123'],
-      status: 'accepted',
-      coupons: ['FIRST_RIDE']
+      driverId: "DRIVER001",
+      vehicleId: "VEHICLE001",
+      userId: "user123",
+      passangers: ["user123"],
+      status: "accepted",
+      coupons: ["FIRST_RIDE"],
     });
     const savedTrip = await sampleTrip.save();
-    
+
     const tripFare = await FareService.calculateFareFromTrip({
       tripId: savedTrip._id.toString(),
       distance: 10,
       duration: 20,
       waitTime: 5,
-      zone: 'business'
+      zone: "business",
     });
-    console.log('Trip Fare:', tripFare.success ? 'Success' : 'Failed');
-    
+    console.log("Trip Fare:", tripFare.success ? "Success" : "Failed");
+
     // Example 3: Enhanced coupon system
-    console.log('\n🎫 Enhanced coupon system...');
+    console.log("\n🎫 Enhanced coupon system...");
     const couponVerification = await FareService.verifyAndApplyCoupon({
       tripId: savedTrip._id.toString(),
-      couponCode: 'FIRST_RIDE',
+      couponCode: "FIRST_RIDE",
       fare: 200,
-      regionCode: 'default'
+      regionCode: "default",
     });
-    console.log('Coupon Verification:', couponVerification.success ? 'Success' : 'Failed');
-    
-    console.log('✅ All direct function examples completed');
-    
+    console.log(
+      "Coupon Verification:",
+      couponVerification.success ? "Success" : "Failed",
+    );
+
+    console.log("✅ All direct function examples completed");
   } catch (error) {
-    console.error('❌ Error in direct function examples:', error);
+    console.error("❌ Error in direct function examples:", error);
   }
 }
 
 // Dynamic coupon system examples
 async function dynamicCouponExamples() {
-  console.log('\n=== Example 4: Dynamic Coupon System ===');
-  
+  console.log("\n=== Example 4: Dynamic Coupon System ===");
+
   try {
     // Initialize fare engine
     await initializeFareEngine(mongoose.connection);
     const { FareService, DynamicCouponService } = getServices();
-    
+
     // Create a sample passenger with good stats for dynamic coupons
-    const Passenger = require('../models/Passenger');
+    const Passenger = require("../models/Passenger");
     const samplePassenger = new Passenger({
-      username: 'dynamicuser',
-      phone: '+919876543210',
-      email: 'dynamic@example.com',
-      password: 'password123',
-      name: 'Dynamic User',
+      username: "dynamicuser",
+      phone: "+919876543210",
+      email: "dynamic@example.com",
+      password: "password123",
+      name: "Dynamic User",
       stats: {
         totalTrips: 25,
         completedTrips: 23,
@@ -595,89 +622,106 @@ async function dynamicCouponExamples() {
         totalSpent: 1500,
         averageRating: 4.5,
         totalRating: 90,
-        ratingCount: 20
+        ratingCount: 20,
       },
       membership: {
-        level: 'gold',
+        level: "gold",
         points: 150,
-        joinDate: new Date('2024-01-01'),
-        lastTripDate: new Date('2024-12-20')
+        joinDate: new Date("2024-01-01"),
+        lastTripDate: new Date("2024-12-20"),
       },
       preferences: {
-        preferredPaymentMethod: 'card',
-        language: 'en',
+        preferredPaymentMethod: "card",
+        language: "en",
         notifications: {
           push: true,
           email: true,
-          sms: false
-        }
+          sms: false,
+        },
       },
       isActive: true,
-      isBlocked: false
+      isBlocked: false,
     });
-    
+
     const savedPassenger = await samplePassenger.save();
-    console.log('✅ Sample passenger created:', savedPassenger._id.toString());
-    
+    console.log("✅ Sample passenger created:", savedPassenger._id.toString());
+
     // Example 1: Get available dynamic coupons
-    console.log('\n🎫 Getting available dynamic coupons...');
+    console.log("\n🎫 Getting available dynamic coupons...");
     const dynamicCoupons = await FareService.getAvailableDynamicCoupons({
       passengerId: savedPassenger._id.toString(),
       fare: 300,
-      regionCode: 'default'
+      regionCode: "default",
     });
-    console.log('Dynamic Coupons Result:', dynamicCoupons.success ? 'Success' : 'Failed');
+    console.log(
+      "Dynamic Coupons Result:",
+      dynamicCoupons.success ? "Success" : "Failed",
+    );
     if (dynamicCoupons.success) {
-      console.log('Available Dynamic Coupons:', dynamicCoupons.data.dynamicCoupons.length);
-      dynamicCoupons.data.dynamicCoupons.forEach(coupon => {
-        console.log(`  - ${coupon.code}: ${coupon.description} (₹${coupon.discount} off)`);
+      console.log(
+        "Available Dynamic Coupons:",
+        dynamicCoupons.data.dynamicCoupons.length,
+      );
+      dynamicCoupons.data.dynamicCoupons.forEach((coupon) => {
+        console.log(
+          `  - ${coupon.code}: ${coupon.description} (₹${coupon.discount} off)`,
+        );
       });
     }
-    
+
     // Example 2: Get all available coupons (static + dynamic)
-    console.log('\n🎫 Getting all available coupons...');
+    console.log("\n🎫 Getting all available coupons...");
     const allCoupons = await FareService.getAllAvailableCoupons({
       passengerId: savedPassenger._id.toString(),
       fare: 300,
-      regionCode: 'default'
+      regionCode: "default",
     });
-    console.log('All Coupons Result:', allCoupons.success ? 'Success' : 'Failed');
+    console.log(
+      "All Coupons Result:",
+      allCoupons.success ? "Success" : "Failed",
+    );
     if (allCoupons.success) {
-      console.log('Static Coupons:', allCoupons.data.staticCoupons.length);
-      console.log('Dynamic Coupons:', allCoupons.data.dynamicCoupons.length);
-      console.log('Total Coupons:', allCoupons.data.totalCoupons);
-      console.log('Passenger Profile:', allCoupons.data.passengerProfile);
+      console.log("Static Coupons:", allCoupons.data.staticCoupons.length);
+      console.log("Dynamic Coupons:", allCoupons.data.dynamicCoupons.length);
+      console.log("Total Coupons:", allCoupons.data.totalCoupons);
+      console.log("Passenger Profile:", allCoupons.data.passengerProfile);
     }
-    
+
     // Example 3: Get valid passenger fields
-    console.log('\n📋 Getting valid passenger fields...');
+    console.log("\n📋 Getting valid passenger fields...");
     const validFields = await FareService.getValidPassengerFields({
-      regionCode: 'default'
+      regionCode: "default",
     });
-    console.log('Valid Fields Result:', validFields.success ? 'Success' : 'Failed');
+    console.log(
+      "Valid Fields Result:",
+      validFields.success ? "Success" : "Failed",
+    );
     if (validFields.success) {
-      console.log('Valid Passenger Fields:', validFields.data.validFields.length);
-      console.log('Sample Fields:', validFields.data.validFields.slice(0, 5));
+      console.log(
+        "Valid Passenger Fields:",
+        validFields.data.validFields.length,
+      );
+      console.log("Sample Fields:", validFields.data.validFields.slice(0, 5));
     }
-    
+
     // Example 4: Get dynamic coupon statistics
-    console.log('\n📊 Getting dynamic coupon statistics...');
+    console.log("\n📊 Getting dynamic coupon statistics...");
     const stats = await FareService.getDynamicCouponStats({
       passengerId: savedPassenger._id.toString(),
-      regionCode: 'default'
+      regionCode: "default",
     });
-    console.log('Stats Result:', stats.success ? 'Success' : 'Failed');
+    console.log("Stats Result:", stats.success ? "Success" : "Failed");
     if (stats.success) {
-      console.log('Passenger Profile:', stats.data.profile);
-      console.log('Cache Stats:', stats.data.cacheStats);
-      console.log('Eligible Rules:', stats.data.eligibleRules);
+      console.log("Passenger Profile:", stats.data.profile);
+      console.log("Cache Stats:", stats.data.cacheStats);
+      console.log("Eligible Rules:", stats.data.eligibleRules);
     }
-    
+
     // Example 5: Direct dynamic coupon service usage
-    console.log('\n🔧 Direct DynamicCouponService usage...');
-    const FareConfig = require('../models/FareConfig');
-    const config = await FareConfig.getActiveConfig('default');
-    
+    console.log("\n🔧 Direct DynamicCouponService usage...");
+    const FareConfig = require("../models/FareConfig");
+    const config = await FareConfig.getActiveConfig("default");
+
     const passengerMeta = {
       username: savedPassenger.username,
       phone: savedPassenger.phone,
@@ -688,24 +732,26 @@ async function dynamicCouponExamples() {
       stats: savedPassenger.stats,
       membership: savedPassenger.membership,
       preferences: savedPassenger.preferences,
-      profile: savedPassenger.profile
+      profile: savedPassenger.profile,
     };
-    
+
     const directDynamicCoupons = DynamicCouponService.getDynamicCoupons({
       passengerMeta,
       config,
-      fare: 300
+      fare: 300,
     });
-    
-    console.log('Direct Dynamic Coupons:', directDynamicCoupons.dynamicCoupons.length);
-    directDynamicCoupons.dynamicCoupons.forEach(coupon => {
+
+    console.log(
+      "Direct Dynamic Coupons:",
+      directDynamicCoupons.dynamicCoupons.length,
+    );
+    directDynamicCoupons.dynamicCoupons.forEach((coupon) => {
       console.log(`  - ${coupon.code}: ${coupon.description}`);
     });
-    
-    console.log('✅ All dynamic coupon examples completed');
-    
+
+    console.log("✅ All dynamic coupon examples completed");
   } catch (error) {
-    console.error('❌ Error in dynamic coupon examples:', error);
+    console.error("❌ Error in dynamic coupon examples:", error);
   }
 }
 
@@ -715,7 +761,7 @@ module.exports = {
   exampleWithDefaultMappings,
   exampleWithCustomMappings,
   directFunctionExamples,
-  dynamicCouponExamples
+  dynamicCouponExamples,
 };
 
 // Run examples if this file is executed directly
@@ -723,26 +769,25 @@ if (require.main === module) {
   (async () => {
     try {
       // Connect to MongoDB first
-      await mongoose.connect('mongodb://localhost:27017/locationTracking');
-      console.log('✅ Connected to MongoDB');
-      
+      await mongoose.connect("mongodb://localhost:27017/locationTracking");
+      console.log("✅ Connected to MongoDB");
+
       // Run examples
       // await exampleWithDefaultMappings();
       await exampleWithCustomMappings();
       // await directFunctionExamples();
       // await dynamicCouponExamples();
-      
+
       // Only reach here if the server is stopped
-      console.log('\n✅ All examples completed successfully!');
-      
+      console.log("\n✅ All examples completed successfully!");
     } catch (error) {
-      console.error('❌ Error running examples:', error);
+      console.error("❌ Error running examples:", error);
     } finally {
       // Only close connection if we're not running a persistent server
       if (mongoose.connection.readyState === 1) {
         await mongoose.connection.close();
-        console.log('🔌 Database connection closed');
+        console.log("🔌 Database connection closed");
       }
     }
   })();
-} 
+}

@@ -165,7 +165,7 @@ async function startStandaloneServer(mongoUri, port = 3001) {
   try {
     const app = await createStandaloneApp(mongoUri, port);
     
-    app.listen(port, () => {
+    app.listen(port, "0.0.0.0", () => {
       console.log(`🚀 Fare Engine server running on port ${port}`);
       console.log(`📊 Health check: http://localhost:${port}/api/fare/health`);
       console.log(`📋 API Documentation: http://localhost:${port}/api/fare/config/default`);

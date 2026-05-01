@@ -105,7 +105,7 @@ app.get('/get-final-fare', async (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   initFareEngine();
   console.log(`Server listening on port ${PORT}`);
 });

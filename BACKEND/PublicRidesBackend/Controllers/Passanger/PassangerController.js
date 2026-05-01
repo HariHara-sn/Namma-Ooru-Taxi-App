@@ -1,6 +1,7 @@
 
 const Controller = require('../Controller');
 const PublicRidePassangerController = require('./PublicRidePassangerController');
+const ActingDriverCustomerController = require('./ActingDriverCustomerController');
 
 class PassangerController extends Controller {
 
@@ -44,9 +45,18 @@ class PassangerController extends Controller {
         this.updatePassangerFCMToken = this.updatePassangerFCMToken.bind(this);
         this.getOnboardingConfig = this.getOnboardingConfig.bind(this);
         this.approveBill = this.approveBill.bind(this);
+        this.manageGarageCreate = this.manageGarageCreate.bind(this);
+        this.manageGarageList = this.manageGarageList.bind(this);
+        this.manageGarageUpdate = this.manageGarageUpdate.bind(this);
+        this.manageGarageDelete = this.manageGarageDelete.bind(this);
+        this.bookActingDriverOnewayTrip = this.bookActingDriverOnewayTrip.bind(this);
+        this.bookActingDriverRoundTrip = this.bookActingDriverRoundTrip.bind(this);
+        this.bookActingDriverOutstationTrip = this.bookActingDriverOutstationTrip.bind(this);
+        this.bookActingDriverTripByType = this.bookActingDriverTripByType.bind(this);
     }
 
 }
 
 PublicRidePassangerController(PassangerController)
+ActingDriverCustomerController(PassangerController)
 module.exports = PassangerController

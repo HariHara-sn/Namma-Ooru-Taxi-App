@@ -5,6 +5,10 @@ const indexes = {
     ],
     ocrlog: [
         { driverId: 1 }
+    ],
+    passengerGarageVehicles: [
+        { passengerId: 1 },
+        { regNo: 1 }
     ]
 };
 
