@@ -88,6 +88,7 @@ module.exports = function (CLASS) {
    *     "password": "securePassword@123"
    * }
    */
+// we wont use this signup route
   CLASS.prototype.publicridesSignupCustomer = async function (req, res) {
     const [payload, errRes] = await this.validate(
       req.body,
@@ -339,7 +340,7 @@ module.exports = function (CLASS) {
       return this.handleError(err, res);
     }
   };
-
+// Initially user signup with this route, after that in profile page they update the profile details
   CLASS.prototype.publicridesUpdatePassangerProfile = async function (
     req,
     res,
@@ -350,9 +351,7 @@ module.exports = function (CLASS) {
         req.body,
       );
       if (!passenger)
-        return res
-          .status(400)
-          .json({ success: false, message: "Failed to update profile" });
+        return res.status(400).json({ success: false, message: "Failed to update profile" });
       const updatedPassenger = await Passanger.getPassangerWithId(
         req.passanger.id,
       );
