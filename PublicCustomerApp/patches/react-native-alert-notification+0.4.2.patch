@@ -1,0 +1,39 @@
+diff --git a/node_modules/react-native-alert-notification/src/containers/ToastRender.tsx b/node_modules/react-native-alert-notification/src/containers/ToastRender.tsx
+index f283aa7..027e465 100644
+--- a/node_modules/react-native-alert-notification/src/containers/ToastRender.tsx
++++ b/node_modules/react-native-alert-notification/src/containers/ToastRender.tsx
+@@ -146,7 +146,7 @@ export class ToastRender extends React.Component<IProps, IState> {
+         {...this._panResponder.panHandlers}
+         style={StyleSheet.flatten([styles.container, { paddingTop, transform: [{ translateY: this._positionToast }] }])}
+       >
+-        <View style={{ zIndex: isInit ? 99999 : -1}}>
++        <View style={{ zIndex: isInit ? 999999 : -1}}>
+           <_ModelRender />
+         </View>
+       </Animated.View>
+@@ -168,6 +168,8 @@ const __styles = (isDark: boolean) =>
+       paddingTop: 12,
+       paddingBottom: 12,
+       backgroundColor: Color.get('card', isDark),
++      width: '95%',
++      alignSelf: 'center',
+       ...Platform.select({
+         ios: {
+           borderRadius: 12,
+@@ -177,6 +179,7 @@ const __styles = (isDark: boolean) =>
+           marginTop: 6,
+           marginHorizontal: 6,
+           borderRadius: 6,
++          elevation: 10,
+         },
+       }),
+     },
+@@ -187,7 +190,7 @@ const __styles = (isDark: boolean) =>
+     },
+ 
+     titleLabel: {
+-      fontWeight: 'bold',
++      // fontWeight: 'bold',
+       fontSize: 18,
+       color: Color.get('label', isDark),
+     },

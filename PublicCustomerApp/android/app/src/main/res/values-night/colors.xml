@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="notif_bg">#232323</color> <!-- dark surface -->
+    <color name="notif_text_primary">#FFFFFF</color>  <!-- white text -->
+    <color name="notif_text_secondary">#B0B0B0</color> <!-- light grey text -->
+    <color name="notif_chip_bg">#33343A</color>       <!-- dark chip bg -->
+    <color name="notif_chip_text">#FFFFFF</color>
+    <color name="notif_stat_bg">#2C2C2E</color>       <!-- dark stats bg -->
+    <color name="notif_stat_border">#444446</color>   <!-- dark border -->
+    <color name="notif_status_bg">#2E3B2E</color>     <!-- dark green for online status -->
+    <color name="notif_status_border">#3C4F3C</color> <!-- border for status -->
+    <color name="notif_accuracy_bg">#1A237E</color>   <!-- dark blue for accuracy -->
+    <color name="notif_accuracy_border">#3949AB</color> <!-- border for accuracy -->
+</resources>

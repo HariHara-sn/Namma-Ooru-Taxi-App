@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NOT</string>
+        <string name="overlay_trip_header">Trip Route</string>
+    <string name="overlay_point_icon_desc">Trip waypoint</string>
+</resources>

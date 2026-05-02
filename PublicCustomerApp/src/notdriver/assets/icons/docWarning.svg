@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="50.464" height="72" viewBox="0 0 50.464 72">
+  <defs>
+    <linearGradient id="linear-gradient" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#9a9c9f"/>
+    </linearGradient>
+  </defs>
+  <g id="Group_26131" data-name="Group 26131" transform="translate(-240.193 -103.385)">
+    <rect id="Rectangle_7128" data-name="Rectangle 7128" width="6.424" height="27.993" transform="translate(262.347 147.392)" fill="url(#linear-gradient)"/>
+    <g id="Group_26130" data-name="Group 26130">
+      <path id="Path_42000" data-name="Path 42000" d="M258.512,107.3,241.339,135.92a8.063,8.063,0,0,0,6.913,12.21h17.173V103.385A8,8,0,0,0,258.512,107.3Z" fill="#ffc005"/>
+      <path id="Path_42001" data-name="Path 42001" d="M289.51,135.92,272.337,107.3a8,8,0,0,0-6.912-3.914V148.13H282.6a8.063,8.063,0,0,0,6.913-12.21Z" fill="#ffd100"/>
+      <path id="Path_42002" data-name="Path 42002" d="M262.84,109.9l-17.172,28.62a3.014,3.014,0,0,0,2.584,4.565h17.173V108.433A2.988,2.988,0,0,0,262.84,109.9Z" fill="#fff"/>
+      <path id="Path_42003" data-name="Path 42003" d="M285.182,138.517,268.009,109.9a2.987,2.987,0,0,0-2.584-1.464v34.649H282.6A3.014,3.014,0,0,0,285.182,138.517Z" fill="#fafafa"/>
+      <g id="Group_26128" data-name="Group 26128">
+        <path id="Path_42004" data-name="Path 42004" d="M263.916,116.045a.815.815,0,0,0-.815.835l.428,17.128a.815.815,0,0,0,.815.794h1.081V116.045Z" fill="#ffd100"/>
+        <path id="Path_42005" data-name="Path 42005" d="M263.549,138.28a1.876,1.876,0,0,0,1.876,1.876V136.4A1.876,1.876,0,0,0,263.549,138.28Z" fill="#ffd100"/>
+      </g>
+      <g id="Group_26129" data-name="Group 26129">
+        <path id="Path_42006" data-name="Path 42006" d="M266.934,116.045h-1.509V134.8h1.081a.815.815,0,0,0,.814-.794l.428-17.128A.814.814,0,0,0,266.934,116.045Z" fill="#ffc005"/>
+        <path id="Path_42007" data-name="Path 42007" d="M265.425,136.4v3.752a1.876,1.876,0,0,0,0-3.752Z" fill="#ffc005"/>
+      </g>
+    </g>
+  </g>
+</svg>

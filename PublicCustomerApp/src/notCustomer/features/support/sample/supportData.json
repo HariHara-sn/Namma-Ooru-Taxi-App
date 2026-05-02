@@ -1,0 +1,237 @@
+{
+  "tickets": [
+    {
+      "ticketId": "TKT001",
+      "subject": "Payment failed for ride",
+      "description": "I was charged twice for my ride yesterday. The payment went through but the ride was cancelled. Need refund.",
+      "category": "billing",
+      "priority": "high",
+      "status": "open",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T14:45:00Z",
+      "lastMessage": "2 hours ago",
+      "messages": [
+        {
+          "id": "msg1",
+          "content": "Hello! I'm experiencing a payment issue with my recent ride. I was charged twice but the ride was cancelled.",
+          "sender": "user",
+          "timestamp": "2024-01-15T10:30:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg2",
+          "content": "Hi there! I understand your concern about the double charge. Let me look into this for you. Can you please provide your ride ID or the transaction details?",
+          "sender": "agent",
+          "timestamp": "2024-01-15T10:35:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg3",
+          "content": "Sure, my ride ID is RIDE-2024-001-12345 and the transaction ID is TXN-789456",
+          "sender": "user",
+          "timestamp": "2024-01-15T10:40:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg4",
+          "content": "Thank you for providing those details. I can see the issue now. The double charge occurred due to a system glitch. I've initiated a refund for the duplicate charge. You should see it in your account within 3-5 business days.",
+          "sender": "agent",
+          "timestamp": "2024-01-15T14:45:00Z",
+          "status": "read"
+        }
+      ]
+    },
+    {
+      "ticketId": "TKT002",
+      "subject": "Driver didn't show up",
+      "description": "Booked a ride but the driver never arrived. Waited for 15 minutes and had to cancel. Need compensation for the inconvenience.",
+      "category": "ride",
+      "priority": "medium",
+      "status": "in_progress",
+      "createdAt": "2024-01-14T08:15:00Z",
+      "updatedAt": "2024-01-15T09:20:00Z",
+      "lastMessage": "1 day ago",
+      "messages": [
+        {
+          "id": "msg1",
+          "content": "Hi, I booked a ride yesterday but the driver never showed up. I waited for 15 minutes and had to cancel. This was very inconvenient.",
+          "sender": "user",
+          "timestamp": "2024-01-14T08:15:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg2",
+          "content": "I apologize for this experience. Can you please share your ride details so I can investigate what happened?",
+          "sender": "agent",
+          "timestamp": "2024-01-14T08:20:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg3",
+          "content": "Ride ID: RIDE-2024-001-12346, booked for 2:30 PM yesterday",
+          "sender": "user",
+          "timestamp": "2024-01-14T08:25:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg4",
+          "content": "Thank you. I can see the driver was assigned but there was a technical issue with the GPS tracking. We're investigating this and will provide compensation for your inconvenience.",
+          "sender": "agent",
+          "timestamp": "2024-01-15T09:20:00Z",
+          "status": "read"
+        }
+      ]
+    },
+    {
+      "ticketId": "TKT003",
+      "subject": "App keeps crashing",
+      "description": "The app crashes every time I try to book a ride. This has been happening for the past 2 days.",
+      "category": "technical",
+      "priority": "high",
+      "status": "resolved",
+      "createdAt": "2024-01-12T16:45:00Z",
+      "updatedAt": "2024-01-13T11:30:00Z",
+      "lastMessage": "2 days ago",
+      "messages": [
+        {
+          "id": "msg1",
+          "content": "The app keeps crashing when I try to book a ride. This is very frustrating.",
+          "sender": "user",
+          "timestamp": "2024-01-12T16:45:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg2",
+          "content": "I'm sorry to hear about this issue. Can you tell me what device and OS version you're using?",
+          "sender": "agent",
+          "timestamp": "2024-01-12T16:50:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg3",
+          "content": "iPhone 12, iOS 17.2",
+          "sender": "user",
+          "timestamp": "2024-01-12T16:55:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg4",
+          "content": "Thank you. This is a known issue with iOS 17.2. We've released an update (version 2.1.3) that should fix this. Please update your app from the App Store.",
+          "sender": "agent",
+          "timestamp": "2024-01-12T17:00:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg5",
+          "content": "Updated the app and it's working perfectly now. Thank you!",
+          "sender": "user",
+          "timestamp": "2024-01-13T11:30:00Z",
+          "status": "read"
+        }
+      ]
+    },
+    {
+      "ticketId": "TKT004",
+      "subject": "Can't update profile picture",
+      "description": "Trying to upload a new profile picture but it keeps failing. The image is under 5MB and in JPG format.",
+      "category": "account",
+      "priority": "low",
+      "status": "closed",
+      "createdAt": "2024-01-10T12:20:00Z",
+      "updatedAt": "2024-01-11T15:10:00Z",
+      "lastMessage": "4 days ago",
+      "messages": [
+        {
+          "id": "msg1",
+          "content": "I can't upload a new profile picture. The upload keeps failing.",
+          "sender": "user",
+          "timestamp": "2024-01-10T12:20:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg2",
+          "content": "Can you try clearing the app cache and restarting the app? This usually resolves upload issues.",
+          "sender": "agent",
+          "timestamp": "2024-01-10T12:25:00Z",
+          "status": "read"
+        },
+        {
+          "id": "msg3",
+          "content": "That worked! Thank you.",
+          "sender": "user",
+          "timestamp": "2024-01-11T15:10:00Z",
+          "status": "read"
+        }
+      ]
+    },
+    {
+      "ticketId": "TKT005",
+      "subject": "Safety concern about driver",
+      "description": "The driver was driving recklessly and not following traffic rules. This was very unsafe.",
+      "category": "safety",
+      "priority": "high",
+      "status": "open",
+      "createdAt": "2024-01-15T18:30:00Z",
+      "updatedAt": "2024-01-15T18:30:00Z",
+      "lastMessage": "Just now",
+      "messages": [
+        {
+          "id": "msg1",
+          "content": "I have a serious safety concern about a driver. He was driving recklessly and not following traffic rules.",
+          "sender": "user",
+          "timestamp": "2024-01-15T18:30:00Z",
+          "status": "sent"
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": "technical",
+      "name": "Technical Issue",
+      "description": "App crashes, login problems, GPS issues"
+    },
+    {
+      "id": "billing",
+      "name": "Billing & Payment",
+      "description": "Payment issues, refunds, billing questions"
+    },
+    {
+      "id": "ride",
+      "name": "Ride Related",
+      "description": "Driver issues, ride cancellations, fare disputes"
+    },
+    {
+      "id": "account",
+      "name": "Account & Profile",
+      "description": "Profile updates, account settings, verification"
+    },
+    {
+      "id": "safety",
+      "name": "Safety & Security",
+      "description": "Safety concerns, security issues, emergency situations"
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "description": "General inquiries and other issues"
+    }
+  ],
+  "priorities": [
+    {
+      "id": "low",
+      "name": "Low",
+      "description": "General inquiries, feature requests"
+    },
+    {
+      "id": "medium",
+      "name": "Medium",
+      "description": "Minor issues, account problems"
+    },
+    {
+      "id": "high",
+      "name": "High",
+      "description": "Payment issues, safety concerns, app crashes"
+    }
+  ]
+} 

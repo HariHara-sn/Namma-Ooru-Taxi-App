@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<item name="orange" type="color">#FF4500
+</item>
+
+<!-- Background of the custom notification row -->
+    <color name="notif_bg">#FFFFFF</color> <!-- light surface -->
+
+    <!-- Text on background -->
+    <color name="notif_text_primary">#1B1B1F</color>  <!-- near-black -->
+    <color name="notif_text_secondary">#5E5E63</color> <!-- medium contrast -->
+
+    <!-- Small status chip -->
+    <color name="notif_chip_bg">#E9E9EF</color>       <!-- light grey/lavender surface -->
+    <color name="notif_chip_text">#1B1B1F</color>
+
+    <!-- Additional notification colors -->
+    <color name="notif_stat_bg">#F5F5F7</color>       <!-- light grey for stats -->
+    <color name="notif_stat_border">#E5E5E7</color>   <!-- border for stats -->
+    <color name="notif_status_bg">#E8F5E8</color>     <!-- light green for online status -->
+    <color name="notif_status_border">#D4EDDA</color> <!-- border for status -->
+    <color name="notif_accuracy_bg">#E3F2FD</color>   <!-- light blue for accuracy -->
+    <color name="notif_accuracy_border">#BBDEFB</color> <!-- border for accuracy -->
+
+<integer-array name="androidcolors">
+    <item>@color/orange</item>
+
+</integer-array>
+</resources>

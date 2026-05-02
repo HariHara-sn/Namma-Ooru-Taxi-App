@@ -1,0 +1,98 @@
+buildscript {
+    ext {
+        buildToolsVersion            = "35.0.0"
+        minSdkVersion                = 24
+        compileSdkVersion            = 35
+        targetSdkVersion             = 35
+        googlePlayServicesVersion    = "20.0.0"
+        playServicesLocationVersion  = "21.0.1"
+        googlePlayServicesIidVersion = "17.0.0"
+        supportLibVersion            = "28.0.0"
+        androidXBrowser              = "1.0.0"
+        androidXAnnotation           = "1.1.0"
+        ndkVersion                   = "28.0.13004108"
+
+        // Kotlin / AGP
+        kotlinVersion                = "2.2.0"
+        androidGradlePluginVersion   = "8.8.0"
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("de.undercouch:gradle-download-task:4.1.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath 'com.google.gms:google-services:4.4.2'
+        // keep a single kotlin-gradle-plugin declaration, pinned to kotlinVersion above
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.0'
+    }
+}
+
+allprojects {
+    repositories {
+        maven { 
+            url("$rootDir/../node_modules/detox/Detox-android")
+       }
+
+            mavenCentral()
+        mavenLocal()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url("$rootDir/../node_modules/react-native/android")
+        }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+
+        google()
+        maven { url 'https://www.jitpack.io' }
+        maven { url 'https://maven.google.com' }
+        maven { url "https://phonepe.mycloudrepo.io/public/repositories/phonepe-intentsdk-android"  }
+
+        flatDir {
+            dirs "${rootDir}/libs/NeNative" // The path to your AAR file
+        }
+    }
+}
+
+subprojects { 
+    ext {
+        compileSdk = rootProject.ext.compileSdkVersion
+        minSdk = rootProject.ext.minSdkVersion
+        targetSdk = rootProject.ext.targetSdkVersion
+    }
+    // Align all Kotlin dependencies to the root kotlinVersion
+    configurations.all { config ->
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == "org.jetbrains.kotlin") {
+                details.useVersion rootProject.ext.kotlinVersion
+            }
+        }
+        resolutionStrategy.force(
+            "org.jetbrains.kotlin:kotlin-stdlib:${rootProject.ext.kotlinVersion}",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${rootProject.ext.kotlinVersion}",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.ext.kotlinVersion}",
+            "org.jetbrains.kotlin:kotlin-reflect:${rootProject.ext.kotlinVersion}"
+        )
+    }
+    afterEvaluate { subproject ->
+        if((subproject.plugins.hasPlugin('android') || subproject.plugins.hasPlugin('android-library'))) {
+            android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+                defaultConfig {
+                    minSdkVersion rootProject.ext.minSdkVersion
+                    targetSdkVersion rootProject.ext.targetSdkVersion
+                }
+            }
+        }
+        
+    }
+    
+}
+
+apply plugin: "com.facebook.react.rootproject"

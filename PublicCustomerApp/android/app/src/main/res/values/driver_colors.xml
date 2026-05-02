@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Driver-specific notification colors that remain consistent in both light and dark modes -->
+    <color name="driver_notif_bg">#FFFFFF</color>            <!-- Always light background -->
+    <color name="driver_notif_text_primary">#1B1B1F</color>  <!-- Always dark text -->
+    <color name="driver_notif_text_secondary">#5E5E63</color> <!-- Always medium contrast text -->
+    <color name="driver_notif_chip_bg">#E9E9EF</color>       <!-- Always light chip background -->
+    <color name="driver_notif_chip_text">#1B1B1F</color>     <!-- Always dark chip text -->
+    <color name="driver_notif_status_bg">#E8F5E8</color>     <!-- Always light green for online status -->
+    <color name="driver_notif_status_border">#D4EDDA</color> <!-- Always light border for status -->
+    <color name="driver_notif_accuracy_bg">#E3F2FD</color>   <!-- Always light blue for accuracy -->
+    <color name="driver_notif_accuracy_border">#BBDEFB</color> <!-- Always light border for accuracy -->
+</resources>

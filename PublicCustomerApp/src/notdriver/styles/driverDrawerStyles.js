@@ -1,0 +1,252 @@
+import {StyleSheet} from 'react-native';
+import { height, width } from '../../common/utils/scalingutils';
+import { Colors, Fonts } from '../../common/constants/constants';
+
+
+export const driverDrawerStyles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+  },
+  button: {
+    padding: 8,
+  },
+  buttonText: {
+    fontSize: 17,
+    color: '#007AFF',
+  },
+  subView: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    height: height,
+    width: width,
+    zIndex: 20000,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  iconOpen: {
+    backgroundColor: Colors.black,
+    borderRadius: 50,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    left:5,
+    bottom:5,
+    shadowColor:Colors.black,
+    shadowOffset:{width:0,height:2},
+    shadowOpacity:0.25,
+    shadowRadius:3.84,
+    elevation:5,
+  },
+  iconClose: {
+    backgroundColor: Colors.black,
+    borderRadius: 50,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: Colors.white,
+    shadowColor: Colors.white,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  subContainer: {
+    width: width * 0.84,
+    backgroundColor: Colors.white,
+    // padding: 20,
+    paddingHorizontal:10
+  },
+  versionText: {
+    alignSelf: 'center',
+    marginTop: 4,
+    color: Colors.black,
+    fontSize: 12,
+    fontFamily: Fonts.regular,
+  },
+  profileContainer: {
+    width: '100%',
+    backgroundColor: Colors.white,
+    padding: 10,
+    flexDirection: 'row',
+  },
+  profileImageContainer: {
+    width: '28%',
+  },
+  profileImage: {
+    width: '100%',
+    aspectRatio: 1,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.grey_light,
+    alignSelf: 'center',
+  },
+  profileImageCrown: {
+    position: 'absolute',
+    zIndex: 1,
+    backgroundColor: Colors.white,
+    padding: 5,
+    borderRadius: 50,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  profileNameContainer: {
+    width: '60%',
+    marginLeft: 10,
+    justifyContent: 'center',
+  },
+  helloTxt: {
+    fontFamily: Fonts.regular,
+    fontSize: 14,
+    color: Colors.black,
+  },
+  userNameTxt: {
+    fontFamily: Fonts.medium,
+    fontSize: 20,
+    color: Colors.black,
+  },
+  optionsContainer: {
+    width: '100%',
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  optionBtns: {
+    // marginTop: scale(10),
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.grey_light,
+  },
+  optionName: {
+    fontFamily: Fonts.medium,
+    color: Colors.black,
+    width: '80%',
+  },
+  subItem: {
+    padding: 5,
+    marginTop: 10,
+    width: '100%',
+    paddingVertical: 10,
+    left: 10,
+  },
+  subItemTxt: {
+    fontSize: 14,
+    fontFamily: Fonts.regular,
+    color: Colors.black,
+    marginLeft: width * 0.03,
+  },
+  reportBtns: {
+    // marginVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: Colors.grey_light,
+    width: '100%',
+    padding: 10,
+    marginTop: 15,
+    borderRadius: 10,
+  },
+  reportsTitle: {
+    fontSize: 16,
+    fontFamily: Fonts.medium,
+    color: Colors.black,
+    marginTop: 10,
+  },
+  optionNameReports: {
+    fontFamily: Fonts.regular,
+    color: Colors.black,
+    width: '83%',
+    marginLeft: 15,
+  },
+  madeByBtn: {
+    flexDirection: 'row',
+    gap: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 15,
+    alignSelf: 'center',
+    backgroundColor:Colors.white, width:'100%', elevation:5,
+    borderRadius:10,
+    paddingVertical:5,
+  },
+  madeByText: {
+    color: '#212121',
+    fontFamily: Fonts.medium,
+    fontSize: 12,
+  },
+  aaosBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    justifyContent: 'space-between',
+    backgroundColor: '#32de84',
+    padding: 10,
+    borderRadius: 10,
+  },
+  aaosBtnIcon: {
+    backgroundColor: Colors.white,
+    padding: 5,
+    borderRadius: 10,
+  },
+  aaosBtnTxt: {
+    fontSize: 16,
+    fontFamily: Fonts.semi_bold,
+    color: Colors.black,
+  },
+  webPortalContainer: {
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#eef0ff',
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 10,
+  },
+  webPortalContainerText: {
+    fontSize: 12,
+    fontFamily: Fonts.regular,
+    color: Colors.black,
+  },
+  tryBtn:{
+    backgroundColor:Colors.periwinkle,
+    width:'100%',
+    alignItems:'center',
+    paddingVertical:10,
+    borderRadius:10
+  },
+  tryBtnTxt:{
+    fontFamily:Fonts.regular,
+    color:Colors.white,
+    fontSize:12
+  },
+  whatsnewBtn:{
+    backgroundColor:Colors.periwinkle,
+    padding:10,
+    borderRadius:10,
+    alignItems:'center',
+    justifyContent:'center',
+    marginVertical:10
+  },
+  whatsnewBtnTxt:{
+    fontFamily:Fonts.regular,
+    color:Colors.white,
+    fontSize:12
+  }
+});
