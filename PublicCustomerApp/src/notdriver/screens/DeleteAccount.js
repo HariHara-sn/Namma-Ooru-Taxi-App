@@ -12,7 +12,7 @@ import GlobalContext from '../../context/GlobalContext';
 import { useMapMarkerStore } from '../../common/store/useMapMarkerStore';
 import usePublicDriverStore from '../store/usePublicDriverStore';
 import APIRequest from '../../common/APIRequest';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import FullScreenLoader from '../../common/loaders/FullScreenLoader';
 import UseBackButton from '../../common/hooks/UseBackButton';
 import NavBar from '../../common/components/NavBar';
@@ -347,3 +347,4 @@ const styles = StyleSheet.create({
         textAlign:'center',
       }
 })
+

@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import Entypo from "react-native-vector-icons/Entypo";
 import { useMapMarkerStore } from "../../../common/store/useMapMarkerStore";
-import { Colors, Fonts } from "../../../common/constants/constants";
+import { Colors, colors, Fonts } from "../../../common/constants/constants";
 
 
 
@@ -64,3 +64,5 @@ const styles = StyleSheet.create({
     paddingLeft:0
   }
 });
+
+

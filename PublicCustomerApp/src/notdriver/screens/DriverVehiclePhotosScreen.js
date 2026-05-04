@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import {
   checkCameraPermission,
   RequestCameraPermission,
@@ -376,3 +376,5 @@ const styles = StyleSheet.create({
   uploadBtnDisabled: { backgroundColor: '#BDBDBD' },
   uploadBtnTxt: { fontSize: 13, fontFamily: Fonts.medium, color: Colors.white },
 });
+
+

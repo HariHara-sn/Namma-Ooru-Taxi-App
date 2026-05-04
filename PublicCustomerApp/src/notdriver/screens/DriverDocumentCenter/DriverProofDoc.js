@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import NavBar from '../../../common/components/NavBar';
 import DocumentImageScanner from '../../components/DocumentImageScanner';
 import usePublicDriverStore from '../../store/usePublicDriverStore';
-import { Colors, Fonts } from '../../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../../common/constants/constants';
 import { useStackScreenStore } from '../../../common/store/useStackScreenStore';
 import publicrideDriverApi from '../../api/publicrideDriverApi';
 import { showNotification } from '../../../common/components/Alerts/showNotification';
@@ -549,3 +549,5 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
 });
+
+

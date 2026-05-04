@@ -28,6 +28,8 @@ import ContactScreen from '../notCustomer/features/about/screens/ContactScreen';
 import useUserStore from '../common/store/useUserStore.js';
 import DriverHomeScreen from '../notdriver/screens/DriverHomeScreen.js';
 import ActingDriverHome from '../actingDriver/screens/ActingDriverHome.js';
+import { APP_CONFIG } from '../config/appConfig';
+import AppConfig from '../notCustomer/Config/AppConfig.js';
 
 const Navigation = () => {
   const Stack = createNativeStackNavigator();
@@ -47,10 +49,29 @@ const Navigation = () => {
     const access_token = await DataStore.loadData('access_token');
     const user_details = await DataStore.loadData('userdetails');
     // const userInfo = await DataStore.loadData('userdetails');
+
     if (userRole?.data) {
       setUserRole(userRole.data);
     }
-    if (userRole?.data === 'driver') {
+
+    // DEV OVERRIDE: Directly navigate to HomeScreen for specific role
+    if (APP_CONFIG.DEV_MODE === true) {
+      const devRole = APP_CONFIG.DEV_ROLE || 'customer';
+      setUserRole(devRole);
+      setInitialRoute('HomeScreen');
+      if (access_token?.data) {
+        if (devRole === 'driver' || devRole === 'actingDriver') {
+          addNOTSocketListener(access_token.data);
+          addRideMatchListener(user_details?.data?._id);
+        } else {
+          addListener(access_token.data);
+        }
+        setUserInfo(user_details?.data);
+      }
+      return;
+    }
+
+    if (userRole?.data === 'driver' || userRole?.data === 'actingDriver') {
       if (access_token.data) {
         setInitialRoute('HomeScreen');
         console.log('Driver Access Token:', user_details?.data?._id);
@@ -66,7 +87,7 @@ const Navigation = () => {
     if (access_token.data) {
       setInitialRoute('HomeScreen');
       addListener(access_token.data);
-      
+
     } else if (language.data && language.data !== 'languageDone') {
       // If language is stored as a language code (en, ta, hi, etc.)
       setLanguage(language.data);
@@ -97,6 +118,10 @@ const Navigation = () => {
         return {
           homeScreen: DriverHomeScreen,
         };
+      case 'actingDriver':
+        return {
+          homeScreen: ActingDriverHome,  //driverpage
+        };
       default:
         return {
           homeScreen: Home,
@@ -112,7 +137,7 @@ const Navigation = () => {
         //   onSplashComplete();
         // }
       });
-    }, 3000);
+    }, __DEV__ ? 10 : 3000);
     return () => clearTimeout(timer);
   }, [nextScreen /*onSplashComplete*/]);
 

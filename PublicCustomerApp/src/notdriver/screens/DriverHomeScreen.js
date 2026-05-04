@@ -15,7 +15,7 @@ import TripSelected from '../../notdriver/assets/icons/tripSelected.svg';
 // import TripHistory from './PDTripHistory/TripHistory';
 
 import NetInfo from '@react-native-community/netinfo';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import MapContainer from '../../common/map/MapContainer';
 import usePublicDriverStore from '../store/usePublicDriverStore';
 import DriverTabBar from '../bottomNavigation/DriverTabBar';
@@ -844,3 +844,4 @@ const styles = StyleSheet.create({
     fontFamily:Fonts.regular
   }
 });
+

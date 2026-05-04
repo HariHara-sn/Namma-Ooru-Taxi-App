@@ -1,17 +1,17 @@
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { registerationStyles } from '../../../notCustomer/styles/UserStyles';
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 import BackArrow from '../../../notCustomer/assets/image/backArrow.svg';
-import { showNotification } from '../../../notCustomer/components/NotificationManger';
-import { usePostQuery } from '../../../notCustomer/hooks/useQuery';
-import { CommonActions,useNavigation} from '@react-navigation/native';
+import {showNotification} from '../../../notCustomer/components/NotificationManger';
+import {DataStore} from '../../../notCustomer/controllers/DataStore';
+import {usePostQuery} from '../../../notCustomer/hooks/useQuery';
+import {registerationStyles} from '../../../notCustomer/styles/UserStyles';
 import useUserInfoStore from '../../store/useUserInfoStore';
-import { DataStore } from '../../../notCustomer/controllers/DataStore';
-import { firebaselog_onBoarding } from '../../utils/FirebaseAnalytics';
+import {firebaselog_onBoarding} from '../../utils/FirebaseAnalytics';
 
 const RegisterationScreen = () => {
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const [FormStepperState, setFormStepperState] = useState(0);
   const [FormStepper, setFormStepper] = useState([]);
 
@@ -22,20 +22,20 @@ const RegisterationScreen = () => {
         title: t('how_do_we_call_you'),
         placeholder: t('your_name'),
         inputMode: 'text',
-        maxlength: 40
+        maxlength: 40,
       },
       {
         id: 'email',
         title: t('whats_your_email_address'),
         placeholder: t('user_email_placeholder'),
         inputMode: 'email',
-        maxlength: 40
+        maxlength: 40,
       },
       {
         id: 'gender',
         title: t('whats_your_gender'),
-        inputMode: 'text'
-      }
+        inputMode: 'text',
+      },
     ]);
   }, [t]);
 
@@ -45,20 +45,19 @@ const RegisterationScreen = () => {
   const [InputErrorId, setInputErrorId] = useState('');
   const [InputErrorMssage, setInputErrorMssage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { setUserdetails } = useUserInfoStore();
+  const {setUserdetails} = useUserInfoStore();
   const navigation = useNavigation();
 
-
-  const verifyEmail = (value) => {
+  const verifyEmail = value => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
   };
 
-  const verifyName = (value) => {
+  const verifyName = value => {
     return value.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(value.trim());
   };
 
-  const validateCurrentStep = (id) => {
+  const validateCurrentStep = id => {
     setInputErrorId('');
     setInputErrorMssage('');
 
@@ -109,51 +108,51 @@ const RegisterationScreen = () => {
     }
   };
 
-  const onRegisterSuccess =async (data) => {
+  const onRegisterSuccess = async data => {
     setIsLoading(false);
-  
 
     if (data?.success) {
       showNotification(t('registration_completed_successfully'), '', 'success');
-      console.log(JSON.stringify(data))
+      console.log(JSON.stringify(data));
       setUserdetails(data?.user);
-      let {  user} = data;
+      let {user} = data;
       setUserdetails(user);
-      
+
       await DataStore.storeData('userdetails', user);
-      firebaselog_onBoarding('OB_Customer(OB_C)', 'OB_C:registration_completed')
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'HomeScreen' }],
-        });
-      
+      firebaselog_onBoarding(
+        'OB_Customer(OB_C)',
+        'OB_C:registration_completed',
+      );
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'HomeScreen'}],
+      });
     } else {
       const errorMessage = data?.message || t('registration_failed');
       showNotification(t('registration_failed'), errorMessage, 'danger');
     }
   };
 
-  const onRegisterError = (error) => {
+  const onRegisterError = error => {
     setIsLoading(false);
-   
-    
+
     let errorMessage = t('network_error_check_connection');
-    
+
     if (error?.response?.data?.message) {
       errorMessage = error.response.data.message;
     } else if (error?.message) {
       errorMessage = error.message;
     }
-     firebaselog_onBoarding('OB_Customer(OB_C)', 'OB_C:registration_failed')
+    firebaselog_onBoarding('OB_Customer(OB_C)', 'OB_C:registration_failed');
     showNotification(t('registration_failed'), errorMessage, 'danger');
   };
 
-  const { mutate: RegisterMutate } = usePostQuery({
+  const {mutate: RegisterMutate} = usePostQuery({
     onSuccess: onRegisterSuccess,
-    onError: onRegisterError
-  }); 
+    onError: onRegisterError,
+  });
 
-  const onStepperNextHandler = (id) => {
+  const onStepperNextHandler = id => {
     if (isLoading) return;
 
     if (!validateCurrentStep(id)) {
@@ -163,29 +162,33 @@ const RegisterationScreen = () => {
     if (FormStepperState < FormStepper.length - 1) {
       setFormStepperState(FormStepperState + 1);
     } else {
-
-      try{
-      
+      try {
+        setIsLoading(true);
         const payload = {
-       
           name: Name.trim(),
           email: Email.trim(),
           gender: Gender,
         };
 
-     
+        console.log(
+          '[RegisterationScreen] Submitting registration with payload:',
+          payload,
+        );
 
         RegisterMutate({
           queryKey: 'profileUpdateQuery',
           url: '/publicrides/customer/v2/updatePassengerProfile',
-          payload: payload
+          payload: payload,
         });
       } catch (error) {
         setIsLoading(false);
         console.log('Error in registration:', error);
-        showNotification(t('registration_error'), t('unexpected_error_occurred'), 'danger');
+        showNotification(
+          t('registration_error'),
+          t('unexpected_error_occurred'),
+          'danger',
+        );
       }
-    
     }
   };
 
@@ -208,7 +211,7 @@ const RegisterationScreen = () => {
     }
   };
 
-  const getStepperInputValue = (id) => {
+  const getStepperInputValue = id => {
     switch (id) {
       case 'name':
         return Name;
@@ -220,7 +223,9 @@ const RegisterationScreen = () => {
   };
 
   const getButtonText = () => {
-    return FormStepperState === FormStepper.length - 1 ? t('submit') : t('next');
+    return FormStepperState === FormStepper.length - 1
+      ? t('submit')
+      : t('next');
   };
 
   const isButtonDisabled = () => {
@@ -237,8 +242,10 @@ const RegisterationScreen = () => {
   }
 
   return (
-    <View style={registerationStyles.container} key={FormStepper[FormStepperState].id}>
-      <View style={{ gap: 5 }}>
+    <View
+      style={registerationStyles.container}
+      key={FormStepper[FormStepperState].id}>
+      <View style={{gap: 5}}>
         {FormStepperState > 0 && (
           <TouchableOpacity onPress={onStepperBackHandler} disabled={isLoading}>
             <BackArrow />
@@ -250,7 +257,7 @@ const RegisterationScreen = () => {
         </Text>
 
         {FormStepper[FormStepperState].id === 'gender' ? (
-          <View style={{ flexDirection: 'row', gap: 10, padding: 10 }}>
+          <View style={{flexDirection: 'row', gap: 10, padding: 10}}>
             <TouchableOpacity
               style={{
                 width: '50%',
@@ -261,9 +268,12 @@ const RegisterationScreen = () => {
                 backgroundColor: Gender === 'male' ? '#000' : '#fff',
               }}
               onPress={() => setGender('male')}
-              disabled={isLoading}
-            >
-              <Text style={{ color: Gender === 'male' ? '#fff' : '#000', textAlign: 'center' }}>
+              disabled={isLoading}>
+              <Text
+                style={{
+                  color: Gender === 'male' ? '#fff' : '#000',
+                  textAlign: 'center',
+                }}>
                 {t('male')}
               </Text>
             </TouchableOpacity>
@@ -278,9 +288,12 @@ const RegisterationScreen = () => {
                 backgroundColor: Gender === 'female' ? '#000' : '#fff',
               }}
               onPress={() => setGender('female')}
-              disabled={isLoading}
-            >
-              <Text style={{ color: Gender === 'female' ? '#fff' : '#000', textAlign: 'center' }}>
+              disabled={isLoading}>
+              <Text
+                style={{
+                  color: Gender === 'female' ? '#fff' : '#000',
+                  textAlign: 'center',
+                }}>
                 {t('female')}
               </Text>
             </TouchableOpacity>
@@ -291,18 +304,19 @@ const RegisterationScreen = () => {
               InputErrorId === FormStepper[FormStepperState].id
                 ? registerationStyles.stepperInputError
                 : {},
-              registerationStyles.stepperInputContianer
-            ]}
-          >
+              registerationStyles.stepperInputContianer,
+            ]}>
             <TextInput
-              style={{ width: '100%', fontSize: 16 }}
+              style={{width: '100%', fontSize: 16}}
               placeholder={FormStepper[FormStepperState].placeholder}
               placeholderTextColor="#D3D3D3"
               inputMode={FormStepper[FormStepperState].inputMode}
               autoCapitalize="none"
               autoCorrect={false}
               value={getStepperInputValue(FormStepper[FormStepperState].id)}
-              onChangeText={(value) => onStepperInputHandler(FormStepper[FormStepperState].id, value)}
+              onChangeText={value =>
+                onStepperInputHandler(FormStepper[FormStepperState].id, value)
+              }
               color="#000"
               maxLength={FormStepper[FormStepperState].maxlength}
               editable={!isLoading}
@@ -318,17 +332,15 @@ const RegisterationScreen = () => {
       </View>
 
       <TouchableOpacity
-        style={{ padding: 10, alignItems: 'flex-end' }}
+        style={{padding: 10, alignItems: 'flex-end'}}
         onPress={() => onStepperNextHandler(FormStepper[FormStepperState].id)}
-        disabled={isButtonDisabled()}
-      >
+        disabled={isButtonDisabled()}>
         <View
           style={[
             isButtonDisabled() ? registerationStyles.requestBtnDisabe : {},
-            registerationStyles.requestBtn
-          ]}
-        >
-          <Text style={{ color: 'white' }}>{getButtonText()}</Text>
+            registerationStyles.requestBtn,
+          ]}>
+          <Text style={{color: 'white'}}>{getButtonText()}</Text>
         </View>
       </TouchableOpacity>
     </View>

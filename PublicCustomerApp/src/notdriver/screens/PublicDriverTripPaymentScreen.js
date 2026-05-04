@@ -23,7 +23,7 @@ import { useMapMarkerStore } from '../../common/store/useMapMarkerStore';
 import { useStackScreenStore } from '../../common/store/useStackScreenStore';
 import BottomSheetPopup from '../../common/components/BottomSheetPopup';
 import { showNotification } from '../../common/components/Alerts/showNotification';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import CustomeBottomSheet from '../../common/components/CustomeBottomSheet';
 import { DateTimeFormatter } from '../../common/utils/DateTimeFormatter';
 import AddressComponent from '../components/AddressComponent';
@@ -847,3 +847,5 @@ const styles = StyleSheet.create({
     alignSelf:'center',
   },
 });
+
+

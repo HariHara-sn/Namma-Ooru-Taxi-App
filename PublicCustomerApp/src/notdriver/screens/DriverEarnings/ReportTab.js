@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import useUserStore from '../../../common/store/useUserStore'
 import { DateTimeFormatter } from '../../../common/utils/DateTimeFormatter'
 import APIRequest from '../../../common/APIRequest'
-import { Colors, Fonts } from '../../../common/constants/constants'
+import { Colors, colors, Fonts } from '../../../common/constants/constants'
 import HistoryHeader from '../TripHistory/HistoryHeader'
 import { height } from '../../../common/utils/scalingutils'
 import { useTranslation } from 'react-i18next'
@@ -417,3 +417,4 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.regular,
   },
 })
+

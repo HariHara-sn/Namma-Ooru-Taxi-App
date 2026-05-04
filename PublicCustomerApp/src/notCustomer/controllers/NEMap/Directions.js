@@ -1,5 +1,5 @@
 import Config from "react-native-config";
-// const polyline = require('polyline');
+import polyline from "@mapbox/polyline";
 
 class DirectionAPI {
 

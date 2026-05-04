@@ -152,3 +152,4 @@ FailedRideModal.propTypes = {
 };
 
 export default FailedRideModal; 
+

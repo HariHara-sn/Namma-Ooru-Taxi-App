@@ -891,3 +891,4 @@ const DriverEntry = ({isEdit = false, setLocationPressed = null}) => {
 };
 
 export default DriverEntry;
+

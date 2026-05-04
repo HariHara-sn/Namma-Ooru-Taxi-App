@@ -4,7 +4,7 @@ import useDriverStatusStore from '../../store/useDriverStatusStore';
 import { useStackScreenStore } from '../../../common/store/useStackScreenStore';
 import UseBackButton from '../../../common/hooks/UseBackButton';
 import NavBar from '../../../common/components/NavBar';
-import { Colors, Fonts } from '../../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../../common/constants/constants';
 import { scale } from '../../../common/utils/scalingutils';
 import { tableScroll } from '../../styles/TableStyles';
 
@@ -197,3 +197,5 @@ const PublicRidesPriceChartDetails = () => {
         marginTop:4
      }
  });
+
+

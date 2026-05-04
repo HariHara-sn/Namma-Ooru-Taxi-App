@@ -222,3 +222,4 @@ DeleteAccountModal.propTypes = {
 };
 
 export default DeleteAccountModal; 
+

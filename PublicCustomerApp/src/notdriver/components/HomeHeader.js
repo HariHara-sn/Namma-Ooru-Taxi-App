@@ -7,7 +7,7 @@ import StatusModal from './StatusModal';
 import useUserStore from '../../common/store/useUserStore';
 import APIRequest from '../../common/APIRequest';
 import { DateTimeFormatter } from '../../common/utils/DateTimeFormatter';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import TotalEarnings from '../../notdriver/assets/icons/totalEarnings.svg';
 
 const HomeHeader = ({shouldShowDueAlert}) => {
@@ -193,3 +193,5 @@ const headerStyles = StyleSheet.create({
     top:25
   }
 });
+
+

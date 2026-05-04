@@ -2,7 +2,7 @@ import {Animated, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View} f
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import useUserStore from '../../common/store/useUserStore';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import WayPointIndicator from '../Indicators/WayPointIndicator';
 import YellowMarker from '../../notdriver/assets/icons/YellowMarker.svg';
 import StatLocBlue from '../../notdriver/assets/icons/statLocBlue.svg';
@@ -279,3 +279,5 @@ const styles = StyleSheet.create({
     color: Colors.black,
   },
 });
+
+

@@ -5,7 +5,6 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import React, { useTransition } from 'react';
-import { getRedirection } from "react-native-translation"
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors, Fonts } from '../constants/constants';
 import { useTranslation } from 'react-i18next';

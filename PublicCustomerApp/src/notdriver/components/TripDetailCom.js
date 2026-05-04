@@ -4,7 +4,7 @@ import Feather from 'react-native-vector-icons/Feather'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import usePublicDriverStore from '../store/usePublicDriverStore';
 import { useStackScreenStore } from '../../common/store/useStackScreenStore';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { DateTimeFormatter } from '../../common/utils/DateTimeFormatter';
 import TotalDistance from '../../notdriver/assets/icons/totalDistance.svg';
 import TotalHours from '../../notdriver/assets/icons/totalHours.svg';
@@ -230,3 +230,4 @@ const styles = StyleSheet.create({
 });
 
 export default TripDetails;
+

@@ -12,7 +12,7 @@ import { permissionData } from '../../common/constants/jsonData';
 import FullScreenLoader from '../../common/loaders/FullScreenLoader';
 import NavBar from '../../common/components/NavBar';
 import UseBackButton from '../../common/hooks/UseBackButton';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import UserDeviceAdded from './UserDeviceAdded';
 import PopupContainerWithBtns from '../../common/components/PopupContainerWithBtns';
 import BgLocation from '../../notdriver/assets/icons/Location.svg';
@@ -281,3 +281,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   }
 });
+

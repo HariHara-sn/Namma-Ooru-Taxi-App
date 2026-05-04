@@ -322,3 +322,5 @@ const searchTabsStyles = (theme) =>
         left: 20,
       },
     });
+
+

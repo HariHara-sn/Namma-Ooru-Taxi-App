@@ -103,3 +103,5 @@ export const yourRidesStyles = StyleSheet.create({
         color: colors.grey_xxdark,
     },
 });
+
+

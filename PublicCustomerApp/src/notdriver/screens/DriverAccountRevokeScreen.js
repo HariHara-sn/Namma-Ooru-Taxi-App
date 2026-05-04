@@ -13,7 +13,7 @@ import { DataStore } from '../../common/controllers/DataStore'
 import { showNotification } from '../../common/components/Alerts/showNotification'
 import FullScreenLoader from '../../common/loaders/FullScreenLoader'
 import APIRequest from '../../common/APIRequest'
-import { Colors, Fonts } from '../../common/constants/constants'
+import { Colors, colors, Fonts } from '../../common/constants/constants'
 import { settingsScreen } from '../styles/SettingsStyles'
 import StatusModal from '../components/StatusModal'
 import { height } from '../../common/utils/scalingutils'
@@ -358,3 +358,4 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
 })
+

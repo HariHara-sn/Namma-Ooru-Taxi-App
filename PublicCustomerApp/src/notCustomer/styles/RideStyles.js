@@ -234,3 +234,5 @@ export const rideStyles = StyleSheet.create({
       marginTop:20
     }
   });
+
+

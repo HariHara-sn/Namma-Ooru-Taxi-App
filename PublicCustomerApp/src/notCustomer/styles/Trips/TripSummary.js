@@ -430,3 +430,5 @@ const TripSummaryStyle = StyleSheet.create({
 });
 
 module.exports = { TripSummaryStyle, tripDetailIcon, profileIcon }
+
+

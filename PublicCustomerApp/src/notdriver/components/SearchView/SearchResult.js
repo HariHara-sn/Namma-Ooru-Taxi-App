@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import CategoryIcon from '../SearchResultIcons/CategoryIcon';
-import { Colors, Fonts } from '../../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../../common/constants/constants';
 import { utils } from '../../../common/utils/utils';
 
 // import CategoryIcon from '../SearchResultIcons/CategoryIcon';
@@ -314,3 +314,5 @@ const styles = StyleSheet.create({
 });
 
 export default SearchResult;
+
+

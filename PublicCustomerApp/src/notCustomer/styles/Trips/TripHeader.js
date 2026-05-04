@@ -36,3 +36,4 @@ const TripHeaderStyles = StyleSheet.create({
 })
 
 module.exports = { TripHeaderStyles }
+

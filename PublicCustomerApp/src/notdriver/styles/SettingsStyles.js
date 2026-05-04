@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import { height, moderateScale, scale, verticalScale, width } from '../../common/utils/scalingutils';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 
 
 export const termsAndConditionsScreen = StyleSheet.create({
@@ -372,3 +372,4 @@ export const settingStyle = StyleSheet.create({
         color:Colors.black
     }
 })
+

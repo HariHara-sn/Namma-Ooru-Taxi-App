@@ -315,3 +315,4 @@ dangerBtnText: {
 });
 
 export default SearchLoader;
+

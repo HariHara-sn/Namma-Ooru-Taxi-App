@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import {
   checkCameraPermission,
   RequestCameraPermission,
@@ -414,3 +414,4 @@ const ss = StyleSheet.create({
   pickBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, paddingVertical: 8, borderRadius: 8, backgroundColor: '#F0F0FF', borderWidth: 1, borderColor: Colors.periwinkle + '44' },
   pickTxt: { fontSize: 11, fontFamily: Fonts.medium, color: Colors.periwinkle },
 });
+

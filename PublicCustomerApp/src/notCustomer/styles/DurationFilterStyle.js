@@ -62,3 +62,5 @@ export const durationFilterStyle = StyleSheet.create({
     }
 
 });
+
+

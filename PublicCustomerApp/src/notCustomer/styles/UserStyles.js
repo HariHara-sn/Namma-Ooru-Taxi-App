@@ -263,3 +263,5 @@ export const registerationStyles = StyleSheet.create({
     color: colors.danger_red
   }
 });
+
+

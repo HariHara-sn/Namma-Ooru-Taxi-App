@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, FlatList } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Colors, Fonts } from '../constants/constants';
+import { Colors, colors, Fonts } from '../constants/constants';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -157,3 +157,5 @@ const styles = StyleSheet.create({
 });
 
 export default MonthPickerModal;
+
+

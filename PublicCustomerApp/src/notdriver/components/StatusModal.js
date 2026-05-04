@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 
 const StatusModal = ({
   isVisible,
@@ -181,3 +181,5 @@ StatusModal.defaultProps = {
   rightBtnTextStyle: {},
   messageTitleStyle: {},
 };
+
+

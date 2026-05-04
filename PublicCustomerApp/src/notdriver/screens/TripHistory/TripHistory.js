@@ -4,7 +4,7 @@ import useUserStore from '../../../common/store/useUserStore'
 import APIRequest from '../../../common/APIRequest'
 import HistoryHeader from './HistoryHeader'
 import TripHistoryList from './TripHistoryList'
-import { Colors, Fonts } from '../../../common/constants/constants'
+import { Colors, colors, Fonts } from '../../../common/constants/constants'
 import { useTranslation } from 'react-i18next'
 
 const TripHistory = () => {
@@ -151,3 +151,4 @@ const styles = StyleSheet.create({
     textAlign:'center',
   }
 })
+

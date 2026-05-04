@@ -68,3 +68,5 @@ export const navStyles = StyleSheet.create({
     paddingLeft:0
   },
 });
+
+

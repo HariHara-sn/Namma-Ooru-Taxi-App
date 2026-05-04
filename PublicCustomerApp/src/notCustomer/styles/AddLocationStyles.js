@@ -393,3 +393,5 @@ export const vehicleList = StyleSheet.create({
     color: colors.grey_xdark,
   },
 });
+
+

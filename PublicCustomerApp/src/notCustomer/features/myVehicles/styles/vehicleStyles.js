@@ -298,3 +298,5 @@ const vehicleStyles = StyleSheet.create({
 });
 
 export default vehicleStyles;
+
+

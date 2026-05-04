@@ -6,7 +6,7 @@ import APIRequest from '../../../common/APIRequest';
 import useUserStore from '../../../common/store/useUserStore';
 import MonthPickerModal from '../../../common/components/MonthPickerModal';
 import CustomeCalender from '../../../common/components/CustomeCalender';
-import { Colors, Fonts } from '../../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../../common/constants/constants';
 import { useTranslation } from 'react-i18next';
 
 const MONTH_NAMES = [
@@ -501,3 +501,5 @@ const styles = StyleSheet.create({
 });
 
 export default WorkHistoryTab;
+
+

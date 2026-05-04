@@ -126,7 +126,7 @@ const WorkHistoryScreen = () => {
     }
 
     const payload = {
-      // eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
       workHistory: filledEntries.map(({id: _id, ...rest}) => rest),
     };
 

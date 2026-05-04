@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import React from 'react';
-import { Colors, Fonts } from '../constants/constants';
+import { Colors, colors, Fonts } from '../constants/constants';
 import { useTranslation } from 'react-i18next';
 
 
@@ -77,3 +77,5 @@ const TopTabs = ({ tabs, activeTab, setActiveTab, containerStyle, tabStyle, acti
 };
 
 export default TopTabs;
+
+

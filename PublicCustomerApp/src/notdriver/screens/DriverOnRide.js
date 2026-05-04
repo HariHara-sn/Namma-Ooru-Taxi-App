@@ -17,7 +17,7 @@ import { showNotification } from '../../common/components/Alerts/showNotificatio
 import { DataStore } from '../../common/controllers/DataStore';
 import APIRequest from '../../common/APIRequest';
 import { height } from '../../common/utils/scalingutils';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { RouteScreenStyles } from '../styles/RouteScreenStyles';
 import TrackingMapIcons from '../../common/components/Alerts/TrackingMapIcons';
 import FullScreenLoader from '../../common/loaders/FullScreenLoader';
@@ -1497,3 +1497,5 @@ const styles = StyleSheet.create({
     },
     /* ── Acting driver media upload row ── */
 })
+
+

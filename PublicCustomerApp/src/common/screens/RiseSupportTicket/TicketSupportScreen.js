@@ -11,7 +11,7 @@ import useSupportStore from '../../store/useSupportStore'
 import APIRequest from '../../APIRequest'
 import NavBar from '../../components/NavBar'
 import UseBackButton from '../../hooks/UseBackButton'
-import { Colors, Fonts } from '../../constants/constants'
+import { Colors, colors, Fonts } from '../../constants/constants'
 import SkeletonLoader from '../../loaders/SkeletonLoader'
 import CreateTicketForm from '../../components/CreateTicketForm'
 import SupportCard from '../../components/SupportCard'
@@ -530,3 +530,4 @@ const styles = StyleSheet.create({
      color: '#9CA3AF',
    },
  });
+

@@ -5,7 +5,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { Colors, Fonts } from '../constants/constants';
+import { Colors, colors, Fonts } from '../constants/constants';
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -103,3 +103,5 @@ const InputField = ({
 };
 
 export default InputField;
+
+

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import analytics from '@react-native-firebase/analytics';
 
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import useUserStore from '../../common/store/useUserStore';
 import useCurrentScreenStore from '../../common/store/useCurrentScreenStore';
 import { flexStyle } from '../../common/styles/flexStyle';
@@ -144,3 +144,5 @@ DriverTabBar.propTypes = {
 DriverTabBar.defaultProps = {
   menus: [],
 };
+
+

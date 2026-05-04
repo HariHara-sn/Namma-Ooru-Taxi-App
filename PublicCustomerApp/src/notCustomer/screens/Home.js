@@ -71,6 +71,9 @@ import ContributionScreen from '../features/contribution/screens/ContributionScr
 import DriverAccessScreen from '../../common/screens/Driver/DriverAccessScreen.jsx';
 import ActingDriverVehicleSelectScreen from '../features/home/screens/ActingDriverVehicleSelectScreen.jsx';
 import MyVehiclesScreen from '../features/myVehicles/screens/MyVehiclesScreen.jsx';
+import HireDriversScreen from '../features/hireDrivers/screens/HireDriversScreen';
+import HireDriversLocationSearchScreen from '../features/hireDrivers/screens/HireDriversLocationSearchScreen';
+import GarageScreen from '../features/garage/screens/GarageScreen';
 import BillsAndPhotosScreen from '../features/rideStatus/screens/BillsAndPhotosScreen';
 import TripSettingsScreen from '../features/rideStatus/screens/TripSettingsScreen';
 import TripTimelineScreen from '../features/rideStatus/screens/TripTimelineScreen';
@@ -941,6 +944,12 @@ const Home = () => {
         return <ActingDriverVehicleSelectScreen {...params} />;
       case 'MyVehiclesScreen':
         return <MyVehiclesScreen {...params} />;
+      case 'HireDriversScreen':
+        return <HireDriversScreen {...params} />;
+      case 'HireDriversLocationSearchScreen':
+        return <HireDriversLocationSearchScreen {...params} />;
+      case 'GarageScreen':
+        return <GarageScreen {...params} />;
       case 'BillsAndPhotosScreen':
         return <BillsAndPhotosScreen {...params} />;
       case 'TripSettingsScreen':

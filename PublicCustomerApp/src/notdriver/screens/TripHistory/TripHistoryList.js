@@ -4,7 +4,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useStackScreenStore } from '../../../common/store/useStackScreenStore';
 import { useSelectedRouteStore } from '../../store/useTripsStore';
 import { DateTimeFormatter } from '../../../common/utils/DateTimeFormatter';
-import { Colors, Fonts } from '../../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../../common/constants/constants';
 import { useTranslation } from 'react-i18next';
 
 const TripHistoryList = ({
@@ -364,3 +364,4 @@ const styles = StyleSheet.create({
     fontFamily:Fonts.medium,
   },
 })
+

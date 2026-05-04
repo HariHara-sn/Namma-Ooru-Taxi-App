@@ -23,7 +23,7 @@ import driverWaitingTime from '../Controller/DriverWaitingTime';
 import { height } from '../../common/utils/scalingutils';
 import FullScreenLoader from '../../common/loaders/FullScreenLoader';
 import { DateTimeFormatter } from '../../common/utils/DateTimeFormatter';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import CustomeBottomSheet from '../../common/components/CustomeBottomSheet';
 import Rupee from '../../notdriver/assets/icons/rupee.svg';
 import AddressComponent from '../components/AddressComponent';
@@ -578,3 +578,5 @@ const styles = StyleSheet.create({
 });
 
 export default TripAccept;
+
+

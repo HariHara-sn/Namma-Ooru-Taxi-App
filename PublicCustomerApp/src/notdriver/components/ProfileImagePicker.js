@@ -6,7 +6,7 @@ import useUserStore from '../../common/store/useUserStore'
 import { checkCameraPermission, RequestCameraPermission } from '../../common/controllers/PermissionHandler'
 import AlertModal from './AlertModal'
 import FullScreenLoader from '../../common/loaders/FullScreenLoader'
-import { Colors, Fonts } from '../../common/constants/constants'
+import { Colors, colors, Fonts } from '../../common/constants/constants'
 import { getPresignedImageUrl } from '../../common/utils/getPresignedImageUrl'
 import CameraIcon from '../../common/assets/icons/CameraIcon.svg'
 import GalleryIcon from '../../common/assets/icons/Gallery.svg'
@@ -432,3 +432,4 @@ const styles = StyleSheet.create({
         marginLeft: 8,
     },
 })
+

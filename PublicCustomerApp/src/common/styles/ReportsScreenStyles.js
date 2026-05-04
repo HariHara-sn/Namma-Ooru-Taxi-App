@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import { Colors, Fonts } from '../constants/constants';
+import { Colors, colors, Fonts } from '../constants/constants';
 import { height, scale, verticalScale, width } from '../utils/scalingutils';
 
 
@@ -135,3 +135,5 @@ export const ReportsScreenStyles = StyleSheet.create({
     overflow:'hidden'
   },
 });
+
+

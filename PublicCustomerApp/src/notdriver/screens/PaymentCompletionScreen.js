@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
 import CircleTick from '../../common/assets/icons/CircleTick.svg';
 import usePublicDriverStore from '../store/usePublicDriverStore';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 
 
 const { width, height } = Dimensions.get('window');
@@ -165,3 +165,5 @@ const styles = StyleSheet.create({
 });
 
 export default PaymentCompletionScreen;
+
+

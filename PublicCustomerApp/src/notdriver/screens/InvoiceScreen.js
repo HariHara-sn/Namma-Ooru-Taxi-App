@@ -5,7 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import UseBackButton from '../../common/hooks/UseBackButton';
 import NavBar from '../../common/components/NavBar';
 import { DateTimeFormatter } from '../../common/utils/DateTimeFormatter';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { useTranslation } from 'react-i18next';
 import { getPresignedImageUrl } from '../../common/utils/getPresignedImageUrl';
 import useUserStore from '../../common/store/useUserStore';
@@ -835,3 +835,4 @@ InvoiceScreen.propTypes = {
 };
 
 export default InvoiceScreen; 
+

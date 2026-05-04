@@ -123,11 +123,11 @@ const VehicleHandlingScreen = () => {
       );
       if (response.success) {
         setDriverInfo({...driverInfo, vehicleHandling: payload.vehicleHandling});
-        // showNotification(
-        //   t('vehicle_handling_saved', {defaultValue: 'Vehicle handling experience saved'}),
-        //   '',
-        //   'success',
-        // );
+showNotification(
+  t('vehicle_handling_saved', {defaultValue: 'Vehicle handling experience saved'}),
+  '',
+  'success',
+);
         goBack();
       } else {
         showNotification(response?.message || 'Error', '', 'danger');

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Colors, Fonts } from '../constants/constants';
+import { Colors, colors, Fonts } from '../constants/constants';
 
 
 export const nabBarAStyles = StyleSheet.create({
@@ -73,3 +73,5 @@ export const navStyles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+

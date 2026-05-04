@@ -16,7 +16,7 @@ import usePublicDriverStore from '../store/usePublicDriverStore';
 import Marker from '../../common/map/Marker';
 import FullScreenLoader from '../../common/loaders/FullScreenLoader';
 import UseBackButton from '../../common/hooks/UseBackButton';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { RouteScreenStyles } from '../styles/RouteScreenStyles';
 import TrackingMapIcons from '../../common/components/Alerts/TrackingMapIcons';
 import useLocationStore from '../../common/store/useLocationStore';
@@ -663,3 +663,5 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 });
+
+

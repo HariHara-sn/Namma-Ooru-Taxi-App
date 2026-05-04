@@ -13,7 +13,7 @@ import { showNotification } from '../../common/components/Alerts/showNotificatio
 import NavBar from '../../common/components/NavBar';
 import FullScreenLoader from '../../common/loaders/FullScreenLoader';
 import UseBackButton from '../../common/hooks/UseBackButton';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { DateTimeFormatter } from '../../common/utils/DateTimeFormatter';
 import AddressComponent from '../components/AddressComponent';
 import { useTranslation } from 'react-i18next';
@@ -550,3 +550,5 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, {useRef, useState} from 'react'
 import {  width } from '../../common/utils/scalingutils';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import Locgrey from '../../notdriver/assets/icons/loc_grey.svg'
 import { useTranslation } from 'react-i18next';
 
@@ -205,3 +205,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   }
 });
+
+

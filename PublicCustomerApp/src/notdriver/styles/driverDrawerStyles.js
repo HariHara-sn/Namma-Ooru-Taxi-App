@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import { height, width } from '../../common/utils/scalingutils';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 
 
 export const driverDrawerStyles = StyleSheet.create({
@@ -250,3 +250,5 @@ export const driverDrawerStyles = StyleSheet.create({
     fontSize:12
   }
 });
+
+

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { useStackScreenStore } from '../../common/store/useStackScreenStore';
 import useActingDriverMediaStore from '../store/useActingDriverMediaStore';
 import useTripsStore from '../store/useTripsStore';
@@ -133,3 +133,5 @@ const styles = StyleSheet.create({
     color: '#43A047',
   },
 });
+
+

@@ -28,7 +28,7 @@ import { useStackScreenStore } from '../../common/store/useStackScreenStore';
 import { breakData } from '../constants/JsonData';
 import { showNotification } from '../../common/components/Alerts/showNotification';
 import { DataStore } from '../../common/controllers/DataStore';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { height } from '../../common/utils/scalingutils';
 import { useTranslation } from 'react-i18next';
 import overlayController from '../../common/controllers/Overlay';
@@ -484,3 +484,5 @@ const styles = StyleSheet.create({
 });
 
 export default FloatingButton;
+
+

@@ -89,6 +89,8 @@ export const Colors = {
   light_black: "#888888"
 };
 
+export const colors = Colors;
+
 export const light = {
   themeColor: '#FFFFFF',
   white: '#000000',

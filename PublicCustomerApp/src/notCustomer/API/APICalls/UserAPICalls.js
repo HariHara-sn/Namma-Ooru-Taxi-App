@@ -1,19 +1,19 @@
 import {QueryClient, useMutation, useQuery} from 'react-query';
+import i18n from '../../../common/i18n';
+import {showNotification} from '../../components/NotificationManger';
 import {
-  getUserDetails,
-  profileUpdate,
-  requestOTP,
   checkOnGoingRide,
-  testlogin,
-  verifyOTP,
   deleteAccount,
   getPassengerTripStats,
+  getUserDetails,
+  profileUpdate,
   requestDriverOTP,
-  verifyDriverOTP,
+  requestOTP,
+  testlogin,
   verifyActingDriverOTP,
+  verifyDriverOTP,
+  verifyOTP,
 } from '../EndPoints/EndPoints';
-import {showNotification} from '../../components/NotificationManger';
-import i18n from '../../../common/i18n';
 
 const queryClient = new QueryClient();
 
@@ -27,7 +27,11 @@ export const requestOTPMutation = onSuccessCallback => {
           onSuccessCallback(data);
         }
       } else {
-        showNotification(i18n.t('login_failed'), i18n.t('something_went_wrong'), 'danger');
+        showNotification(
+          i18n.t('login_failed'),
+          i18n.t('something_went_wrong'),
+          'danger',
+        );
       }
     },
     onError: error => {
@@ -49,7 +53,11 @@ export const testLogin = onSuccessCallback => {
           onSuccessCallback(data);
         }
       } else {
-        showNotification(i18n.t('login_failed'), i18n.t('something_went_wrong'), 'danger');
+        showNotification(
+          i18n.t('login_failed'),
+          i18n.t('something_went_wrong'),
+          'danger',
+        );
       }
     },
     onError: error => {
@@ -62,31 +70,34 @@ export const testLogin = onSuccessCallback => {
   });
 };
 
-
 // verify OTP Mutation
-// export const verifyActingDriverOTPMutation = onSuccessCallback => {
-//   return useMutation(['verifyActingDriverOTP'], verifyActingDriverOTP, {
-//     onSuccess: data => {
-//       if (data.success) {
-//         if (onSuccessCallback) {
-//           queryClient.invalidateQueries('verifyActingDriverOTP');
-//           onSuccessCallback(data);
-//         }
-//       } else {
-//         console.log('OTP verification failed:', data);
-//         showNotification(i18n.t('verification_failed'), i18n.t('some_error_occurred'), 'danger');
-//       }
-//     },
-//     onError: error => {
-//       console.log('Error during OTP verification:', error);
-//       showNotification(
-//         i18n.t('verification_failed'),
-//         i18n.t('some_error_occurred'),
-//         'danger',
-//       );
-//     },
-//   });
-// };
+export const verifyActingDriverOTPMutation = onSuccessCallback => {
+  return useMutation(['verifyActingDriverOTP'], verifyActingDriverOTP, {
+    onSuccess: data => {
+      if (data.success) {
+        if (onSuccessCallback) {
+          queryClient.invalidateQueries('verifyActingDriverOTP');
+          onSuccessCallback(data);
+        }
+      } else {
+        console.log('OTP verification failed:', data);
+        showNotification(
+          i18n.t('verification_failed'),
+          i18n.t('some_error_occurred'),
+          'danger',
+        );
+      }
+    },
+    onError: error => {
+      console.log('Error during OTP verification:', error);
+      showNotification(
+        i18n.t('verification_failed'),
+        i18n.t('some_error_occurred'),
+        'danger',
+      );
+    },
+  });
+};
 
 // verify OTP Mutation
 export const verifyOTPMutation = onSuccessCallback => {
@@ -99,7 +110,11 @@ export const verifyOTPMutation = onSuccessCallback => {
         }
       } else {
         console.log('OTP verification failed:', data);
-        showNotification(i18n.t('verification_failed'), i18n.t('some_error_occurred'), 'danger');
+        showNotification(
+          i18n.t('verification_failed'),
+          i18n.t('some_error_occurred'),
+          'danger',
+        );
       }
     },
     onError: error => {
@@ -123,24 +138,28 @@ export const profileUpdateMutations = onSuccessCallback => {
           onSuccessCallback(data);
         }
       } else {
-        showNotification(i18n.t('registration_failed'), i18n.t('something_went_wrong'), 'danger');
+        showNotification(
+          i18n.t('registration_failed'),
+          i18n.t('something_went_wrong'),
+          'danger',
+        );
       }
     },
     onError: error => {
-      showNotification(i18n.t('registration_failed'), i18n.t('something_went_wrong'), 'danger');
+      showNotification(
+        i18n.t('registration_failed'),
+        i18n.t('something_went_wrong'),
+        'danger',
+      );
     },
   });
 };
 
-
 export const getOngoingRide = onSuccessCallback => {
- 
   return useQuery(['getOngoingRide'], checkOnGoingRide, {
     onSuccess: data => {
-    
       if (data.success) {
         if (onSuccessCallback) {
-          
           onSuccessCallback(data);
         }
       }
@@ -149,7 +168,7 @@ export const getOngoingRide = onSuccessCallback => {
       showNotification(`${error.status}`, error.message, 'danger');
     },
   });
-}
+};
 
 // query user profile
 export const fetchUserDetails = () => {
@@ -170,7 +189,11 @@ export const deleteAccountMutation = onSuccessCallback => {
           onSuccessCallback(data);
         }
       } else {
-        showNotification(i18n.t('delete_account_failed'), i18n.t('something_went_wrong') , 'danger');
+        showNotification(
+          i18n.t('delete_account_failed'),
+          i18n.t('something_went_wrong'),
+          'danger',
+        );
       }
     },
     onError: error => {
@@ -184,7 +207,7 @@ export const deleteAccountMutation = onSuccessCallback => {
 };
 
 // fetch passenger trip stats
-export const fetchPassengerTripStats = (onSuccessCallback) => {
+export const fetchPassengerTripStats = onSuccessCallback => {
   return useQuery(['passengerTripStats'], getPassengerTripStats, {
     onSuccess: data => {
       if (onSuccessCallback) {
@@ -201,7 +224,6 @@ export const fetchPassengerTripStats = (onSuccessCallback) => {
   });
 };
 
-
 // requestDriverOTPMutation
 export const requestDriverOTPMutation = onSuccessCallback => {
   return useMutation(['requestDriverOTP'], requestDriverOTP, {
@@ -212,7 +234,11 @@ export const requestDriverOTPMutation = onSuccessCallback => {
           onSuccessCallback(data);
         }
       } else {
-        showNotification(i18n.t('login_failed'), i18n.t('something_went_wrong'), 'danger');
+        showNotification(
+          i18n.t('login_failed'),
+          i18n.t('something_went_wrong'),
+          'danger',
+        );
       }
     },
     onError: error => {
@@ -234,13 +260,17 @@ export const verifyDriverOTPMutation = onSuccessCallback => {
           onSuccessCallback(data);
         }
       } else {
-        showNotification(i18n.t('verification_failed'), i18n.t('invalid_otp', {defaultValue: 'Invalid OTP'}), 'danger');
+        showNotification(
+          i18n.t('verification_failed'),
+          i18n.t('invalid_otp', {defaultValue: 'Invalid OTP'}),
+          'danger',
+        );
       }
     },
     onError: error => {
       showNotification(
         i18n.t('verification_failed'),
-        i18n.t('Invalid_otp',{defaultValue:'Invalid OTP'}),
+        i18n.t('Invalid_otp', {defaultValue: 'Invalid OTP'}),
         'danger',
       );
     },

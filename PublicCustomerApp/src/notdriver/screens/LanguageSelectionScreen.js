@@ -8,7 +8,7 @@ import { languages } from '../../notCustomer/constants/JsonData';
 import i18n from '../../common/i18n';
 import { DataStore } from '../../common/controllers/DataStore';
 import NavBar from '../../common/components/NavBar';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import UseBackButton from '../../common/hooks/UseBackButton';
 
 const LanguageScreen = ({fromDrawer, fromSettings, fromDriverStack}) => {
@@ -162,3 +162,5 @@ const styles = StyleSheet.create({
       textTransform: 'uppercase',
     },
   });           
+
+

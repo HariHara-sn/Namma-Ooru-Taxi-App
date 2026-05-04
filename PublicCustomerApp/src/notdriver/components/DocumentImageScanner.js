@@ -4,7 +4,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { Camera } from 'react-native-camera-kit';
 import RNFS from 'react-native-fs';
 import TextRecognition from '@react-native-ml-kit/text-recognition';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { checkCameraPermission, RequestCameraPermission } from '../../common/controllers/PermissionHandler';
 import CameraIcon from '../../common/assets/icons/CameraIcon.svg';
 import GalleryIcon from '../../common/assets/icons/Gallery.svg';
@@ -809,3 +809,5 @@ const styles = StyleSheet.create({
     color:Colors.black
   }
 });
+
+

@@ -6,7 +6,7 @@ import useUserStore from '../../common/store/useUserStore';
 import { getPresignedImageUrl } from '../../common/utils/getPresignedImageUrl';
 import NavBar from '../../common/components/NavBar';
 import UseBackButton from '../../common/hooks/UseBackButton';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 
 
 const DriverIDCard = () => {
@@ -269,3 +269,5 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.semi_bold,
   },
 });
+
+

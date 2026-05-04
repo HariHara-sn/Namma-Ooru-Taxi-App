@@ -1,32 +1,43 @@
-import {Text, TouchableOpacity, View, Platform, ActivityIndicator} from 'react-native';
-import React, {useState, useEffect, useRef, useContext} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {
+  ActivityIndicator,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-import {loginStyles} from '../../../notCustomer/styles/UserStyles';
-import {colors} from '../../../notCustomer/constants/constants';
-import {CommonActions, useNavigation} from '@react-navigation/native';
-import {showNotification} from '../../../notCustomer/components/NotificationManger';
-import {DataStore} from '../../../notCustomer/controllers/DataStore';
-import useUserInfoStore from '../../store/useUserInfoStore';
-import {requestOTPMutation, verifyActingDriverOTPMutation, verifyDriverOTPMutation, verifyOTPMutation} from '../../../notCustomer/API/APICalls/UserAPICalls';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import messaging from '@react-native-firebase/messaging';
-import DeviceInfo from 'react-native-device-info';  
-import PropTypes from 'prop-types';  
-import { GlobalContext } from '../../../context/GlobalContext';
-import useRideMatching from '../../../notCustomer/hooks/useRideMatching';
+import {CommonActions, useNavigation} from '@react-navigation/native';
+import PropTypes from 'prop-types';
+import DeviceInfo from 'react-native-device-info';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import OTPInput from '../../../common/components/OTPInput';
+import {GlobalContext} from '../../../context/GlobalContext';
+import {
+  requestOTPMutation,
+  verifyActingDriverOTPMutation,
+  verifyDriverOTPMutation,
+  verifyOTPMutation,
+} from '../../../notCustomer/API/APICalls/UserAPICalls';
 import AdaptiveText from '../../../notCustomer/components/Common/AdaptiveText';
+import {showNotification} from '../../../notCustomer/components/NotificationManger';
+import {colors} from '../../../notCustomer/constants/constants';
+import {DataStore} from '../../../notCustomer/controllers/DataStore';
+import useRideMatching from '../../../notCustomer/hooks/useRideMatching';
+import {loginStyles} from '../../../notCustomer/styles/UserStyles';
+import useUserInfoStore from '../../store/useUserInfoStore';
 import useUserStore from '../../store/useUserStore';
-import { firebaselog_userLogin } from '../../utils/FirebaseAnalytics';
+import {firebaselog_userLogin} from '../../utils/FirebaseAnalytics';
 // Utility function to mask phone number
-const maskPhoneNumber = (phoneNumber) => {
+const maskPhoneNumber = phoneNumber => {
   if (!phoneNumber || phoneNumber.length < 5) return phoneNumber;
-  
+
   const firstThree = phoneNumber.substring(0, 3);
   const lastTwo = phoneNumber.substring(phoneNumber.length - 2);
   const middleAsterisks = '*'.repeat(phoneNumber.length - 5);
-  
+
   return `${firstThree}${middleAsterisks}${lastTwo}`;
 };
 
@@ -34,37 +45,36 @@ const OTPScreen = ({route}) => {
   const {userRole, setUserInfo, setIsDev} = useUserStore();
   const {t} = useTranslation();
   const navigation = useNavigation();
-  const {addListener, addRideMatchListener, addNOTSocketListener} = useContext(GlobalContext);
-  const { initializeSocket} = useRideMatching();
-  const [loginPhoneNumber] = useState(
-    route.params.phoneNumber,
-  );
-  const [countryCode] = useState(
-    route.params.countryCode,
-  );
+  const {addListener, addRideMatchListener, addNOTSocketListener} =
+    useContext(GlobalContext);
+  const {initializeSocket} = useRideMatching();
+  const [loginPhoneNumber] = useState(route.params.phoneNumber);
+  const [countryCode] = useState(route.params.countryCode);
   const {navRole} = route.params || userRole;
   const [otpInput, setOtpInput] = useState('');
   const [otpError, setOtpError] = useState('');
 
   const [timer, setTimer] = useState(120);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  
 
   const {setID, setUserdetails} = useUserInfoStore();
-  
+
   // Add ref for OTP input to enable auto-fill
   const otpRef = useRef(null);
 
-  const formatTime = (totalSeconds) => {
+  const formatTime = totalSeconds => {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(
+      2,
+      '0',
+    )}`;
   };
 
   useEffect(() => {
     if (timer > 0) {
       const interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
+        setTimer(prevTimer => prevTimer - 1);
       }, 1000);
       return () => clearInterval(interval);
     } else {
@@ -77,13 +87,18 @@ const OTPScreen = ({route}) => {
       if (data.success) {
         console.log('Verification data', data);
         setOtpError(''); // Clear error on success
-       
-        let { user, isNewUser } = data;
-        
+
+        let {user, isNewUser} = data;
+
         setID(user._id);
         setUserdetails(user);
 
+        console.log('[OTPScreen] Saving token:', {
+          hasToken: !!user?.token,
+          tokenLength: user?.token?.length || 0,
+        });
         await DataStore.storeData('access_token', user?.token);
+        console.log('[OTPScreen] Token saved to DataStore');
         addListener(user?.token);
         await DataStore.storeData('userdetails', user);
         // Prefetch user stats after successful login
@@ -99,7 +114,7 @@ const OTPScreen = ({route}) => {
           firebaselog_userLogin('UL_Customer(UL_C)', 'UL_C:login_success');
           navigation.reset({
             index: 0,
-            routes: [{ name: 'HomeScreen' }],
+            routes: [{name: 'HomeScreen'}],
           });
         }
         // showNotification(t('otp_verified'), t('otp_verified_successfully'), 'success');
@@ -107,12 +122,12 @@ const OTPScreen = ({route}) => {
         setOtpError(t('invalid_otp'));
         console.log('OTP verification failed:', data);
 
-        if(typeof data?.message === 'string'){  
+        if (typeof data?.message === 'string') {
           showNotification(t('failed'), t('invalid_otp'), 'danger');
-        }else{
+        } else {
           showNotification(t('failed'), t('something_went_wrong'), 'danger');
         }
-        firebaselog_userLogin('UL_Customer(UL_C)', 'UL_C:login_failed')
+        firebaselog_userLogin('UL_Customer(UL_C)', 'UL_C:login_failed');
       }
     } catch (error) {
       console.log('Error in handleVerificationSuccess:', error);
@@ -121,14 +136,14 @@ const OTPScreen = ({route}) => {
     }
   };
 
-  const handleDriverVerificationSuccess = async (data) => {
- try {
+  const handleDriverVerificationSuccess = async data => {
+    try {
       if (data.success) {
         setOtpError('');
-       
-        let { user } = data;
-          const deviceImei = await DeviceInfo.getUniqueId().catch(error => {
-        console.log('Error getting device IMEI: ', error);
+
+        let {user} = data;
+        const deviceImei = await DeviceInfo.getUniqueId().catch(error => {
+          console.log('Error getting device IMEI: ', error);
         });
         setID(user._id);
         setUserdetails(user);
@@ -138,41 +153,41 @@ const OTPScreen = ({route}) => {
         addNOTSocketListener(user?.token);
         addRideMatchListener(user?._id);
         await DataStore.storeData('userdetails', user);
-        await DataStore.storeData("bg_userToken", user?.token)
-        await DataStore.storeData("bg_deviceImei", deviceImei)
-          if (user && Object.prototype.hasOwnProperty.call(user, 'isAvailable')) {
-            firebaselog_userLogin('UL_Driver(UL_D)', 'UL_D:login_success');
-          } else {
-            firebaselog_userLogin('UL_Newuser(UL_New)', 'UL_New:driver');
-          }
-          navigation.reset({
-            index: 0,
-            routes: [{name: 'HomeScreen'}],
-          });
+        await DataStore.storeData('bg_userToken', user?.token);
+        await DataStore.storeData('bg_deviceImei', deviceImei);
+        if (user && Object.prototype.hasOwnProperty.call(user, 'isAvailable')) {
+          firebaselog_userLogin('UL_Driver(UL_D)', 'UL_D:login_success');
+        } else {
+          firebaselog_userLogin('UL_Newuser(UL_New)', 'UL_New:driver');
+        }
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'HomeScreen'}],
+        });
         // showNotification(t('otp_verified'), t('otp_verified_successfully'), 'success');
       } else {
         setOtpError(t('invalid_otp'));
 
-        if(typeof data?.message === 'string'){  
+        if (typeof data?.message === 'string') {
           showNotification(t('failed'), t('invalid_otp'), 'danger');
-        }else{
+        } else {
           console.log('Driver OTP verification failed:', data);
           showNotification(t('failed'), t('something_went_wrong'), 'danger');
         }
-        firebaselog_userLogin('UL_Driver(UL_D)', 'UL_D:login_failed')
+        firebaselog_userLogin('UL_Driver(UL_D)', 'UL_D:login_failed');
       }
     } catch (error) {
       console.error('Error in handleVerificationSuccess:', error);
 
       showNotification(t('failed'), t('something_went_wrong'), 'danger');
     }
-  } 
+  };
 
   //   const handleActingDriverVerificationSuccess = async (data) => {
   //   try {
   //     if (data.success) {
   //       setOtpError('');
-       
+
   //       let { user } = data;
   //         const deviceImei = await DeviceInfo.getUniqueId().catch(error => {
   //       console.log('Error getting device IMEI: ', error);
@@ -200,7 +215,7 @@ const OTPScreen = ({route}) => {
   //     } else {
   //       setOtpError(t('invalid_otp'));
 
-  //       if(typeof data?.message === 'string'){  
+  //       if(typeof data?.message === 'string'){
   //         showNotification(t('failed'), t('invalid_otp'), 'danger');
   //       }else{
   //         console.log('Driver OTP verification failed:', data);
@@ -213,31 +228,35 @@ const OTPScreen = ({route}) => {
 
   //     showNotification(t('failed'), t('something_went_wrong'), 'danger');
   //   }
-  // } 
+  // }
 
-  const {mutate: verifyOTPMutate, isLoading: isLoading, error: verifyOTPError} = verifyOTPMutation(
-    handleVerificationSuccess,
-  );
+  const {
+    mutate: verifyOTPMutate,
+    isLoading: isLoading,
+    error: verifyOTPError,
+  } = verifyOTPMutation(handleVerificationSuccess);
 
-  const {mutate: verifyDriverOTPMutate, isLoading: isVerifyOTPLoading, error: verifyDriverOTPError} = verifyDriverOTPMutation(
+  const {
+    mutate: verifyDriverOTPMutate,
+    isLoading: isVerifyOTPLoading,
+    error: verifyDriverOTPError,
+  } = verifyDriverOTPMutation(handleDriverVerificationSuccess);
+
+  const {mutate: verifyActingDriverOTPMutate} = verifyActingDriverOTPMutation(
     handleDriverVerificationSuccess,
   );
-
-  // const {mutate: verifyActingDriverOTPMutate, isLoading: isVerifyActingOTPLoading, error: verifyActingDriverOTPError} = verifyActingDriverOTPMutation(
-  //   handleActingDriverVerificationSuccess,
-  // );
 
   // Log errors only when they change
   useEffect(() => {
     if (verifyOTPError) {
-      firebaselog_userLogin('UL_Customer(UL_C)', 'UL_C:login_failed')
+      firebaselog_userLogin('UL_Customer(UL_C)', 'UL_C:login_failed');
       console.error('verifyOTPMutation error:', verifyOTPError);
     }
   }, [verifyOTPError]);
 
   useEffect(() => {
     if (verifyDriverOTPError) {
-      firebaselog_userLogin('UL_Driver(UL_D)', 'UL_D:login_failed')
+      firebaselog_userLogin('UL_Driver(UL_D)', 'UL_D:login_failed');
       console.error('verifyDriverOTPMutation error:', verifyDriverOTPError);
     }
   }, [verifyDriverOTPError]);
@@ -251,7 +270,7 @@ const OTPScreen = ({route}) => {
     }
   };
 
-   console.log('Payload for OTP verification:', navRole);
+  console.log('Payload for OTP verification:', navRole);
 
   const verifyOtp = async () => {
     if (otpInput.length === 0) {
@@ -295,36 +314,34 @@ const OTPScreen = ({route}) => {
       if (navRole === 'customer') {
         verifyOTPMutate(payload);
       } else {
-      const sendToServer = {
-      otp: otpInput,
-      phone: `+${countryCode}${loginPhoneNumber}`,
-      deviceMeta: deviceMeta,
-    };
-    const tokenCred = {
-      token: fcmToken,
-      deviceImei: deviceImei,
-    };
+        const sendToServer = {
+          otp: otpInput,
+          phone: `+${countryCode}${loginPhoneNumber}`,
+          deviceMeta: deviceMeta,
+        };
+        const tokenCred = {
+          token: fcmToken,
+          deviceImei: deviceImei,
+        };
 
-    if (fcmToken) sendToServer.fcmToken = tokenCred;
-   
-    if (navRole === 'acting_driver') {
-      verifyActingDriverOTPMutate(sendToServer);
-    } else {
-        verifyDriverOTPMutate(sendToServer);
-      }     
-    } 
+        if (fcmToken) sendToServer.fcmToken = tokenCred;
+
+        if (navRole === 'acting_driver') {
+          verifyActingDriverOTPMutate(sendToServer);
+        } else {
+          verifyDriverOTPMutate(sendToServer);
+        }
+      }
     }
   };
 
-
-  useEffect(()=>{
-    if(otpInput.length === 6){
-      verifyOtp()
+  useEffect(() => {
+    if (otpInput.length === 6) {
+      verifyOtp();
     }
-  },[otpInput])
+  }, [otpInput]);
 
- 
-  const onOtpChange = (text) => {
+  const onOtpChange = text => {
     if (otpError) {
       setOtpError('');
     }
@@ -332,23 +349,23 @@ const OTPScreen = ({route}) => {
     const code = digitsOnly.slice(0, 6);
     setOtpInput(code);
   };
-  
-  const handleResendSuccess = (data) => {
-    if(data.success){
-      showNotification(t('otp_resend'), t('otp_resend_successfully'), 'success');
-      
-    }else{
-      showNotification(t('otp_resend'), t('failed_to_resend_otp') , 'danger');
+
+  const handleResendSuccess = data => {
+    if (data.success) {
+      showNotification(
+        t('otp_resend'),
+        t('otp_resend_successfully'),
+        'success',
+      );
+    } else {
+      showNotification(t('otp_resend'), t('failed_to_resend_otp'), 'danger');
     }
   };
-  const {mutate: requestOTPMutate} = requestOTPMutation(
-    handleResendSuccess,
-  );
+  const {mutate: requestOTPMutate} = requestOTPMutation(handleResendSuccess);
 
   const resendOTP = async () => {
     const payload = {
       phone: `+${countryCode}${loginPhoneNumber}`,
-     
     };
     DataStore.storeData('login_phoneNumber', loginPhoneNumber);
     requestOTPMutate(payload);
@@ -356,16 +373,18 @@ const OTPScreen = ({route}) => {
     setIsButtonDisabled(true);
   };
 
-  
-
   return (
     <View style={loginStyles.screen}>
-    
-      
       {/* Header with back button */}
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 20}}>
-      
-        <TouchableOpacity 
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingHorizontal: 20,
+          paddingTop: 20,
+        }}>
+        <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={{
             width: 40,
@@ -373,27 +392,28 @@ const OTPScreen = ({route}) => {
             borderRadius: 20,
             backgroundColor: colors.blue_xxdark,
             justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
+            alignItems: 'center',
+          }}>
           <Icon name="chevron-left" size={30} color="white" />
         </TouchableOpacity>
       </View>
-      
+
       <AdaptiveText style={[loginStyles.headerTxt, loginStyles.otpHeaderTxt]}>
         {t('one_time_password_otp')}
       </AdaptiveText>
-      <AdaptiveText style={[loginStyles.headerContent, loginStyles.otpHeaderTxt]}>
+      <AdaptiveText
+        style={[loginStyles.headerContent, loginStyles.otpHeaderTxt]}>
         {t('otp_sent_to_mobile')}
       </AdaptiveText>
-      <Text style={loginStyles.phoneTxt}>{maskPhoneNumber(loginPhoneNumber)}</Text>
-      
+      <Text style={loginStyles.phoneTxt}>
+        {maskPhoneNumber(loginPhoneNumber)}
+      </Text>
 
       <View style={loginStyles.otpContainer}>
-      <OTPInput
+        <OTPInput
           inputCount={6}
           onChange={onOtpChange}
-          onComplete={(code) => setOtpInput(code)}  // your effect will auto-verify when length===6
+          onComplete={code => setOtpInput(code)} // your effect will auto-verify when length===6
           autoFocus
           keyboardType="number-pad"
           textContentType="oneTimeCode"
@@ -401,7 +421,7 @@ const OTPScreen = ({route}) => {
           focusedBorderColor={colors.blue_xxdark}
           tintColor={[
             colors.grey_xdark,
-            colors.grey_xdark ,
+            colors.grey_xdark,
             colors.grey_xdark,
             colors.grey_xdark,
             colors.grey_xdark,
@@ -410,16 +430,25 @@ const OTPScreen = ({route}) => {
           inputStyle={{
             width: 40,
             height: 60,
-            borderWidth: 1,    
+            borderWidth: 1,
             margin: 5,
             borderRadius: 5,
             color: colors.black,
           }}
-      />
+        />
       </View>
-      {otpError ? <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>{otpError}</Text> : null}
-      <TouchableOpacity disabled={isButtonDisabled} onPress={()=> isButtonDisabled ? null : resendOTP()}>
-      <Text style={loginStyles.resendOTP}>{t('resend_otp')} {isButtonDisabled ? `${t('in')} ${formatTime(timer)}` : null}</Text>
+      {otpError ? (
+        <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>
+          {otpError}
+        </Text>
+      ) : null}
+      <TouchableOpacity
+        disabled={isButtonDisabled}
+        onPress={() => (isButtonDisabled ? null : resendOTP())}>
+        <Text style={loginStyles.resendOTP}>
+          {t('resend_otp')}{' '}
+          {isButtonDisabled ? `${t('in')} ${formatTime(timer)}` : null}
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={loginStyles.otpBtn}

@@ -10,7 +10,7 @@ import useUserStore from '../../../common/store/useUserStore'
 import APIRequest from '../../../common/APIRequest'
 import BGLocationTask from '../../../common/controllers/BGLocationTask'
 import { showNotification } from '../../../common/components/Alerts/showNotification'
-import { Colors, Fonts } from '../../../common/constants/constants'
+import { Colors, colors, Fonts } from '../../../common/constants/constants'
 import FullScreenLoader from '../../../common/loaders/FullScreenLoader'
 import NavBar from '../../../common/components/NavBar'
 import UseBackButton from '../../../common/hooks/UseBackButton'
@@ -594,3 +594,4 @@ const styles = StyleSheet.create({
         fontSize: 14,
     }
 })
+

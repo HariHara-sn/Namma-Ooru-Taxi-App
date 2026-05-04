@@ -5,10 +5,11 @@ export const getTotalDistanceAndTime = async (stops,pickup=false) => {
     const totalStops = stops.filter((stop) => pickup ? !stop.isReached : stop.isReached).map((stop) => {
         return stop.location;
     });
+    let currentUserLocation = null;
     
     // Get current user location and add to totalStops
     if(!pickup){
-        const currentUserLocation = await utils.getCurrentUserLocation();
+        currentUserLocation = await utils.getCurrentUserLocation();
         if (currentUserLocation) {
             totalStops.push(currentUserLocation);
         }

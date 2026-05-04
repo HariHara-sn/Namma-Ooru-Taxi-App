@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect }   from 'react';
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity, Alert, Modal, BackHandler } from 'react-native';
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity, Alert, Modal, BackHandler, Platform, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { useStackScreenStore } from '../../../store/useStackScreenStore';

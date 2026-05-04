@@ -7,7 +7,7 @@ import APIRequest from '../../common/APIRequest'
 import { showNotification } from '../../common/components/Alerts/showNotification'
 import FullScreenLoader from '../../common/loaders/FullScreenLoader'
 import NavBar from '../../common/components/NavBar'
-import { Colors, Fonts } from '../../common/constants/constants'
+import { Colors, colors, Fonts } from '../../common/constants/constants'
 import { useTranslation } from 'react-i18next'
 
 const DriverAskVehicle = () => {
@@ -362,3 +362,4 @@ const styles = StyleSheet.create({
 })
 
 export default DriverAskVehicle
+

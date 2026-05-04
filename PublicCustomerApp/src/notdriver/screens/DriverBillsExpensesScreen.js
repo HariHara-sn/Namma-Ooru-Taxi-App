@@ -20,7 +20,7 @@ import {
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import {
   checkCameraPermission,
   RequestCameraPermission,
@@ -841,5 +841,7 @@ const bc = StyleSheet.create({
   paymentReceiptHeader: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   paymentReceiptLabel: { fontSize: 11, fontFamily: Fonts.medium, color: '#16A34A' },
 });
+
+
 
 

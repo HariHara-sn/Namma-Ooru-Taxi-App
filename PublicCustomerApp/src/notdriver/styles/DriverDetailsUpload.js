@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { Colors, Fonts } from "../../common/constants/constants";
+import { Colors, colors, Fonts } from "../../common/constants/constants";
 
 
 export const driverDetailStyles = StyleSheet.create({
@@ -153,3 +153,4 @@ export const driverDetailStyles = StyleSheet.create({
         gap:10
       }
   });
+

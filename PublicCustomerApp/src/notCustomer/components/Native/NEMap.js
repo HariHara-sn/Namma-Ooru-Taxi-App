@@ -228,7 +228,7 @@ class NEMap extends Component {
   componentWillUnmount() {
     this.mapReadyListener.remove();
     this.mapClickListener.remove();
-    const {setDirectionPoints} = useMapStore.getState()
+    const {setDirectionPoints, setFindRouteWithRequest} = useMapStore.getState()
     console.log("Map unmounted")
     // Don't forget to remove the listener to avoid memory leaks
     this.mapReadyListener.remove();
@@ -244,7 +244,7 @@ class NEMap extends Component {
    
   
     setDirectionPoints(null)
-    setFindRouteWithRequest(null)
+    setFindRouteWithRequest?.(null)
   }
 
   getmapReady() {

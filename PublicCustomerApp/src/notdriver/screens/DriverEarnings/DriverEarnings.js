@@ -4,7 +4,7 @@ import EarningsTab from './EarningsTab';
 import ReportTab from './ReportTab';
 import TransactionTab from './TransactionTab';
 import WorkHistoryTab from './WorkHistoryTab';
-import { Colors, Fonts } from '../../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../../common/constants/constants';
 import TopTabs from '../../../common/components/TopTabs';
 import { useTranslation } from 'react-i18next';
 
@@ -147,3 +147,4 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.medium,
       }
 })
+

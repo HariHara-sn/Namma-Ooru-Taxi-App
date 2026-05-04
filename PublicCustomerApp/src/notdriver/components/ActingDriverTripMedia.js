@@ -20,7 +20,7 @@ import {
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import {
   checkCameraPermission,
   RequestCameraPermission,
@@ -524,3 +524,5 @@ const styles = StyleSheet.create({
     color: Colors.periwinkle,
   },
 });
+
+

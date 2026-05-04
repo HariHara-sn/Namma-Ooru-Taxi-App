@@ -32,7 +32,7 @@ import { DataStore } from '../../common/controllers/DataStore';
 import BGLocationTask from '../../common/controllers/BGLocationTask';
 import locationTask from '../../common/controllers/GetCurrentLocation';
 import { showNotification } from '../../common/components/Alerts/showNotification';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 
 // ─── Mode promo cards config ───────────────────────────────────────────────────
 const MODE_CARDS = {
@@ -623,3 +623,4 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
 });
+

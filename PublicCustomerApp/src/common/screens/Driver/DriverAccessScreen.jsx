@@ -7,7 +7,7 @@ import i18n from '../../../common/i18n';
 import { colors, Fonts } from '../../../notCustomer/constants/constants';
 import { GlobalContext } from '../../../context/GlobalContext';
 import { useStackScreenStore } from '../../../notCustomer/store/useStackScreenStore';
-import { goBack } from '../../navigation/RootNavigation';
+import { goBack } from '../../../navigation/RootNavigation';
 import { DataStore } from '../../controllers/DataStore';
 import { useTranslation } from 'react-i18next';
 import { t } from 'i18next';

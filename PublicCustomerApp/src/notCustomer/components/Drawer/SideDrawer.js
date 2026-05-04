@@ -66,7 +66,9 @@ const SideDrawerV2 = ({ handleMenu }) => {
         useNativeDriver: true,
       })
     ]).start(() => {
-      handleMenu();
+      setTimeout(() => {
+        handleMenu();
+      }, 0);
     });
   }
   
@@ -83,14 +85,18 @@ const SideDrawerV2 = ({ handleMenu }) => {
       screen: 'MyRidesScreen',
       icon: <Ionicons name="car" size={20} color="black" />,
     },
-     appConfig?.actingDriverEnabled
-      ? {
-        id: 'my-vehicles',
-        name: t('mygarage', 'My Garage'),
-        screen: 'MyVehiclesScreen',
-        icon: <Ionicons name="car-sport-outline" size={20} color="black" />,
-      }
-      : null,
+    {
+      id: 'hire-drivers',
+      name: t('hire_drivers', 'Hire Drivers'),
+      screen: 'HireDriversScreen',
+      icon: <Ionicons name="car-sport" size={20} color="black" />,
+    },
+    {
+      id: 'garage',
+      name: t('garage', 'Garage'),
+      screen: 'GarageScreen',
+      icon: <Ionicons name="car-sport-outline" size={20} color="black" />,
+    },
     {
       id: 'saved-places',
       name: t('saved_places'),
@@ -228,10 +234,9 @@ const SideDrawerV2 = ({ handleMenu }) => {
           <ScrollView>
             {drawerData.map(item => {
               return (
-                <>
+                <React.Fragment key={`drawer-${item.id}`}>
                 <TouchableOpacity
                   style={drawerStyles.drawerBtns}
-                  key={`drawer-${item.id}`}
                   onPress={() => HandleOpenDrawerMenu(item)}
                 >
                   <View style={{ position: 'relative',flexDirection:'row',alignItems:'center',gap:15 }}>
@@ -242,7 +247,7 @@ const SideDrawerV2 = ({ handleMenu }) => {
                   <Ionicons name={'chevron-forward'} size={20} color={'#757575'} />
                 </TouchableOpacity>
                 {drawerData.indexOf(item) !== drawerData.length - 1 && <View style={drawerStyles.divider} />} 
-                </>
+                </React.Fragment>
               );
             })}
           </ScrollView>

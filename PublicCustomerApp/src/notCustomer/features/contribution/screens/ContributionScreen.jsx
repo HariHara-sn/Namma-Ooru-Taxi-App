@@ -10,7 +10,6 @@ import { colors, Fonts } from '../../../constants/constants';
 import locationTask from '../../../controllers/GetCurrentLocation';
 import NavBar from '../../../components/NavBar';
 import { useStackScreenStore } from '../../../store/useStackScreenStore';
-import { goBack } from '../../../navigation/RootNavigation';
 
 const ContributionScreen = () => {
   const { t } = useTranslation();
@@ -25,13 +24,11 @@ const ContributionScreen = () => {
   const [locLoading, setLocLoading] = useState(false);
 
   const onPickLocationResultCallback =(item)=> {
-   
-    if (item?.latitude && item?.longitude){ {
+    if (item?.latitude && item?.longitude){
       setLocation({ lat: item.latitude, lon: item.longitude  });
-      selectionSetMatchesResult()
-    }   
+      setItem(item);
+    }
     goBack();
-}
   }
  
 

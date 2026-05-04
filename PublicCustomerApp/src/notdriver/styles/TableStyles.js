@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { scale } from '../../common/utils/scalingutils';
 
 
@@ -100,3 +100,4 @@ export const tableScroll = StyleSheet.create({
     borderRightWidth: 1,
   },
 });
+

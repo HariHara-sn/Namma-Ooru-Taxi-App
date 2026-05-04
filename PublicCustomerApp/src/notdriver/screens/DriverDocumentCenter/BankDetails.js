@@ -1018,3 +1018,4 @@ const BankDetails = ({onNext, isView, isEdit = false}) => {
 };
 
 export default BankDetails;
+

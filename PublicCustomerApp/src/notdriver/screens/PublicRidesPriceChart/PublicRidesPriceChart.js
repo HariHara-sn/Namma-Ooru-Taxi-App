@@ -13,7 +13,7 @@ import useDriverStatusStore from '../../store/useDriverStatusStore';
 import APIRequest from '../../../common/APIRequest';
 import UseBackButton from '../../../common/hooks/UseBackButton';
 import NavBar from '../../../common/components/NavBar';
-import { Colors, Fonts } from '../../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../../common/constants/constants';
 import { DateTimeFormatter } from '../../../common/utils/DateTimeFormatter';
 
 
@@ -265,3 +265,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
+
+
+

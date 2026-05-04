@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-useless-catch */
-import Config from "react-native-config";
+import Config from 'react-native-config';
 
 const DefaultPostHeaders = {
   'Content-Type': 'application/json',
@@ -34,17 +34,23 @@ class APIRequest {
         .map(key => `${key}=${encodeURIComponent(queryParams[key])}`)
         .join('&');
 
-    const url = `${this.baseURL}${endpoint}${queryString ? `?${queryString}` : ''
-      }`;
+    const url = `${this.baseURL}${endpoint}${
+      queryString ? `?${queryString}` : ''
+    }`;
 
-    if (authToken !== null) {
+    if (authToken !== null && authToken !== undefined && authToken !== '') {
       headers.Authorization = `Bearer ${authToken}`;
+    } else if (method !== 'GET' && method !== 'HEAD') {
+      console.warn(
+        `[APIRequest] No auth token provided for ${method} ${endpoint}. Token:`,
+        authToken,
+      );
     }
 
     if (body instanceof FormData) {
-      headers = { ...headers, ...DefaultFormDataHeaders };
+      headers = {...headers, ...DefaultFormDataHeaders};
     } else {
-      headers = { ...headers, ...DefaultPostHeaders };
+      headers = {...headers, ...DefaultPostHeaders};
     }
 
     const options = {
@@ -63,11 +69,9 @@ class APIRequest {
       }
     }
 
-
     let response = await fetch(url, options);
     response = await response.json();
-    return response
-
+    return response;
   }
 }
 

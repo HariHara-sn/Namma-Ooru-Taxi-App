@@ -5,7 +5,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import moment from 'moment';
 import { DateTimeFormatter } from '../../../common/utils/DateTimeFormatter';
 import CustomeCalender from '../../../common/components/CustomeCalender';
-import { Colors, Fonts } from '../../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../../common/constants/constants';
 import CustomDropdown from '../../../common/components/CustomDropdown';
 import { lines } from '../../../common/styles/flexStyle';
 import { useTranslation } from 'react-i18next';
@@ -398,3 +398,5 @@ const styles = StyleSheet.create({
 });
 
 export default HistoryHeader;
+
+

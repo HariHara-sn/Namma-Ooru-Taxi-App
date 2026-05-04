@@ -18,7 +18,8 @@ const useTrackHook = (screenMode = 'arrival') => {
   } = useAssignedDriverInfoStore();
 
   const {
-    setMapMarkers
+    setMapMarkers,
+    setVehicleMarkers,
   } = useMapStore();
 
   const {

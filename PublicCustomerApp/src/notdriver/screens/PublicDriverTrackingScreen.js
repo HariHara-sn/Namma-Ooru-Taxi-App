@@ -16,7 +16,7 @@ import { DataStore } from '../../common/controllers/DataStore';
 import { showNotification } from '../../common/components/Alerts/showNotification';
 import { RouteScreenStyles } from '../styles/RouteScreenStyles';
 import DriverOnRide from './DriverOnRide';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import PublicDriverTripPaymentScreen from './PublicDriverTripPaymentScreen';
 import FullScreenLoader from '../../common/loaders/FullScreenLoader';
 import { firebaselog_onRide, firebaselog_tripCompletion, firebaselog_tripReview, firebaselog_tripPayment } from '../../common/utils/FirebaseAnalytics';
@@ -363,3 +363,5 @@ const ratingStyles = StyleSheet.create({
     color: Colors.white,
   },
 });
+
+

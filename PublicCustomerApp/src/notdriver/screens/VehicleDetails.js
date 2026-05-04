@@ -6,7 +6,7 @@ import usePublicDriverStore from '../store/usePublicDriverStore'
 import useUserStore from '../../common/store/useUserStore'
 import APIRequest from '../../common/APIRequest'
 import { showNotification } from '../../common/components/Alerts/showNotification'
-import { Colors, Fonts } from '../../common/constants/constants'
+import { Colors, colors, Fonts } from '../../common/constants/constants'
 import { moderateScale, scale, verticalScale } from '../../common/utils/scalingutils'
 import { useTranslation } from 'react-i18next'
 
@@ -315,3 +315,4 @@ const styles = StyleSheet.create({
         marginLeft: scale(10),
     },
 })
+

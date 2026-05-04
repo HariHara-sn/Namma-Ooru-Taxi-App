@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useRef, use} from 'react';
+import React, {useState, useEffect, useCallback, useRef, useMemo} from 'react';
 import {
   View,
   Text,
@@ -53,6 +53,26 @@ import MapMove from '../assets/image/MapMove.webp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firebaselog_ridePlanning } from '../../common/utils/FirebaseAnalytics.js';
 
+const CURRENT_LOCATION_MARKER_ID = 'pick-location-current-location';
+
+const createCurrentLocationMarker = (locationData) => {
+  if (!Array.isArray(locationData) || locationData.length < 2) return null;
+  const marker = new Marker(
+    CURRENT_LOCATION_MARKER_ID,
+    'Current Location',
+    locationData[0],
+    locationData[1],
+    'bearing',
+    48,
+    false,
+    0,
+  );
+  marker.setAnimate(false);
+  marker.setFocus(false);
+  marker.setDoRotation(false);
+  return marker;
+};
+
 
 const PickLocationScreen = ({onPickLocationResultCallback,locationType=null,defaultLocation=null,label=null,isFromRidePointsSelection=false,limitRadius=null, searchBar=false,index=null,buttonLabel=null,isFromContribution=false, focusSearchOnMount=true,isConfirmLocation=false,isFromwaypointEdit=false}) => {
   const {goBack} = useStackScreenStore();
@@ -88,6 +108,13 @@ const PickLocationScreen = ({onPickLocationResultCallback,locationType=null,defa
   } = useRideBookingLocationStore();
   const { userFavPlaces } = useUserInfoStore();
   const linearGradientColors = isConfirmLocation?['transparent','#00aa41ff'] : ['transparent','#303030',];
+  const currentLocationMarker = useMemo(() => createCurrentLocationMarker(location), [location]);
+
+  const setMapMarkersWithCurrentLocation = useCallback((markers = []) => {
+    const nextMarkers = currentLocationMarker ? [currentLocationMarker, ...markers] : markers;
+    setMapMarkers(nextMarkers);
+  }, [currentLocationMarker, setMapMarkers]);
+
   const getLastLatLngfromPolyLine = useCallback(async (polylineData) => {
     console.log("polylineData",polylineData)
     const encodedPolyline = polylineData.trip.legs?.[0].shape || null;
@@ -229,7 +256,7 @@ const PickLocationScreen = ({onPickLocationResultCallback,locationType=null,defa
     setIsErrorMessage('');
     if(!limitRadius){
     setGeometries([]);
-    setMapMarkers([]);
+    setMapMarkersWithCurrentLocation();
     }
     const response = await fetchAddressName(data.longitude, data.latitude);
     
@@ -289,7 +316,7 @@ const PickLocationScreen = ({onPickLocationResultCallback,locationType=null,defa
       homeMarker.setAnimate(true);
       homeMarker.setAnimationTime(10000);
       console.log('homeMarker', homeMarker);
-      setMapMarkers([homeMarker]);
+      setMapMarkersWithCurrentLocation([homeMarker]);
     }   
   };
 
@@ -329,7 +356,7 @@ const PickLocationScreen = ({onPickLocationResultCallback,locationType=null,defa
     if (hasExistingPick) {
       
       setIsMapButtonVisible(false);
-      setMapMarkers([]);
+      setMapMarkersWithCurrentLocation();
       suppressCenterChangeRef.current = true;
       // setTimeout(() => {
       //   setMapLocation({
@@ -410,7 +437,7 @@ const PickLocationScreen = ({onPickLocationResultCallback,locationType=null,defa
       });
 
       setIsMapButtonVisible(false);
-      setMapMarkers([]); 
+      setMapMarkersWithCurrentLocation(); 
       suppressCenterChangeRef.current = true;
       // setTimeout(()=>{
       //   setMapLocation({
@@ -430,6 +457,10 @@ const PickLocationScreen = ({onPickLocationResultCallback,locationType=null,defa
       setIsMapButtonVisible(true);
     };
   },[]);
+
+  useEffect(() => {
+    setMapMarkersWithCurrentLocation();
+  }, [setMapMarkersWithCurrentLocation]);
 
   useEffect(() => {
     return () => {
@@ -773,7 +804,7 @@ const PickLocationScreen = ({onPickLocationResultCallback,locationType=null,defa
                   setIsError(false);
                   setIsErrorMessage('');
                   setGeometries([]);
-                  setMapMarkers([]);
+                  setMapMarkersWithCurrentLocation();
                 }}
                 accessibilityRole="button"
                 accessibilityLabel={t('pick_different_place', { defaultValue: 'Pick a different place' })}

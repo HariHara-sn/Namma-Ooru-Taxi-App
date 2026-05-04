@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { Colors, Fonts } from '../../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../../common/constants/constants';
 import usePublicDriverStore from '../../store/usePublicDriverStore';
 import useUserStore from '../../../common/store/useUserStore';
 import { useStackScreenStore } from '../../../common/store/useStackScreenStore';
@@ -464,3 +464,5 @@ const DocumentsListScreen = ({ onNext, isEdit }) => {
 };
 
 export default DocumentsListScreen;
+
+

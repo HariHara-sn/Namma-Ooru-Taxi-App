@@ -17,7 +17,7 @@ import HomeHeader from '../../notdriver/components/HomeHeader';
 import { RouteScreenStyles } from '../../notdriver/styles/RouteScreenStyles';
 import TrackingMapIcons from '../../common/components/Alerts/TrackingMapIcons';
 import FloatingButton from '../../notdriver/components/FloatingButton';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import useUserStore from '../../common/store/useUserStore';
 
 const {NeNativeModule} = NativeModules;
@@ -51,7 +51,7 @@ const DriverMapScreen = props => {
     NeNativeModule.clearDirectionPoints();
   }, []);
 
-  // Refresh state & spinner animation
+// Refresh state & spinner animation
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const onRefreshPress = useCallback(() => {
@@ -62,7 +62,7 @@ const DriverMapScreen = props => {
     } catch (e) {
       console.log('[refreshStatus error]', e);
     }
-    // Disable for 10 seconds then stop animation
+// Disable for 10 seconds then stop animation
     setTimeout(() => {
       setIsRefreshing(false);
     }, 10000);
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   refreshIcon: {
-    // marginRight: 6,
+marginRight: 6,
   },
   refreshIconTxt: {
     fontSize: 16,
@@ -331,10 +331,10 @@ const styles = StyleSheet.create({
   contactBtnDisabled: {
     opacity: 0.5,
   },
-  // Bank verification styles
+// Bank verification styles
   bankVerificationContainer: {
     position: 'absolute',
-    // bottom: height * 0.09,
+bottom: height * 0.09,
     left: 0,
     right: 0,
     backgroundColor: Colors.white,
@@ -440,3 +440,5 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
 });
+
+

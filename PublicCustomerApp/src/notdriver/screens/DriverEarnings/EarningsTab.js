@@ -9,7 +9,7 @@ import APIRequest from '../../../common/APIRequest'
 import publicrideDriverApi from '../../api/publicrideDriverApi'
 import FullScreenLoader from '../../../common/loaders/FullScreenLoader'
 import PayDue from './PayDue'
-import { Colors, Fonts } from '../../../common/constants/constants'
+import { Colors, colors, Fonts } from '../../../common/constants/constants'
 import { useTranslation } from 'react-i18next'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 
@@ -288,3 +288,4 @@ const styles = StyleSheet.create({
           },
 
 })
+

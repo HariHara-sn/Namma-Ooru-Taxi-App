@@ -14,7 +14,7 @@ import {
 import DeviceInfo from 'react-native-device-info';
 import useTripsStore from '../../notdriver/store/useTripsStore';
 import { DataStore } from '../controllers/DataStore';
-import { Colors, Fonts } from '../constants/constants';
+import { Colors, colors, Fonts } from '../constants/constants';
 
 
 
@@ -276,3 +276,4 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
 });
+

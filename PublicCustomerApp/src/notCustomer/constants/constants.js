@@ -49,5 +49,7 @@ export const colors = {
   danger:'red'
 };
 
+export const Colors = colors;
+
 export const webPortalURL = 'https://tracker.vmmaps.com';
 export const mapcopyrightURL = 'https://www.openstreetmap.org/copyright';

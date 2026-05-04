@@ -6,7 +6,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useSelectedRouteStore } from '../store/useTripsStore';
 import { useMapMarkerStore } from '../../common/store/useMapMarkerStore';
 import { useStackScreenStore } from '../../common/store/useStackScreenStore';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import UseBackButton from '../../common/hooks/UseBackButton';
 import NavBar from '../../common/components/NavBar';
 
@@ -65,7 +65,7 @@ const DriverRouteDetailsScreen = () => {
                 </View>
                 <Text style={styles.stopAddressTxt}>{item.address}</Text>
                 <Text style={styles.stopArrivalTimeTxt}>
-                  {<ClockGrey />} {item.arrivalTime}
+                  <Ionicons name="time-outline" size={14} color={Colors.grey_dark} /> {item.arrivalTime}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -184,3 +184,4 @@ const styles = StyleSheet.create({
       marginVertical:10
     }
 })
+

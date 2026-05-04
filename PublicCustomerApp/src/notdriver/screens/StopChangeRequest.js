@@ -8,7 +8,7 @@ import { useStackScreenStore } from '../../common/store/useStackScreenStore';
 import APIRequest from '../../common/APIRequest';
 import { showNotification } from '../../common/components/Alerts/showNotification';
 import FullScreenLoader from '../../common/loaders/FullScreenLoader';
-import { Colors, Fonts } from '../../common/constants/constants';
+import { Colors, colors, Fonts } from '../../common/constants/constants';
 import { DateTimeFormatter } from '../../common/utils/DateTimeFormatter';
 import AddressComponent from '../components/AddressComponent';
 import BottomSheet from '../../common/components/BottomSheet';
@@ -216,3 +216,5 @@ const styles= StyleSheet.create({
         fontSize:12
       },
 })
+
+
