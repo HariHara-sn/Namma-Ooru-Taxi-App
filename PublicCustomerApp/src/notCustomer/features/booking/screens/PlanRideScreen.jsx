@@ -48,10 +48,31 @@ const PlanRideScreen = ({selectedDestination,showScheduleTime,fromSavedPlaces,mo
   const [showTripFor, setShowTripFor] = useState(false);
   const [showScheduleContainer, setShowScheduleContainer] = useState(false);
   const [selectedFavPlace, setSelectedFavPlace] = useState(null);
-  const isContinueButtonVisible = rideStartLocation && rideEndLocation
   const [isContinuing, setIsContinuing] = useState(false);
   const [durationUnit, setDurationUnit] = useState('hr'); // '30min' | 'hr' | 'day'
   const [durationValue, setDurationValue] = useState(null);
+  const [selectedTripCategory, setSelectedTripCategory] = useState('oneway');
+
+  const TRIP_CATEGORY_OPTIONS = [
+    {
+      key: 'oneway',
+      icon: 'navigate-outline',
+      title: 'Oneway Trip',
+      description: 'Nearby drops, select both pickup and destination',
+    },
+    {
+      key: 'roundtrip',
+      icon: 'repeat-outline',
+      title: 'Round Trip',
+      description: 'Pickup and destination same',
+    },
+    {
+      key: 'outstation',
+      icon: 'map-outline',
+      title: 'Outstation Trip',
+      description: 'Other state or districts, select both pickup and destination',
+    },
+  ];
 
   const DURATION_UNITS = [
     { key: '30min', label: '30 Min' },
@@ -60,6 +81,13 @@ const PlanRideScreen = ({selectedDestination,showScheduleTime,fromSavedPlaces,mo
   ];
   const HOUR_OPTIONS = [1, 2, 3, 4, 6, 8, 12];
   const DAY_OPTIONS  = [1, 2, 3, 7, 14];
+  const isActingDriverMode = mode === 'ACTING_DRIVER';
+  const isRoundTrip = isActingDriverMode && selectedTripCategory === 'roundtrip';
+  const isTripDurationRequired = isActingDriverMode && (isRoundTrip || selectedTripCategory === 'outstation');
+  const isCarDurationSelected = durationUnit === '30min' || durationValue != null;
+  const isTripDurationSelected = !isTripDurationRequired || isCarDurationSelected;
+  const hasRequiredLocations = isRoundTrip ? rideStartLocation : rideStartLocation && rideEndLocation;
+  const isContinueButtonVisible = hasRequiredLocations && isTripDurationSelected;
 
   const onDurationUnitChange = (unit) => {
     setDurationUnit(unit);
@@ -78,6 +106,12 @@ const PlanRideScreen = ({selectedDestination,showScheduleTime,fromSavedPlaces,mo
       setRideEndLocation(selectedDestination);
     }
   }, [selectedDestination]);
+
+  useEffect(() => {
+    if (isRoundTrip && rideStartLocation) {
+      setRideEndLocation(rideStartLocation);
+    }
+  }, [isRoundTrip, rideStartLocation, setRideEndLocation]);
 
   const _toggleSubview = useCallback(() => {
     setShowBottomSheet(!showBottomSheet);
@@ -201,6 +235,16 @@ const PlanRideScreen = ({selectedDestination,showScheduleTime,fromSavedPlaces,mo
     setStackScreen('WaypointScreen',{fromPlanScreen:true});
   }
 
+  const onTripCategoryPress = (key) => {
+    if (selectedTripCategory === 'roundtrip' && key !== 'roundtrip' && rideEndLocation === rideStartLocation) {
+      setRideEndLocation(null);
+    }
+    setSelectedTripCategory(key);
+    if (key === 'roundtrip' && rideStartLocation) {
+      setRideEndLocation(rideStartLocation);
+    }
+  }
+
 
   const HandsetRideLocation = (item,type)=>{
     if (type === LocationTypes.START_LOCATION){
@@ -216,7 +260,7 @@ const PlanRideScreen = ({selectedDestination,showScheduleTime,fromSavedPlaces,mo
   const debouncedSearchCallback = useDebouncedAPICall((item, type) => {
     HandsetRideLocation(item, type);
     goBack();
-    if(type !== LocationTypes.START_LOCATION && rideStartLocation && rideEndLocation){
+    if(type !== LocationTypes.START_LOCATION && rideStartLocation && rideEndLocation && isTripDurationSelected){
       setStackScreen('BookRideScreen',{})
     }
   }, 300);
@@ -252,10 +296,13 @@ const PlanRideScreen = ({selectedDestination,showScheduleTime,fromSavedPlaces,mo
     const isStart = type === LocationTypes.START_LOCATION;
     // Derive what start/end will be after this selection to avoid using stale values
     const nextStartLocation = isStart ? item : rideStartLocation;
-    const nextEndLocation = isStart ? rideEndLocation : item; // if selecting destination/waypoint, item is the end/waypoint
+    const nextEndLocation = isRoundTrip ? nextStartLocation : isStart ? rideEndLocation : item; // if selecting destination/waypoint, item is the end/waypoint
+    if (isRoundTrip && nextStartLocation) {
+      setRideEndLocation(nextStartLocation);
+    }
     console.log("nextStartLocation,nextEndLocation",nextStartLocation,nextEndLocation)
     // // If we have both start & end after this selection and it's not a start selection, go straight to booking
-    if ( nextStartLocation && nextEndLocation && !nextStartLocation?.currentLocation) {
+    if ( nextStartLocation && nextEndLocation && isTripDurationSelected && !nextStartLocation?.currentLocation) {
       goBack()
       setStackScreen(mode === 'ACTING_DRIVER' ? 'BookActingDriverScreen' : 'BookRideScreen', {});
       return; // Skip going back, we are moving forward
@@ -313,7 +360,12 @@ const PlanRideScreen = ({selectedDestination,showScheduleTime,fromSavedPlaces,mo
 
   const handleHistoryLocationClick=(item)=>{
     debouncedHistoryCallback(item)
-    if(rideStartLocation && rideEndLocation){
+    const nextEndLocation = isRoundTrip ? rideStartLocation : item;
+    const canOpenBooking = isRoundTrip ? rideStartLocation && isTripDurationSelected : rideStartLocation && nextEndLocation && isTripDurationSelected;
+    if(canOpenBooking){
+      if (isRoundTrip && rideStartLocation) {
+        setRideEndLocation(rideStartLocation);
+      }
     setStackScreen(mode === 'ACTING_DRIVER' ? 'BookActingDriverScreen' : 'BookRideScreen',{})
     }
 
@@ -339,6 +391,9 @@ const PlanRideScreen = ({selectedDestination,showScheduleTime,fromSavedPlaces,mo
 
   const handleContinue = () => {  
      setIsContinuing(true); 
+     if (isRoundTrip && rideStartLocation) {
+      setRideEndLocation(rideStartLocation);
+     }
      if(rideStartLocation?.currentLocation){
       const props={
         onPickLocationResultCallback:onPickLocationResultCallback,
@@ -402,6 +457,7 @@ const scheduleTime = scheduleDateTime?.time ? utils.timestampTo12HourFormat(sche
       
         onAddWaypoint={onAddWaypoint}
         onLocationClick={handleLocationClick}
+        hideDestination={isRoundTrip}
         
         />
 
@@ -422,6 +478,43 @@ const scheduleTime = scheduleDateTime?.time ? utils.timestampTo12HourFormat(sche
             setStackScreen("SavedPlacesScreen",{})
           }} type="add" />
         </ScrollView>
+        {isActingDriverMode && (
+          <View style={styles.tripCategoryContainer}>
+            {TRIP_CATEGORY_OPTIONS.map(item => {
+              const isSelected = selectedTripCategory === item.key;
+              return (
+                <TouchableOpacity
+                  key={item.key}
+                  style={[styles.tripCategoryButton, isSelected && styles.tripCategoryButtonSelected]}
+                  onPress={() => onTripCategoryPress(item.key)}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.tripCategoryIconWrap, isSelected && styles.tripCategoryIconWrapSelected]}>
+                    <Ionicons
+                      name={item.icon}
+                      size={20}
+                      color={isSelected ? colors.white : colors.black}
+                    />
+                  </View>
+                  <Text
+                    style={[styles.tripCategoryTitle, isSelected && styles.tripCategoryTitleSelected]}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.8}
+                  >
+                    {item.title}
+                  </Text>
+                  <Text
+                    style={[styles.tripCategoryDescription, isSelected && styles.tripCategoryDescriptionSelected]}
+                    numberOfLines={3}
+                  >
+                    {item.description}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
         <DashedLine style={styles.dottedLine} />
         <ScrollView style={{ flex: 1}} contentContainerStyle={{paddingBottom: height*0.2}}>
             {/* Acting Driver: selected vehicle + duration */}
@@ -445,13 +538,18 @@ const scheduleTime = scheduleDateTime?.time ? utils.timestampTo12HourFormat(sche
                   ].filter(Boolean).join(' · ')}
                 </Text>
               </View>
-              <TouchableOpacity
-                style={styles.changeVehicleBtn}
-                onPress={() => { setActingDriverVehicle(null); setActingDriverHours(null); goBack(); }}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.changeVehicleText}>{t('change', 'Change')}</Text>
-              </TouchableOpacity>
+              <View style={styles.changeVehicleContainer}>
+                <TouchableOpacity
+                  style={styles.changeVehicleBtn}
+                  onPress={() => { setActingDriverVehicle(null); setActingDriverHours(null); goBack(); }}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.changeVehicleText}>{t('change', 'Change')}</Text>
+                </TouchableOpacity>
+                {isTripDurationRequired && !isCarDurationSelected && (
+                  <Text style={styles.durationRequiredText}>{t('required', 'Required')}</Text>
+                )}
+              </View>
             </View>
 
             {/* Duration selector */}
@@ -585,6 +683,10 @@ const styles = StyleSheet.create({
     color: colors.grey_xxdark,
     marginTop: 2,
   },
+  changeVehicleContainer: {
+    alignItems: 'center',
+    gap: 3,
+  },
   changeVehicleBtn: {
     paddingHorizontal: 12,
     paddingVertical: 5,
@@ -596,6 +698,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: Fonts.medium,
     color: colors.black,
+  },
+  durationRequiredText: {
+    fontSize: 10,
+    fontFamily: Fonts.medium,
+    color: '#E53935',
   },
   durationSection: {
     gap: 8,
@@ -664,6 +771,54 @@ const styles = StyleSheet.create({
   },
   favPlacesScrollView: {
     flexGrow: 0,
+  },
+  tripCategoryContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 5,
+    marginBottom: 8,
+  },
+  tripCategoryButton: {
+    flex: 1,
+    aspectRatio: 1,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#E0E0E0',
+    backgroundColor: '#FAFAFA',
+    padding: 8,
+    justifyContent: 'space-between',
+  },
+  tripCategoryButtonSelected: {
+    borderColor: colors.black,
+    backgroundColor: colors.black,
+  },
+  tripCategoryIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F0F0F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tripCategoryIconWrapSelected: {
+    backgroundColor: '#333333',
+  },
+  tripCategoryTitle: {
+    fontSize: 12,
+    fontFamily: Fonts.semibold || Fonts.medium,
+    color: colors.black,
+  },
+  tripCategoryTitleSelected: {
+    color: colors.white,
+  },
+  tripCategoryDescription: {
+    fontSize: 9,
+    lineHeight: 12,
+    fontFamily: Fonts.regular,
+    color: colors.grey_xxdark,
+  },
+  tripCategoryDescriptionSelected: {
+    color: '#E0E0E0',
   },
   dottedLine:{
     marginVertical: 5,

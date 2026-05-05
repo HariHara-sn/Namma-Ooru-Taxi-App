@@ -16,7 +16,7 @@ const useActingDriverBookTrip = () => {
   const [loading, setLoading] = useState(false);
   const { setCurrentRideInfo } = useCurrentRideInfoStore();
   const { t } = useTranslation();
-  const { initializeSocket, startMatching } = useRideMatching();
+  const { initializeSocket, startMatching, setRideMatchStatus } = useRideMatching();
   const { id: userId } = useUserInfoStore();
 
   const handleBookingSuccess = useCallback(() => {}, []);
@@ -41,17 +41,27 @@ const useActingDriverBookTrip = () => {
           try {
             await DataStore.storeData(PREF.CURRENT_TRIP, result.trip?._id);
             setCurrentRideInfo(result.trip);
+            setRideMatchStatus({
+              status: 'searching',
+              message: t('searching_for_drivers', 'Searching for drivers...'),
+              driver: null,
+            });
+            setStackScreen('RideStatus', {});
 
             let connected = rideMatchingSocketService.isConnected();
             if (!connected) {
               connected = await initializeSocket(userId);
             }
             if (!connected) {
+              setRideMatchStatus({
+                status: 'failed',
+                message: t('network_error'),
+                driver: null,
+              });
               showNotification(t('network_error'), t('please_try_again'), 'danger');
               return result;
             }
 
-            setStackScreen('RideStatus', {});
             startMatching(result.tripId, userId, result?.trip?.vehicleType);
             return result;
           } catch (err) {
@@ -68,7 +78,7 @@ const useActingDriverBookTrip = () => {
         setLoading(false);
       }
     },
-    [bookingService, initializeSocket, userId, t, setCurrentRideInfo, setStackScreen, startMatching],
+    [bookingService, initializeSocket, userId, t, setCurrentRideInfo, setStackScreen, startMatching, setRideMatchStatus],
   );
 
   return {

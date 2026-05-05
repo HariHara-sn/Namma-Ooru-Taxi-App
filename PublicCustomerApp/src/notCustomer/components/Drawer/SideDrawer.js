@@ -85,18 +85,20 @@ const SideDrawerV2 = ({ handleMenu }) => {
       screen: 'MyRidesScreen',
       icon: <Ionicons name="car" size={20} color="black" />,
     },
-    {
-      id: 'hire-drivers',
-      name: t('hire_drivers', 'Hire Drivers'),
-      screen: 'HireDriversScreen',
-      icon: <Ionicons name="car-sport" size={20} color="black" />,
-    },
-    {
-      id: 'garage',
-      name: t('garage', 'Garage'),
-      screen: 'GarageScreen',
-      icon: <Ionicons name="car-sport-outline" size={20} color="black" />,
-    },
+    // {
+    //   id: 'hire-drivers',
+    //   name: t('hire_drivers', 'Hire Drivers'),
+    //   screen: 'HireDriversScreen',
+    //   icon: <Ionicons name="car-sport" size={20} color="black" />,
+    // },
+    appConfig?.actingDriverEnabled
+      ? {
+        id: 'my-vehicles',
+        name: t('mygarage', 'My Garage'),
+        screen: 'MyVehiclesScreen',
+        icon: <Ionicons name="car-sport-outline" size={20} color="black" />,
+      }
+      : null,
     {
       id: 'saved-places',
       name: t('saved_places'),

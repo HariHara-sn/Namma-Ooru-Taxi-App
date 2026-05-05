@@ -515,6 +515,7 @@ const MapScreen = () => {
       if(item.key == "acting_driver"){
         setCurrentLoactionPickupLocation();
         setStackScreen('ActingDriverVehicleSelectScreen', {});
+        // setStackScreen('MyVehiclesScreen', {});
         return;
       }
 

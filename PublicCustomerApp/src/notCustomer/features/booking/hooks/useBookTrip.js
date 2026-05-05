@@ -21,9 +21,9 @@ import rideMatchingSocketService from '../../../controllers/RideMatchingSocketSe
 const useBookTrip = () => {
   const { setStackScreen } = useStackScreenStore();
   const [loading, setLoading] = useState(false);
-  const { setCurrentRideInfo, setTripStatus } = useCurrentRideInfoStore();
+  const { setCurrentRideInfo } = useCurrentRideInfoStore();
   const { t } = useTranslation();
-  const { initializeSocket, startMatching } = useRideMatching();
+  const { initializeSocket, startMatching, setRideMatchStatus } = useRideMatching();
   const { setFromPayload } = useScheduleStore();
   const { id: userId } = useUserInfoStore();
   const { addScheduledTrip } = useScheduleTripStore();
@@ -83,18 +83,28 @@ const useBookTrip = () => {
           await DataStore.storeData(PREF.CURRENT_TRIP, result.trip?._id);
          
           setCurrentRideInfo(result.trip);
+          setRideMatchStatus({
+            status: 'searching',
+            message: t('searching_for_drivers', 'Searching for drivers...'),
+            driver: null
+          });
+          setStackScreen('RideStatus', {});
+
           // Ensure ride-matching socket is connected before proceeding
           let connected = rideMatchingSocketService.isConnected();
           if (!connected) {
             connected = await initializeSocket(userId);
           }
           if (!connected) {
+            setRideMatchStatus({
+              status: 'failed',
+              message: t('network_error'),
+              driver: null
+            });
             showNotification(t('network_error'), t('please_try_again'), 'danger');
             return result;
           }
         
-          setStackScreen('RideStatus', {
-          });
           // showNotification(t('booking_successful'), t('your_ride_has_been_booked_successfully'), 'success'); 
           
           startMatching(result.tripId, userId, result?.trip?.vehicleType);
@@ -112,7 +122,7 @@ const useBookTrip = () => {
     } finally {
       setLoading(false);
     }
-  }, [bookingService, initializeSocket, userId, t, setCurrentRideInfo, setStackScreen, startMatching]);
+  }, [bookingService, initializeSocket, userId, t, setCurrentRideInfo, setStackScreen, startMatching, setRideMatchStatus]);
 
   /**
    * Get current booking payload for debugging

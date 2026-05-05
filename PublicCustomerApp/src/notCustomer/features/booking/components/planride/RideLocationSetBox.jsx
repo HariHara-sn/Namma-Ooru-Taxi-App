@@ -16,6 +16,7 @@ import DashedLine from '../../../../components/Common/DashedLine';
 const RideLocationSetBox = ({
   onAddWaypoint,
   onLocationClick,
+  hideDestination = false,
 }) => {
   const { t } = useTranslation();
   const {rideStartLocation,rideEndLocation,rideWayPoints} = useRideBookingLocationStore()
@@ -90,20 +91,22 @@ const RideLocationSetBox = ({
         </TouchableOpacity>
      
       {/* Destination Row */}
-      <TouchableOpacity style={[styles.row]} onPress={()=>onLocationClick(LocationTypes.DESTINATION_LOCATION)} activeOpacity={0.7}>
-        <View style={styles.iconContainer}>
-        <DashedLine color="grey" strokeWidth={1} dashLength={3} dashGap={5} vertical={true} />
-        
-         <DestinationIcon  height={23} width={23} />
-        <View style={[styles.dottedVerticalLine, { borderColor: 'transparent' }]} />
+      {!hideDestination && (
+        <TouchableOpacity style={[styles.row]} onPress={()=>onLocationClick(LocationTypes.DESTINATION_LOCATION)} activeOpacity={0.7}>
+          <View style={styles.iconContainer}>
+          <DashedLine color="grey" strokeWidth={1} dashLength={3} dashGap={5} vertical={true} />
+          
+           <DestinationIcon  height={23} width={23} />
+          <View style={[styles.dottedVerticalLine, { borderColor: 'transparent' }]} />
 
-        
-        </View>
-        <View style={[styles.locationContainer]}>
-          <Text style={styles.label}>{t('destination')}</Text>
-          {rideEndLocation ? <Text style={styles.address} numberOfLines={1}>{destination}</Text>:<Text style={styles.placeHolder}>{t('search_destination')}</Text>}
-        </View>
-      </TouchableOpacity>
+          
+          </View>
+          <View style={[styles.locationContainer]}>
+            <Text style={styles.label}>{t('destination')}</Text>
+            {rideEndLocation ? <Text style={styles.address} numberOfLines={1}>{destination}</Text>:<Text style={styles.placeHolder}>{t('search_destination')}</Text>}
+          </View>
+        </TouchableOpacity>
+      )}
   
       </View>
     </View>
@@ -116,6 +119,7 @@ RideLocationSetBox.propTypes = {
   onAddWaypoint: PropTypes.func,
   onLocationClick: PropTypes.func,
   onSearchDestination: PropTypes.func,
+  hideDestination: PropTypes.bool,
 };
 
 const styles = StyleSheet.create({

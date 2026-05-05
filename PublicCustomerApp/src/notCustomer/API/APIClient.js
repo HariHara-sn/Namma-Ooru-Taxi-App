@@ -1,7 +1,7 @@
 import axios from 'axios';
-import Config from "react-native-config";
+import Config from 'react-native-config';
+import {firebaselog_apicalls} from '../../common/utils/FirebaseAnalytics';
 import {DataStore} from '../controllers/DataStore';
-import { firebaselog_apicalls } from '../../common/utils/FirebaseAnalytics';
 
 const REQUEST_TIMEOUT_MS = 10000;
 const MAX_RETRY_ATTEMPTS = 1;
@@ -9,8 +9,12 @@ const MAX_RETRY_ATTEMPTS = 1;
 const apiClient = axios.create({
   baseURL: Config.ROOT_API_URL,
   timeout: 10000,
+  validateStatus: status => (status >= 200 && status < 300) || status === 304,
   headers: {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    Pragma: 'no-cache',
+    Expires: '0',
   },
 });
 
@@ -26,6 +30,14 @@ apiClient.interceptors.request.use(
     if (typeof requestConfig.__retryCount !== 'number') {
       requestConfig.__retryCount = 0;
     }
+
+    requestConfig.headers = {
+      ...requestConfig.headers,
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+      'If-Modified-Since': '0',
+    };
 
     const access_token = await DataStore.loadData('access_token');
 
@@ -44,7 +56,6 @@ apiClient.interceptors.request.use(
 
     // Log API call start
     try {
-     
     } catch (e) {
       // Swallow analytics errors to avoid affecting request
     }
@@ -67,10 +78,7 @@ apiClient.interceptors.response.use(
         ? Date.now() - response.config.__startTime
         : undefined;
       const statusCode = response.status;
-      firebaselog_apicalls(
-        'API_call_Customer(API_C)',
-        `API_C:${statusCode}`
-      );
+      firebaselog_apicalls('API_call_Customer(API_C)', `API_C:${statusCode}`);
     } catch (e) {
       // Swallow analytics errors
     }
@@ -101,11 +109,7 @@ apiClient.interceptors.response.use(
         const duration = error.config?.__startTime
           ? Date.now() - error.config.__startTime
           : undefined;
-        firebaselog_apicalls(
-           'API_call_Customer(API_C)',
-          'API_C:retry',
-         
-        );
+        firebaselog_apicalls('API_call_Customer(API_C)', 'API_C:retry');
       } catch (e) {
         // Swallow analytics errors
       }
@@ -149,7 +153,7 @@ apiClient.interceptors.response.use(
         : undefined;
       firebaselog_apicalls(
         'API_call_Customer(API_C)',
-        `API_C:${statusCode || 0}`
+        `API_C:${statusCode || 0}`,
       );
     } catch (e) {
       // Swallow analytics errors
