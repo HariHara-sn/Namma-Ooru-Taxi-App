@@ -148,7 +148,7 @@ module.exports = function (CLASS) {
         } catch (err) {
             return this.handleError(err, res);
         }
-    }
+    } 
 
     CLASS.prototype.bookActingDriverOnewayTrip = async function (req, res) {
         return this.bookActingDriverTripByType(req, res, TRIP_TYPES.ONEWAY);

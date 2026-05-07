@@ -92,6 +92,7 @@ import rideMatchWSService from '../../common/controllers/socketServices/RideMatc
 import messaging from '@react-native-firebase/messaging';
 import DriverMapScreenV2 from './DriverMapScreenV2';
 import DriverMapScreenV3 from './DriverMapScreenV3';
+import {isDevDriverBypassUser} from '../../common/utils/devDriverBypass';
 
 const checkDriverDetails = (response) => {
   if (!response?.driver) return false;
@@ -129,6 +130,14 @@ const checkDriverDetails = (response) => {
   }
   if (hasProofDocuments) {
     setDocumentsCompleteStatus(true)
+  }
+  if (isDevDriverBypassUser(response.driver)) {
+    setLocationCompleteStatus(true)
+    setDriverDetailsCompleteStatus(true)
+    setVehicleDetailsCompleteStatus(true)
+    setBankDetailsCompleteStatus(true)
+    setDocumentsCompleteStatus(true)
+    return true;
   }
   return (
     requiredKeys.every(key => key in response.driver) && 
@@ -401,6 +410,8 @@ const PublicRidesDriverHomeScreen = () => {
         const isBlocked = response?.driver?.isBlocked
         const timeoutSeconds = response?.driver?.tripAcceptDuration
         const isBankVerified = response?.driver?.isBankVerified
+        const shouldBypassVerifyDoc =
+          isDevDriverBypassUser(response?.driver) || isDevDriverBypassUser(userInfo)
 
         const vehicleApproved = response?.driver?.ownVehicleInfo?.isApproved
         const vehicleBlocked = response?.driver?.ownVehicleInfo?.isBlocked
@@ -410,15 +421,15 @@ const PublicRidesDriverHomeScreen = () => {
         setDriverModes(modes)
 
         setTimeoutSeconds(timeoutSeconds)
-        setApproved(isApproved)
-        setBlocked(isBlocked)
+        setApproved(shouldBypassVerifyDoc ? true : isApproved)
+        setBlocked(shouldBypassVerifyDoc ? false : isBlocked)
         if (response?.driver?.isDeleted) {
           setStackScreen('AccountRevokeScreen');
           BGLocationTask.stopDriverBgTask();
           return
         }
 
-        if(response?.driver?.role === 'dco' && !checkDriverDetails(response)){
+        if(!shouldBypassVerifyDoc && response?.driver?.role === 'dco' && !checkDriverDetails(response)){
           if (!isApproved) {
           setStackScreen('DocumentCenter');
           BGLocationTask.stopDriverBgTask();
@@ -437,7 +448,7 @@ const PublicRidesDriverHomeScreen = () => {
           setStackScreen('DriverAskVehicle');
           return
         }
-        if (!isApproved) {
+        if (!shouldBypassVerifyDoc && !isApproved) {
           if (acceptedTrips === 0) {
             setStackScreen('DriverApprovalScreen');
             BGLocationTask.stopDriverBgTask();
@@ -449,14 +460,14 @@ const PublicRidesDriverHomeScreen = () => {
           }
         }
 
-        if (!isBankVerified) {
+        if (!shouldBypassVerifyDoc && !isBankVerified) {
           setIsBankVerified(false)
           return
         } else {
           setIsBankVerified(true)
         }
         
-        if (response?.driver?.mode.includes('dco')) {
+        if (!shouldBypassVerifyDoc && response?.driver?.mode.includes('dco')) {
           if(response?.driver?.role === 'dco' && (!vehicleApproved || vehicleBlocked || vehicleDeleted)){
           setStackScreen('DriverVehicleApprovalScreen');
           BGLocationTask.stopDriverBgTask();
@@ -465,7 +476,7 @@ const PublicRidesDriverHomeScreen = () => {
         }
        
 
-        if (isBlocked) {
+        if (!shouldBypassVerifyDoc && isBlocked) {
           // setIsBlocked(true)
           BGLocationTask.stopDriverBgTask();
           return

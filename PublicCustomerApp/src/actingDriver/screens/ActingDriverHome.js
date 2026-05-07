@@ -66,6 +66,7 @@ import ActingDriverEditDocCenter from './ActingDriverEditDocCenter';
 import VehicleEntry from '../../notdriver/screens/DriverDocumentCenter/VehicleEntry';
 import PublicDriverTrackingScreen from '../../notdriver/screens/PublicDriverTrackingScreen';
 import DriverPermissionScreen from '../../notdriver/screens/DriverPermissionScreen';
+import {isDevDriverBypassUser} from '../../common/utils/devDriverBypass';
 
 const checkDriverDetails = (response) => {
   if (!response?.driver) return false;
@@ -86,6 +87,12 @@ const checkDriverDetails = (response) => {
   }
   if (hasProofDocuments) {
     setDocumentsCompleteStatus(true)
+  }
+  if (isDevDriverBypassUser(response.driver)) {
+    setDriverDetailsCompleteStatus(true)
+    setBankDetailsCompleteStatus(true)
+    setDocumentsCompleteStatus(true)
+    return true;
   }
   return (
     driverDetailKeys.every(key => key in response.driver) && 
@@ -376,10 +383,12 @@ const ActingDriverHomeScreen = () => {
         const isBlocked = response?.driver?.isBlocked
         const timeoutSeconds = response?.driver?.tripAcceptDuration
         const isBankVerified = response?.driver?.isBankVerified
+        const shouldBypassVerifyDoc =
+          isDevDriverBypassUser(response?.driver) || isDevDriverBypassUser(userInfo)
 
         setTimeoutSeconds(timeoutSeconds)
-        setApproved(isApproved)
-        setBlocked(isBlocked)
+        setApproved(shouldBypassVerifyDoc ? true : isApproved)
+        setBlocked(shouldBypassVerifyDoc ? false : isBlocked)
         if (response?.driver?.isDeleted) {
           setStackScreen('AccountRevokeScreen');
           BGLocationTask.stopDriverBgTask();
@@ -388,7 +397,7 @@ const ActingDriverHomeScreen = () => {
 
         // Always evaluate completion statuses so the edit doc screen reflects current state
         const allDetailsDone = checkDriverDetails(response);
-        if(response?.driver?.role === 'dco' && !allDetailsDone){
+        if(!shouldBypassVerifyDoc && response?.driver?.role === 'dco' && !allDetailsDone){
           if (!isApproved) {
           setStackScreen('DocumentCenter');
           BGLocationTask.stopDriverBgTask();
@@ -397,7 +406,7 @@ const ActingDriverHomeScreen = () => {
         }
 
         
-        if (!isApproved) {
+        if (!shouldBypassVerifyDoc && !isApproved) {
           if (acceptedTrips === 0) {
             setStackScreen('DriverApprovalScreen');
             BGLocationTask.stopDriverBgTask();
@@ -409,14 +418,14 @@ const ActingDriverHomeScreen = () => {
           }
         }
 
-        if (!isBankVerified) {
+        if (!shouldBypassVerifyDoc && !isBankVerified) {
           setIsBankVerified(false)
           return
         } else {
           setIsBankVerified(true)
         }
 
-        if (isBlocked) {
+        if (!shouldBypassVerifyDoc && isBlocked) {
           // setIsBlocked(true)
           BGLocationTask.stopDriverBgTask();
           return

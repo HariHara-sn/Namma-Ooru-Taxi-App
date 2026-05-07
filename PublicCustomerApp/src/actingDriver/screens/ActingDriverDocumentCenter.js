@@ -133,19 +133,17 @@ const ActingDriverDocumentCenter = () => {
         {fcmToken: {deviceImei: userDeviceId, token: userInfo?.token}},
         userInfo?.token,
       );
-      if (!response.success)
-        throw new Error(response.message || 'Network request failed');
-      setShowLogoutModal(false);
-      setMapMarkers(null);
-      setTimeout(() => {
-        logout('driver');
-        setLoading(false);
-        BGLocationTask.stopDriverBgTask();
-      }, 1000);
+      if (!response?.success) {
+        console.log(response?.message || 'Driver logout API failed');
+      }
     } catch (error) {
-      console.log('Logout error:', error);
+      console.log('Driver logout API failed; clearing local session:', error);
+    } finally {
       setLoading(false);
       setShowLogoutModal(false);
+      setMapMarkers(null);
+      BGLocationTask.stopDriverBgTask();
+      logout('driver');
     }
   };
 

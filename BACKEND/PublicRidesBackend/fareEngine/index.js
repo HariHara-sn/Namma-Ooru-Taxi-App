@@ -1,37 +1,37 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const fareRoutes = require('./routes/fareRoutes');
-const FareConfig = require('./models/FareConfig');
-const defaultConfig = require('./config/defaultFareConfig.json');
+const express = require("express");
+const mongoose = require("mongoose");
+const fareRoutes = require("./routes/fareRoutes");
+const FareConfig = require("./models/FareConfig");
+const defaultConfig = require("./config/defaultFareConfig.json");
 
 // Global collection mappings
 let collectionMappings = {
   driver: {
-    id: 'driverId',
-    rating: 'rating',
-    tripCountToday: 'tripCountToday',
-    totalTripsAccepted: 'totalTripsAccepted',
-    totalTripsRejected: 'totalTripsRejected',
-    isTrusted: 'isTrusted',
-    liveStats: 'liveStats',
-    vehicleId: 'vehicleId'
+    id: "driverId",
+    rating: "rating",
+    tripCountToday: "tripCountToday",
+    totalTripsAccepted: "totalTripsAccepted",
+    totalTripsRejected: "totalTripsRejected",
+    isTrusted: "isTrusted",
+    liveStats: "liveStats",
+    vehicleId: "vehicleId",
   },
   vehicle: {
-    id: '_id',
-    type: 'type',
-    driverId: 'driverId'
+    id: "_id",
+    type: "type",
+    driverId: "driverId",
   },
   passenger: {
-    id: '_id',
-    userId: 'userId'
+    id: "_id",
+    userId: "userId",
   },
   trip: {
-    id: '_id',
-    driverId: 'driverId',
-    vehicleId: 'vehicleId',
-    userId: 'userId',
-    passengers: 'passangers'
-  }
+    id: "_id",
+    driverId: "driverId",
+    vehicleId: "vehicleId",
+    userId: "userId",
+    passengers: "passangers",
+  },
 };
 
 /**
@@ -43,22 +43,23 @@ async function initializeFareEngine(connection, mappings = null) {
   try {
     // Use existing connection
     if (connection && connection.readyState === 1) {
-      console.log('✅ Fare engine initialized with existing MongoDB connection');
+      console.log(
+        "✅ Fare engine initialized with existing MongoDB connection",
+      );
     } else {
-      throw new Error('Invalid or disconnected MongoDB connection');
+      throw new Error("Invalid or disconnected MongoDB connection");
     }
-    
+
     // Update collection mappings if provided
     if (mappings) {
       collectionMappings = { ...collectionMappings, ...mappings };
-      console.log('✅ Collection mappings updated:', Object.keys(mappings));
+      console.log("✅ Collection mappings updated:", Object.keys(mappings));
     }
-    
+
     // Initialize default config if not exists
     await initializeDefaultConfig();
-    
   } catch (error) {
-    console.error('❌ Fare engine initialization failed:', error);
+    console.error("❌ Fare engine initialization failed:", error);
     throw error;
   }
 }
@@ -71,15 +72,14 @@ async function initializeDatabase(mongoUri) {
   try {
     await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
-    console.log('✅ MongoDB connected successfully');
-    
+    console.log("✅ MongoDB connected successfully");
+
     // Initialize default config if not exists
     await initializeDefaultConfig();
-    
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error);
+    console.error("❌ MongoDB connection failed:", error);
     throw error;
   }
 }
@@ -89,17 +89,17 @@ async function initializeDatabase(mongoUri) {
  */
 async function initializeDefaultConfig() {
   try {
-    const existingConfig = await FareConfig.getActiveConfig('default');
-    
+    const existingConfig = await FareConfig.getActiveConfig("default");
+
     if (!existingConfig) {
       const config = new FareConfig(defaultConfig);
       await config.save();
-      console.log('✅ Default fare configuration initialized');
+      console.log("✅ Default fare configuration initialized");
     } else {
-      console.log('✅ Default fare configuration already exists');
+      console.log("✅ Default fare configuration already exists");
     }
   } catch (error) {
-    console.error('❌ Failed to initialize default config:', error);
+    console.error("❌ Failed to initialize default config:", error);
   }
 }
 
@@ -108,7 +108,7 @@ async function initializeDefaultConfig() {
  * @param {Object} app - Express app instance
  * @param {string} basePath - Base path for routes (default: '/api/fare')
  */
-function registerFareRoutes(app, basePath = '/api/fare') {
+function registerFareRoutes(app, basePath = "/api/fare") {
   app.use(basePath, fareRoutes);
   console.log(`✅ Fare routes registered at ${basePath}`);
 }
@@ -120,39 +120,45 @@ function registerFareRoutes(app, basePath = '/api/fare') {
  */
 async function createStandaloneApp(mongoUri, port = 3001) {
   const app = express();
-  
+
   // Middleware
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  
+
   // CORS middleware
   app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    
-    if (req.method === 'OPTIONS') {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    );
+
+    if (req.method === "OPTIONS") {
       res.sendStatus(200);
     } else {
       next();
     }
   });
-  
+
   // Initialize database
   await initializeDatabase(mongoUri);
-  
+
   // Register routes
   registerFareRoutes(app);
-  
+
   // Error handling middleware
   app.use((error, req, res, next) => {
-    console.error('Error:', error);
+    console.error("Error:", error);
     res.status(500).json({
       success: false,
-      error: 'Internal server error'
+      error: "Internal server error",
     });
   });
-  
+
   return app;
 }
 
@@ -164,16 +170,18 @@ async function createStandaloneApp(mongoUri, port = 3001) {
 async function startStandaloneServer(mongoUri, port = 3001) {
   try {
     const app = await createStandaloneApp(mongoUri, port);
-    
+
     app.listen(port, "0.0.0.0", () => {
       console.log(`🚀 Fare Engine server running on port ${port}`);
       console.log(`📊 Health check: http://localhost:${port}/api/fare/health`);
-      console.log(`📋 API Documentation: http://localhost:${port}/api/fare/config/default`);
+      console.log(
+        `📋 API Documentation: http://localhost:${port}/api/fare/config/default`,
+      );
     });
-    
+
     return app;
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    console.error("❌ Failed to start server:", error);
     throw error;
   }
 }
@@ -183,15 +191,15 @@ async function startStandaloneServer(mongoUri, port = 3001) {
  */
 function getServices() {
   return {
-    FareCalculatorService: require('./services/FareCalculatorService'),
-    FareService: require('./services/FareService'),
-    TripFareService: require('./services/TripFareService'),
-    CouponVerificationService: require('./services/CouponVerificationService'),
-    DynamicCouponService: require('./services/DynamicCouponService'),
-    SurgeService: require('./services/SurgeService'),
-    PromoService: require('./services/PromoService'),
-    IncentiveService: require('./services/IncentiveService'),
-    CancellationService: require('./services/CancellationService')
+    FareCalculatorService: require("./services/FareCalculatorService"),
+    FareService: require("./services/FareService"),
+    TripFareService: require("./services/TripFareService"),
+    CouponVerificationService: require("./services/CouponVerificationService"),
+    DynamicCouponService: require("./services/DynamicCouponService"),
+    SurgeService: require("./services/SurgeService"),
+    PromoService: require("./services/PromoService"),
+    IncentiveService: require("./services/IncentiveService"),
+    CancellationService: require("./services/CancellationService"),
   };
 }
 
@@ -206,21 +214,21 @@ function getFareConfigModel() {
  * Get driver model
  */
 function getDriverModel() {
-  return require('./models/Driver');
+  return require("./models/Driver");
 }
 
 /**
  * Get vehicle model
  */
 function getVehicleModel() {
-  return require('./models/Vehicle');
+  return require("./models/Vehicle");
 }
 
 /**
  * Get passenger model
  */
 function getPassengerModel() {
-  return require('./models/Passenger');
+  return require("./models/Passenger");
 }
 
 /**
@@ -236,16 +244,27 @@ function getCollectionMappings() {
  */
 function updateCollectionMappings(mappings) {
   collectionMappings = { ...collectionMappings, ...mappings };
-  
+
   // Update TripFareService mappings if it exists
   try {
-    const TripFareService = require('./services/TripFareService');
+    const TripFareService = require("./services/TripFareService");
     TripFareService.updateMappings(mappings);
   } catch (error) {
     // TripFareService might not be loaded yet
   }
-  
-  console.log('✅ Collection mappings updated:', Object.keys(mappings));
+
+  console.log("✅ Collection mappings updated:", Object.keys(mappings));
+}
+
+if (require.main === module) {
+  const mongoUri =
+    process.env.MONGO_URI || "mongodb://localhost:27017/locationTracking";
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
+
+  startStandaloneServer(mongoUri, port).catch((error) => {
+    console.error("Fatal startup error:", error);
+    process.exit(1);
+  });
 }
 
 module.exports = {
@@ -260,5 +279,5 @@ module.exports = {
   getVehicleModel,
   getPassengerModel,
   getCollectionMappings,
-  updateCollectionMappings
-}; 
+  updateCollectionMappings,
+};

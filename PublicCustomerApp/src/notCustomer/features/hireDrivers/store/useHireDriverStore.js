@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export const useHireDriverStore = create((set) => ({
-  tripType: 'oneWay', // 'oneWay', 'roundTrip', 'outstation'
+  tripType: 'hireDriver',
   source: '',
   destination: '',
   scheduleType: 'now', // 'now', 'later'

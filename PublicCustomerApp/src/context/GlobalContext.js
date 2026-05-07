@@ -27,7 +27,7 @@ export const ContextProvider = ({children}) => {
   });
   const [themeMode, setThemeMode] = useState('default'); // 'light', 'dark', 'default'
   const [isInitialized, setIsInitialized] = useState(false);
-  const {setUserInfo} = useUserStore()
+  const {setUserInfo, setIsDev} = useUserStore()
 
   const {resetPublicDriverState} = usePublicDriverStore();
 
@@ -181,20 +181,24 @@ export const ContextProvider = ({children}) => {
     }
   }, [systemColorScheme, themeMode, isInitialized]);
 
-    const logout = async () => {
+    const logout = async role => {
     try {
       // setIsLoading(true);
       setUserInfo(null);
+      setIsDev(false);
       resetPublicDriverState();
       // DataStore.clearData('userInfo');
-      DataStore.clearData('role')
-      DataStore.clearData('activeTripId')
-      DataStore.clearSession();
-      DataStore.clearSession('userdetails');
-      DataStore.clearSession('access_token');
+      await DataStore.clearData('role')
+      await DataStore.clearData('activeTripId')
+      await DataStore.clearData('isOngoingTrip')
+      await DataStore.clearSession('userdetails');
+      await DataStore.clearSession('access_token');
+      await DataStore.clearSession('refresh_token');
+      await DataStore.clearSession('bg_userToken');
+      await DataStore.clearSession('bg_deviceImei');
       RideMatchWSService.removeListeners();
       RideMatchWSService.close();
-      resetTo('LoginScreen');
+      resetTo('LoginScreen', role ? {navRole: role} : undefined);
       // showNotification(
       //   t.logout_success,
       //   t.login_to,

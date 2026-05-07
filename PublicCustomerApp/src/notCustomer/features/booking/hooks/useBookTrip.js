@@ -12,6 +12,10 @@ import useUserInfoStore from '../../../../common/store/useUserInfoStore';
 import useScheduleStore from '../../schedule/store/useScheduleStore';
 import useScheduleTripStore from '../../../store/useScheduleTripStore';
 import rideMatchingSocketService from '../../../controllers/RideMatchingSocketService';
+import {
+  isDriverMatchSimulationEnabled,
+  simulateDriverMatch,
+} from '../utils/simulateDriverMatch';
 /**
  * Simple hook for booking trips with navigation handling
  * @returns {Object} Booking functions and state
@@ -89,6 +93,11 @@ const useBookTrip = () => {
             driver: null
           });
           setStackScreen('RideStatus', {});
+
+          if (isDriverMatchSimulationEnabled()) {
+            simulateDriverMatch(result, result?.trip?.vehicleType);
+            return result;
+          }
 
           // Ensure ride-matching socket is connected before proceeding
           let connected = rideMatchingSocketService.isConnected();

@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { colors, Fonts } from '../../../constants/constants';
+import {StyleSheet} from 'react-native';
+import {colors, Fonts} from '../../../constants/constants';
 
 const vehicleStyles = StyleSheet.create({
   container: {
@@ -95,7 +95,7 @@ const vehicleStyles = StyleSheet.create({
     backgroundColor: colors.black,
     borderRadius: 12,
     paddingVertical: 16,
-    marginBottom: 24,
+    marginBottom: 10,
   },
   addVehicleBtnText: {
     fontFamily: Fonts.semi_bold,
@@ -134,6 +134,21 @@ const vehicleStyles = StyleSheet.create({
     fontFamily: Fonts.regular,
     fontSize: 13,
     color: colors.orange,
+  },
+  successBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: '#E8F5E9',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 20,
+  },
+  successBannerText: {
+    flex: 1,
+    fontFamily: Fonts.regular,
+    fontSize: 13,
+    color: '#2E7D32',
   },
   inputLabel: {
     fontFamily: Fonts.medium,
@@ -192,7 +207,8 @@ const vehicleStyles = StyleSheet.create({
   formActions: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 32,
+    marginBottom: 10,
+    paddingBottom: 16,
   },
   cancelBtn: {
     flex: 1,
@@ -201,6 +217,7 @@ const vehicleStyles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
+    bottom: 10,
   },
   cancelBtnText: {
     fontFamily: Fonts.semi_bold,
@@ -213,6 +230,7 @@ const vehicleStyles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
+    bottom: 10,
   },
   addBtnDisabled: {
     backgroundColor: colors.grey_dark,
@@ -295,8 +313,80 @@ const vehicleStyles = StyleSheet.create({
     fontSize: 15,
     color: colors.black,
   },
+  pickerConfirmBtn: {
+    flex: 0,
+    marginHorizontal: 16,
+    marginTop:10,
+    marginBottom: 10,
+  },
+  // ─── Verified form styles ────────────────────────────────────────────────
+  sectionTitle: {
+    fontFamily: Fonts.semi_bold,
+    fontSize: 14,
+    color: colors.black,
+    marginTop: 20,
+    marginBottom: 16,
+  },
+  verifiedFieldContainer: {
+    backgroundColor: colors.grey_xxlight,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 12,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.black,
+  },
+  verifiedFieldLabel: {
+    fontFamily: Fonts.medium,
+    fontSize: 12,
+    color: colors.grey_xxdark,
+    marginBottom: 4,
+  },
+  verifiedFieldValue: {
+    fontFamily: Fonts.regular,
+    fontSize: 14,
+    color: colors.black,
+  },
+  // ─── Custom field styles ─────────────────────────────────────────────────
+  customFieldContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  customFieldInput: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  addCustomFieldBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.grey_xxlight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16,
+  },
+  tag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.black,
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  tagText: {
+    fontFamily: Fonts.regular,
+    fontSize: 13,
+    color: colors.white,
+  },
 });
 
 export default vehicleStyles;
-
-

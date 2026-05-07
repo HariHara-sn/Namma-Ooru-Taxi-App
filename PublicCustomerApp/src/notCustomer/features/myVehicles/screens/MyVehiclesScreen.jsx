@@ -1,8 +1,9 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   FlatList,
   ScrollView,
   Text,
@@ -23,9 +24,10 @@ import {colors} from '../../../constants/constants';
 import {useStackScreenStore} from '../../../store/useStackScreenStore';
 import VehicleCard from '../components/VehicleCard';
 import VehicleFormFields from '../components/VehicleFormFields';
+import VerifiedForm from '../components/VerifiedForm';
 import styles from '../styles/vehicleStyles';
 
-// ─── Initial form state ───────────────────────────────────────────────────────
+// Initial form state
 const EMPTY_FIELDS = {
   vehicleType: '',
   make: '',
@@ -54,29 +56,146 @@ const fieldsFromVehicle = v => ({
   maxSpeed: v.maxSpeed ? String(v.maxSpeed) : '',
 });
 
-// ─── Step 1: Registration number ─────────────────────────────────────────────
+const hasValidTransmission = transmission =>
+  Array.isArray(transmission) &&
+  transmission.length > 0 &&
+  (transmission[0] !== 'automatic' || !!transmission[1]);
+
+// Step 1: Registration number
 const RegNoForm = ({onVerify, onCancel}) => {
   const {t} = useTranslation();
   const [regNo, setRegNo] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isInvalid, setIsInvalid] = useState(false);
+  const shakeAnim = useRef(new Animated.Value(0));
+  const REG_NO_REGEX = /^[A-Z]{2}[0-9]{1,2}[A-Z]{1,3}[0-9]{1,4}$/;
 
   const handleVerify = async () => {
     const trimmed = regNo.trim().toUpperCase();
-    if (!trimmed) {
-      Alert.alert(
-        t('error'),
-        t('reg_no_required', 'Please enter registration number'),
+    const normalized = trimmed.replace(/[\s-]/g, '');
+
+    if (!normalized) {
+      setIsInvalid(true);
+      shakeAnim.current.setValue(0);
+      Animated.sequence([
+        Animated.timing(shakeAnim.current, {
+          toValue: -10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: 10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: -6,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: 6,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setIsInvalid(false));
+      return;
+    }
+
+    // enforce length between 8 and 11 characters (after removing spaces/hyphens)
+    if (normalized.length < 8 || normalized.length > 11) {
+      setIsInvalid(true);
+      shakeAnim.current.setValue(0);
+      Animated.sequence([
+        Animated.timing(shakeAnim.current, {
+          toValue: -10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: 10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: -6,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: 6,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setIsInvalid(false));
+      return;
+    }
+
+    if (!REG_NO_REGEX.test(normalized)) {
+      console.log(
+        'Invalid registration number format:',
+        normalized,
+        REG_NO_REGEX.test(normalized),
       );
+      // invalid format: shake input and show red border briefly
+      setIsInvalid(true);
+      shakeAnim.current.setValue(0);
+      Animated.sequence([
+        Animated.timing(shakeAnim.current, {
+          toValue: -10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: 10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: -6,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: 6,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim.current, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setIsInvalid(false));
       return;
     }
     setLoading(true);
     try {
-      const response = await updatePassangerVehicle({regNo: trimmed});
-      onVerify(trimmed, response);
-    } catch (_) {
+      const response = await updatePassangerVehicle({regNo: normalized});
+      onVerify(normalized, response);
+    } catch (error) {
+      if (
+        error?.status === 403 &&
+        error?.message?.toLowerCase().includes('vehicle not found')
+      ) {
+        onVerify(normalized, {success: false, isParivahanFailed: true});
+        return;
+      }
+
       Alert.alert(
         t('error'),
-        t('something_went_wrong', 'Something went wrong. Please try again.'),
+        error?.message ||
+          t('something_went_wrong', 'Something went wrong. Please try again.'),
       );
     } finally {
       setLoading(false);
@@ -97,15 +216,23 @@ const RegNoForm = ({onVerify, onCancel}) => {
       <Text style={styles.inputLabel}>
         {t('registration_number', 'Registration Number')} *
       </Text>
-      <TextInput
-        style={styles.input}
-        value={regNo}
-        onChangeText={setRegNo}
-        placeholder="e.g. TN01AB1234"
-        placeholderTextColor={colors.grey_dark}
-        autoCapitalize="characters"
-        autoCorrect={false}
-      />
+      <Animated.View
+        style={{
+          transform: [{translateX: shakeAnim.current}],
+        }}>
+        <TextInput
+          style={[
+            styles.input,
+            isInvalid && {borderColor: colors.danger_red, borderWidth: 1},
+          ]}
+          value={regNo}
+          onChangeText={setRegNo}
+          placeholder="e.g. TN01AB1234"
+          placeholderTextColor={colors.grey_dark}
+          autoCapitalize="characters"
+          autoCorrect={false}
+        />
+      </Animated.View>
       <View style={styles.formActions}>
         <TouchableOpacity
           style={styles.cancelBtn}
@@ -129,7 +256,7 @@ const RegNoForm = ({onVerify, onCancel}) => {
   );
 };
 
-// ─── Step 2: Manual details after Parivahan failure ──────────────────────────
+// Step 2: Manual details after Parivahan failure
 const ManualForm = ({regNo, onAdd, onCancel}) => {
   const {t} = useTranslation();
   const [fields, setFields] = useState(EMPTY_FIELDS);
@@ -147,10 +274,43 @@ const ManualForm = ({regNo, onAdd, onCancel}) => {
       );
       return;
     }
+    if (!fields.make?.trim()) {
+      Alert.alert(t('error'), t('make_required', 'Please select a make'));
+      return;
+    }
+    if (!fields.model?.trim()) {
+      Alert.alert(t('error'), t('model_required', 'Please select a model'));
+      return;
+    }
+    if (!fields.year) {
+      Alert.alert(t('error'), t('year_required', 'Please select a year'));
+      return;
+    }
+    if (!fields.maxSpeed) {
+      Alert.alert(
+        t('error'),
+        t('speed_limit_required', 'Please enter a speed limit'),
+      );
+      return;
+    }
     if (fields.maxSpeed && Number(fields.maxSpeed) < 40) {
       Alert.alert(
         t('error'),
         t('max_speed_min_error', 'Minimum allowed max speed is 40 km/h'),
+      );
+      return;
+    }
+    if (!hasValidTransmission(fields.transmission)) {
+      Alert.alert(
+        t('error'),
+        t('transmission_required', 'Please select a transmission'),
+      );
+      return;
+    }
+    if (!fields.features || fields.features.length === 0) {
+      Alert.alert(
+        t('error'),
+        t('features_required', 'Please select at least one feature'),
       );
       return;
     }
@@ -176,10 +336,11 @@ const ManualForm = ({regNo, onAdd, onCancel}) => {
           response.message || t('something_went_wrong', 'Something went wrong'),
         );
       }
-    } catch (_) {
+    } catch (error) {
       Alert.alert(
         t('error'),
-        t('something_went_wrong', 'Something went wrong. Please try again.'),
+        error?.message ||
+          t('something_went_wrong', 'Something went wrong. Please try again.'),
       );
     } finally {
       setLoading(false);
@@ -256,10 +417,43 @@ const EditForm = ({vehicle, onSave, onCancel}) => {
       );
       return;
     }
+    if (!fields.make?.trim()) {
+      Alert.alert(t('error'), t('make_required', 'Please select a make'));
+      return;
+    }
+    if (!fields.model?.trim()) {
+      Alert.alert(t('error'), t('model_required', 'Please select a model'));
+      return;
+    }
+    if (!fields.year) {
+      Alert.alert(t('error'), t('year_required', 'Please select a year'));
+      return;
+    }
+    if (!fields.maxSpeed) {
+      Alert.alert(
+        t('error'),
+        t('speed_limit_required', 'Please enter a speed limit'),
+      );
+      return;
+    }
     if (fields.maxSpeed && Number(fields.maxSpeed) < 40) {
       Alert.alert(
         t('error'),
         t('max_speed_min_error', 'Minimum allowed max speed is 40 km/h'),
+      );
+      return;
+    }
+    if (!hasValidTransmission(fields.transmission)) {
+      Alert.alert(
+        t('error'),
+        t('transmission_required', 'Please select a transmission'),
+      );
+      return;
+    }
+    if (!fields.features || fields.features.length === 0) {
+      Alert.alert(
+        t('error'),
+        t('features_required', 'Please select at least one feature'),
       );
       return;
     }
@@ -339,9 +533,11 @@ const MyVehiclesScreen = () => {
   const {t} = useTranslation();
   const {goBack} = useStackScreenStore();
 
-  // 'list' | 'regNo' | 'manual' | 'edit'
+  // 'list' | 'regNo' | 'manual' | 'verified' | 'edit'
   const [view, setView] = useState('list');
   const [pendingRegNo, setPendingRegNo] = useState('');
+  const [pendingVehicleId, setPendingVehicleId] = useState(null);
+  const [pendingVerifiedData, setPendingVerifiedData] = useState(null);
   const [editingVehicle, setEditingVehicle] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [loadingVehicles, setLoadingVehicles] = useState(false);
@@ -374,8 +570,11 @@ const MyVehiclesScreen = () => {
         setPendingRegNo(regNo);
         setView('manual');
       } else if (response.success) {
-        setVehicles(prev => [response.vehicle, ...prev]);
-        setView('list');
+        // Navigate to verified form with verified data from MParivahan
+        setPendingRegNo(regNo);
+        setPendingVehicleId(response?.vehicle?._id);
+        setPendingVerifiedData(response?.vehicle?.parivahanData || {});
+        setView('verified');
       } else {
         Alert.alert(
           t('error'),
@@ -397,9 +596,21 @@ const MyVehiclesScreen = () => {
 
   const handleCancel = useCallback(() => {
     setPendingRegNo('');
+    setPendingVehicleId(null);
+    setPendingVerifiedData(null);
     setEditingVehicle(null);
     setView('list');
   }, []);
+
+  const handleVerifiedFormSave = useCallback(
+    async vehicle => {
+      setPendingRegNo('');
+      setPendingVerifiedData(null);
+      setView('list');
+      await fetchVehicles();
+    },
+    [fetchVehicles],
+  );
 
   const handleEdit = useCallback(vehicle => {
     setEditingVehicle(vehicle);
@@ -473,6 +684,26 @@ const MyVehiclesScreen = () => {
         <EditForm
           vehicle={editingVehicle}
           onSave={handleEditSave}
+          onCancel={handleCancel}
+        />
+      </View>
+    );
+  }
+
+  if (view === 'verified') {
+    return (
+      <View style={styles.container}>
+        <NavBar
+          title={t('add_vehicle', 'Add Vehicle')}
+          onBackPress={handleCancel}
+          withBg
+          withShadow
+        />
+        <VerifiedForm
+          vehicleId={pendingVehicleId}
+          regNo={pendingRegNo}
+          verifiedData={pendingVerifiedData}
+          onSave={handleVerifiedFormSave}
           onCancel={handleCancel}
         />
       </View>

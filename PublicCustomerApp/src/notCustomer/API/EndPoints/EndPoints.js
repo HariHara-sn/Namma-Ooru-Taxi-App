@@ -1,5 +1,6 @@
 import {Platform} from 'react-native';
 import Config from 'react-native-config';
+import axios from 'axios';
 import apiClient from '../APIClient';
 
 // request OTP
@@ -26,7 +27,7 @@ export const requestDriverOTP = async payload => {
 
 export const verifyDriverOTP = async payload => {
   const {data} = await apiClient.post(
-    `/publicrides/driver/v2/verifyOTP?platform=${Platform.OS}`,
+    `/publicrides/driver/v2/verifyOTP?platform=${Platform.OS}&isdev=${true}`,
     payload,
   );
   return data;
@@ -73,6 +74,18 @@ export const getRideEstimation = async payload => {
     '/publicrides/customer/v2/getRideEstimation',
     payload,
   );
+  return data;
+};
+
+export const getFareEngineRange = async payload => {
+  const fareEngineBaseURL = (
+    Config.FARE_ENGINE_URL || 'http://10.0.2.2:3001'
+  ).replace(/\/+$/, '');
+
+  const {data} = await axios.get(`${fareEngineBaseURL}/api/fare/range`, {
+    params: payload,
+    timeout: 10000,
+  });
   return data;
 };
 

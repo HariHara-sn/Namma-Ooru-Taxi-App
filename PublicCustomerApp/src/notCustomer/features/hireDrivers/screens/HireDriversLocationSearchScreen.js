@@ -45,7 +45,7 @@ const HireDriversLocationSearchScreen = ({ params }) => {
   const [activeInput, setActiveInput] = useState('End');
   const destinationInputRef = useRef(null);
   
-  const tripType = params?.tripType || 'One Way';
+  const screenTitle = params?.title || t('hire_driver', 'Hire Driver');
 
   useEffect(() => {
     // Auto-focus the destination input when screen opens
@@ -89,7 +89,7 @@ const HireDriversLocationSearchScreen = ({ params }) => {
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.white} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t(tripType.toLowerCase().replace(' ', '_'), tripType)}</Text>
+        <Text style={styles.headerTitle}>{screenTitle}</Text>
       </View>
 
       <View style={styles.container}>
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
 
 HireDriversLocationSearchScreen.propTypes = {
   params: PropTypes.shape({
-    tripType: PropTypes.string,
+    title: PropTypes.string,
   }),
 };
 

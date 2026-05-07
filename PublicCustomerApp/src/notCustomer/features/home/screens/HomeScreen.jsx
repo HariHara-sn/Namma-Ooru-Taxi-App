@@ -572,7 +572,7 @@ const MapScreen = () => {
         
         <View style={{marginTop:60}}>
         
-          {<ScheduledTripBanner/>}
+          {<ScheduledTripBanner/>}    {/* need to implement */}
         
           <DynamicSection onSelect={handleServiceVehicleSelect}/>
           <FavLabelItems onLabelPress={handleFavouriteLocationPress}/>

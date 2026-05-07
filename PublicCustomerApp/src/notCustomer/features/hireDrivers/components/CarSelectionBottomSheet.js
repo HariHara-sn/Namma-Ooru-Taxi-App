@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, FlatList, Image, Animated, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, FlatList, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors, Fonts } from '../../../constants/constants';
 
@@ -12,7 +13,7 @@ const MOCK_CARS = [
   { id: '3', name: 'SUV', type: 'SUV', capacity: 6, price: 300 },
 ];
 
-const CarSelectionBottomSheet = ({ visible, onClose, tripType }) => {
+const CarSelectionBottomSheet = ({ visible, onClose }) => {
   const { t } = useTranslation();
   const [selectedCar, setSelectedCar] = useState(null);
 
@@ -64,7 +65,7 @@ const CarSelectionBottomSheet = ({ visible, onClose, tripType }) => {
                   
                   <View style={styles.priceContainer}>
                     <Text style={styles.price}>₹{item.price}</Text>
-                    <Text style={styles.priceUnit}>{tripType === 'round_trip' ? '/day' : '/trip'}</Text>
+                    <Text style={styles.priceUnit}>/trip</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -84,6 +85,11 @@ const CarSelectionBottomSheet = ({ visible, onClose, tripType }) => {
       </View>
     </Modal>
   );
+};
+
+CarSelectionBottomSheet.propTypes = {
+  visible: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({

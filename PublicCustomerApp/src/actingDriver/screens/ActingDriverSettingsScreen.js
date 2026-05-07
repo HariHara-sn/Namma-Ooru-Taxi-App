@@ -5,7 +5,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import usePublicDriverStore from '../../notdriver/store/usePublicDriverStore';
 import useUserStore from '../../common/store/useUserStore';
 import BGLocationTask from '../../common/controllers/BGLocationTask';
-import {showNotification} from '../../common/components/Alerts/showNotification';
 import {useStackScreenStore} from '../../common/store/useStackScreenStore';
 import {useMapMarkerStore} from '../../common/store/useMapMarkerStore';
 import useCurrentScreenStore from '../../common/store/useCurrentScreenStore';
@@ -133,24 +132,16 @@ export default function ActingDriverSettingsScreen() {
         userInfo?.token,
       );
 
-      if (!response.success)
-        throw new Error(response.message || 'Network request failed');
-
-      setMapMarkers(null);
-
-      setTimeout(() => {
-        logout('driver');
-        setLoading(false);
-        BGLocationTask.stopDriverBgTask();
-        setLoading(false);
-      }, 1000);
+      if (!response?.success) {
+        console.log(response?.message || 'Driver logout API failed');
+      }
     } catch (error) {
-      console.log(error, 'Error logging out');
-      showNotification(
-        error?.message || 'Network request failed',
-        '',
-        'danger',
-      );
+      console.log(error, 'Driver logout API failed; clearing local session');
+    } finally {
+      setMapMarkers(null);
+      BGLocationTask.stopDriverBgTask();
+      logout('driver');
+      setLoading(false);
     }
   };
 

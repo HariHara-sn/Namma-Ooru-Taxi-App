@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import {
     View,
     StyleSheet,
@@ -28,7 +29,7 @@ import useRideBookingLocationStore from '../store/useRideBookingLocationStore';
 import useDirectionLoad from '../hooks/useDirectionLoad';
 import useMapStore from '../../map/store/useMapStore';
 import useActingDriverBookTrip from '../hooks/useActingDriverBookTrip';
-import { getRideEstimation } from '../../../API/EndPoints/EndPoints';
+import { getFareEngineRange, getRideEstimation } from '../../../API/EndPoints/EndPoints';
 import { useDebouncedAPICall } from '../../../hooks/useDebounce';
 import { showNotification } from '../../../components/NotificationManger';
 import AnimatedBottomSheetWrapper from '../../shared/component/AnimatedBottomSheetWrapper';
@@ -45,7 +46,76 @@ import {
     setInCache as setEstimationInCache,
     prune as pruneEstimationCache,
 } from '../store/useEstimationCacheStore';
-import vehicleType from '../types/vehicleType.json';
+
+const VEHICLE_TYPE_TO_FARE_ENGINE = {
+    hatchback: 'HATCHBACK',
+    sedan: 'SEDAN',
+    suv: 'SUV',
+    exsedan: 'SEDAN',
+    muv: 'SUV',
+    luxury: 'SUV',
+};
+
+const CURRENCY_SYMBOLS = {
+    INR: '\u20B9',
+    RS: '\u20B9',
+};
+
+const getFareEngineVehicleType = (type) => {
+    if (!type) return 'ALL';
+    return VEHICLE_TYPE_TO_FARE_ENGINE[String(type).toLowerCase()] || String(type).toUpperCase();
+};
+
+const getCurrencySymbol = (currency) => {
+    if (!currency) return '\u20B9';
+    const normalizedCurrency = String(currency).toUpperCase();
+    return CURRENCY_SYMBOLS[normalizedCurrency] || currency;
+};
+
+const formatFareAmount = (amount) => {
+    const value = Number(amount);
+    if (!Number.isFinite(value)) return null;
+    return Number.isInteger(value) ? String(value) : value.toFixed(2);
+};
+
+const formatFareRange = (fareData, fallbackCurrency) => {
+    if (!fareData) return null;
+
+    const symbol = getCurrencySymbol(fareData.currency || fallbackCurrency);
+    const minFare = formatFareAmount(fareData.minFare);
+    const maxFare = formatFareAmount(fareData.maxFare);
+    const fare = formatFareAmount(fareData.fare);
+
+    if (minFare && maxFare) return `${symbol}${minFare} - ${symbol}${maxFare}`;
+    if (fare) return `${symbol}${fare}`;
+    if (minFare) return `${symbol}${minFare}+`;
+    return null;
+};
+
+const getFareDataForVehicle = (data, vehicleTypeKey, appVehicleType) => {
+    const fareEngineData = data?.data;
+    if (fareEngineData?.minFare || fareEngineData?.fare) {
+        return { fareData: fareEngineData, currency: fareEngineData.currency };
+    }
+
+    const fareRanges = data?.result?.data?.fareRanges || fareEngineData?.fareRanges;
+    const fallbackCurrency = data?.result?.data?.currency || fareEngineData?.currency;
+    const appVehicleTypeKey = appVehicleType ? String(appVehicleType) : null;
+    const selectedFareData =
+        fareRanges?.[appVehicleTypeKey] ||
+        fareRanges?.[appVehicleTypeKey?.toLowerCase?.()] ||
+        fareRanges?.[appVehicleTypeKey?.toUpperCase?.()] ||
+        fareRanges?.[vehicleTypeKey] ||
+        fareRanges?.[vehicleTypeKey?.toLowerCase?.()] ||
+        fareRanges?.[vehicleTypeKey?.toUpperCase?.()];
+
+    if (selectedFareData) {
+        return { fareData: selectedFareData, currency: selectedFareData.currency || fallbackCurrency };
+    }
+
+    const firstKey = fareRanges ? Object.keys(fareRanges)[0] : null;
+    return { fareData: firstKey ? fareRanges[firstKey] : null, currency: fallbackCurrency };
+};
 
 // ─── Bottom sheet header (map + current location button) ─────────────────────
 const BottomSheetHeader = (rideDistance, estimatedDuration, setShowPreference) => {
@@ -127,10 +197,23 @@ const SelectedVehicleCard = ({ vehicle, fare, isLoading }) => {
     );
 };
 
+SelectedVehicleCard.propTypes = {
+    vehicle: PropTypes.shape({
+        type: PropTypes.string,
+        make: PropTypes.string,
+        model: PropTypes.string,
+        year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        regNo: PropTypes.string,
+        verified: PropTypes.bool,
+    }),
+    fare: PropTypes.string,
+    isLoading: PropTypes.bool,
+};
+
 // ─── Main screen ──────────────────────────────────────────────────────────────
 const BookActingDriverScreen = () => {
     const { t } = useTranslation();
-    const { goBack, goBackToScreen } = useStackScreenStore();
+    const { goBack } = useStackScreenStore();
 
     const {
         paymentType,
@@ -141,6 +224,7 @@ const BookActingDriverScreen = () => {
         actingDriverVehicle,
         setRegionOfficeId,
         setRegionOfficeCode,
+        regionOfficeCode,
         couponCode,
     } = useRideBookingInfo();
 
@@ -148,10 +232,9 @@ const BookActingDriverScreen = () => {
 
     const {
         transformRideLocationsToDirectionPoints,
-        isRideLocationsReady,
     } = useDirectionLoad();
 
-    const { setDirectionPoints, routeLoading, setRouteLoading } = useMapStore();
+    const { setDirectionPoints, routeLoading } = useMapStore();
 
     const {
         bookTrip,
@@ -161,7 +244,7 @@ const BookActingDriverScreen = () => {
     } = useActingDriverBookTrip();
 
     const [isPaymentTypeOpen, setIsPaymentTypeOpen] = useState(false);
-    const [showPreference, setShowPreference] = useState(false);
+    const [, setShowPreference] = useState(false);
     const [showCoupon, setShowCoupon] = useState(false);
     const [isEstimationLoading, setIsEstimationLoading] = useState(false);
     const [fareDisplay, setFareDisplay] = useState(null);
@@ -171,7 +254,7 @@ const BookActingDriverScreen = () => {
     const [layoutHeight, setLayoutHeight] = useState(0);
 
       const layOutChange = (event) => {
-        const {width, height} = event.nativeEvent.layout;
+        const { height } = event.nativeEvent.layout;
         setLayoutHeight(height);
     }
 
@@ -203,9 +286,18 @@ const BookActingDriverScreen = () => {
     // ── Fare estimation ────────────────────────────────────────────────────────
     const onEstimationSuccess = useCallback(
         (data) => {
-            if (data?.result?.success) {
+            if (data?.result?.success || data?.success) {
                 if (data?.regionCode) setRegionOfficeCode(data.regionCode);
                 if (data?.regionOfficeId) setRegionOfficeId(data.regionOfficeId);
+
+                const appVehicleType = actingDriverVehicle?.type;
+                const vehicleTypeKey = getFareEngineVehicleType(appVehicleType);
+                const { fareData, currency } = getFareDataForVehicle(data, vehicleTypeKey, appVehicleType);
+                const nextFareDisplay = formatFareRange(fareData, currency);
+                if (nextFareDisplay) {
+                    setFareDisplay(nextFareDisplay);
+                    return;
+                }
 
                 const fareRanges = data?.result?.data?.fareRanges;
                 const vehicleT = actingDriverVehicle?.type;
@@ -244,8 +336,14 @@ const BookActingDriverScreen = () => {
             try {
                 setIsEstimationLoading(true);
                 if (longLoadTimerRef.current) clearTimeout(longLoadTimerRef.current);
-                const data = await getRideEstimation(payload);
-                if (cacheKey && data?.result?.success) setEstimationInCache(cacheKey, data);
+                let data = null;
+                try {
+                    data = await getFareEngineRange(payload);
+                } catch (fareEngineError) {
+                    console.warn('Fare engine range failed, falling back to ride estimation:', fareEngineError);
+                    data = await getRideEstimation(payload);
+                }
+                if (cacheKey && (data?.result?.success || data?.success)) setEstimationInCache(cacheKey, data);
                 onEstimationSuccess(data);
             } catch (_) {
                 showNotification(t('ride_estimation_title'), t('request_failed'), 'danger');
@@ -284,10 +382,12 @@ const BookActingDriverScreen = () => {
         const payload = {
             distance: rideDistance,
             duration: estimatedDuration,
+            zone: 'all',
+            regionCode: regionOfficeCode || 'default',
             coordinates: [rideStartLocation?.longitude, rideStartLocation?.latitude],
         };
         debouncedGetRideEstimation(payload, cacheKey);
-    }, [rideDistance, estimatedDuration, rideStartLocation, rideEndLocation, rideWayPoints]);
+    }, [rideDistance, estimatedDuration, regionOfficeCode, rideStartLocation, rideEndLocation, rideWayPoints]);
 
     useEffect(() => {
         if (rideDistance && estimatedDuration) {
@@ -312,11 +412,6 @@ const BookActingDriverScreen = () => {
         } catch (error) {
             console.error('Acting driver booking failed:', error);
         }
-    };
-
-    const handleRetry = () => {
-        if (rideDistance && estimatedDuration) getEstimatedFare();
-        else loadRoute();
     };
 
     const onRetryFetchRoute = () => loadRoute();

@@ -88,7 +88,7 @@ module.exports = function (CLASS) {
    *     "password": "securePassword@123"
    * }
    */
-// we wont use this signup route
+  // we wont use this signup route
   CLASS.prototype.publicridesSignupCustomer = async function (req, res) {
     const [payload, errRes] = await this.validate(
       req.body,
@@ -340,7 +340,7 @@ module.exports = function (CLASS) {
       return this.handleError(err, res);
     }
   };
-// Initially user signup with this route, after that in profile page they update the profile details
+  // Initially user signup with this route, after that in profile page they update the profile details
   CLASS.prototype.publicridesUpdatePassangerProfile = async function (
     req,
     res,
@@ -351,7 +351,9 @@ module.exports = function (CLASS) {
         req.body,
       );
       if (!passenger)
-        return res.status(400).json({ success: false, message: "Failed to update profile" });
+        return res
+          .status(400)
+          .json({ success: false, message: "Failed to update profile" });
       const updatedPassenger = await Passanger.getPassangerWithId(
         req.passanger.id,
       );
@@ -2227,15 +2229,24 @@ module.exports = function (CLASS) {
             await VehicleVerifierMParivahan.verfiyRC(normalizedRegNo);
           if (parivahanResult.valid && parivahanResult.data) {
             const d = parivahanResult.data;
-            vehicleDoc.make = d.maker_desc || d.maker || "";
-            vehicleDoc.model = d.model || d.vehicle_class_desc || "";
-            vehicleDoc.type = mapParivahanVehicleClass(
-              d.vehicle_class_desc || "",
-            );
-            vehicleDoc.year = d.manufacturing_yr || d.reg_yr || "";
-            vehicleDoc.fuelType = d.fuel_desc || "";
+            // Map MParivahan response fields to vehicle document
+            vehicleDoc.make = d.brand_name || d.maker_desc || d.maker || "";
+            vehicleDoc.model =
+              d.brand_model || d.model || d.vehicle_class_desc || "";
+            vehicleDoc.type =
+              d.class || mapParivahanVehicleClass(d.vehicle_class_desc || "");
+            vehicleDoc.year = d.registration_date
+              ? new Date(d.registration_date).getFullYear()
+              : d.manufacturing_yr || d.reg_yr || "";
+            vehicleDoc.fuelType = d.fuel_type || d.fuel_desc || "";
             vehicleDoc.color = d.color || "";
             vehicleDoc.ownerName = d.owner_name || "";
+            // Store additional verified details
+            vehicleDoc.seatingCapacity = d.seating_capacity || "";
+            vehicleDoc.cubicCapacity = d.cubic_capacity || "";
+            vehicleDoc.chassisNumber = d.chassis_number || "";
+            vehicleDoc.engineNumber = d.engine_number || "";
+            vehicleDoc.rcStatus = d.rc_status || "";
             vehicleDoc.verified = true;
             vehicleDoc.parivahanData = d;
           } else {
@@ -2265,6 +2276,15 @@ module.exports = function (CLASS) {
         vehicleDoc.year = vehicleInfo.year || "";
         vehicleDoc.fuelType = vehicleInfo.fuelType || "";
         vehicleDoc.color = vehicleInfo.color || "";
+        vehicleDoc.transmission = Array.isArray(vehicleInfo.transmission)
+          ? vehicleInfo.transmission
+          : vehicleInfo.transmission
+          ? [vehicleInfo.transmission]
+          : [];
+        vehicleDoc.features = Array.isArray(vehicleInfo.features)
+          ? vehicleInfo.features
+          : [];
+        vehicleDoc.additionalInfo = vehicleInfo.additionalInfo || "";
         if (
           vehicleInfo.maxSpeed !== undefined &&
           vehicleInfo.maxSpeed !== null
@@ -2276,7 +2296,10 @@ module.exports = function (CLASS) {
 
       // Save to vehicles collection (upsert by regNo + passangerId)
       const existingVehicle =
-        await Vehicle.getVehicleByVehicleNumber(normalizedRegNo);
+        await Vehicle.getPassangerVehicleByVehicleNumber(
+          passangerId,
+          normalizedRegNo,
+        );
       let vehicleId;
 
       if (existingVehicle) {

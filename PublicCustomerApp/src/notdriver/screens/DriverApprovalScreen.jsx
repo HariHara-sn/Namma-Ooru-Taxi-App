@@ -10,7 +10,6 @@ import { showNotification } from '../../common/components/Alerts/showNotificatio
 import APIRequest from '../../common/APIRequest';
 import publicrideDriverApi from '../api/publicrideDriverApi';
 import BGLocationTask from '../../common/controllers/BGLocationTask';
-import { DataStore } from '../../common/controllers/DataStore';
 import FullScreenLoader from '../../common/loaders/FullScreenLoader';
 import { settingsScreen } from '../styles/SettingsStyles';
 import { height } from '../../common/utils/scalingutils';
@@ -113,6 +112,7 @@ const DriverApprovalScreen = () => {
   };
 
   const handleLogout = async () => {
+    setLoading(true);
     const url = `/publicrides/driver/v2/publicridesdriverLogout?platform=${Platform.OS}`;
     const api = new APIRequest();
 
@@ -124,28 +124,16 @@ const DriverApprovalScreen = () => {
         userInfo?.token,
       );
 
-      if (!response.success)
-        throw new Error(response.message || 'Network request failed');
-
-      setLoading(true);
-      setMapMarkers(null);
-
-      setTimeout(() => {
-        // resetAllStore();
-        logout('driver');
-        setLoading(false);
-        BGLocationTask.stopDriverBgTask();
-        setLoading(false);
-      }, 1000);
-
-      DataStore.clearSession();
+      if (!response?.success) {
+        console.log(response?.message || 'Driver logout API failed');
+      }
     } catch (error) {
-      // console.log(error, 'Error logging out');
-      showNotification(
-        error?.message || 'Network request failed',
-        t('pls_try_later'),
-        'danger',
-      );
+      console.log(error, 'Driver logout API failed; clearing local session');
+    } finally {
+      setMapMarkers(null);
+      BGLocationTask.stopDriverBgTask();
+      logout('driver');
+      setLoading(false);
     }
   };
 

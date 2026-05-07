@@ -1,0 +1,21 @@
+🧭 Core concept: Heading / Azimuth via Sensor Fusion
+
+The “compass-like” behavior comes from calculating the phone’s azimuth angle (rotation around the Z-axis relative to magnetic north or true north).
+
+This relies on:
+
+1. Sensors involved
+Magnetometer → detects Earth’s magnetic field (gives north direction)
+Accelerometer → detects gravity (used to determine device tilt)
+Gyroscope → detects rotation changes (smooths movement)
+
+
+
+Kill PORT :
+1. netstat -ano | findstr :8080.  - its find the ports
+2. taskkill /PID 2660 /F  - this kill the port [replace the '2600']
+
+
+If the port is in use: kill the 8081 and establish 8081
+adb reverse tcp:8081 tcp:8081
+

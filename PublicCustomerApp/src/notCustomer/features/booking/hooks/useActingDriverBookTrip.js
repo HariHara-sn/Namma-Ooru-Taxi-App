@@ -10,6 +10,10 @@ import { showNotification } from '../../../components/NotificationManger';
 import useRideMatching from '../../../hooks/useRideMatching';
 import useUserInfoStore from '../../../../common/store/useUserInfoStore';
 import rideMatchingSocketService from '../../../controllers/RideMatchingSocketService';
+import {
+  isDriverMatchSimulationEnabled,
+  simulateDriverMatch,
+} from '../utils/simulateDriverMatch';
 
 const useActingDriverBookTrip = () => {
   const { setStackScreen } = useStackScreenStore();
@@ -46,6 +50,14 @@ const useActingDriverBookTrip = () => {
               message: t('searching_for_drivers', 'Searching for drivers...'),
               driver: null,
             });
+
+            if (isDriverMatchSimulationEnabled()) {
+              simulateDriverMatch(result, result?.trip?.vehicleType);
+              setStackScreen('Home', {});
+              setStackScreen('RideStatus', {});
+              return result;
+            }
+
             setStackScreen('RideStatus', {});
 
             let connected = rideMatchingSocketService.isConnected();

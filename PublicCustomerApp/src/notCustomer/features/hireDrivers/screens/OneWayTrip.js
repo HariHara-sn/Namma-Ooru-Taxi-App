@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors, Fonts } from '../../../constants/constants';
 import { useStackScreenStore } from '../../../store/useStackScreenStore';
 import useLocationStore from '../../../store/useLocationStore';
@@ -38,7 +37,7 @@ const OneWayTrip = () => {
       <TouchableOpacity 
         style={styles.searchContainer} 
         activeOpacity={0.8}
-        onPress={() => setStackScreen('HireDriversLocationSearchScreen', { tripType: 'One Way' })}
+        onPress={() => setStackScreen('HireDriversLocationSearchScreen', {})}
       >
         <Ionicons name="search" size={24} color="#5e626a" style={styles.searchIcon} />
         <View style={{ flex: 1 }}>
@@ -80,7 +79,6 @@ const OneWayTrip = () => {
       <CarSelectionBottomSheet 
         visible={showCarSelection} 
         onClose={() => setShowCarSelection(false)} 
-        tripType="one_way"
       />
     </View>
   );

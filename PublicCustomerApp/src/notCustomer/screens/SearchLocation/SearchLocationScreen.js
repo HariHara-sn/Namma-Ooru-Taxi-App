@@ -1,4 +1,4 @@
-import {Animated, Text, TouchableOpacity, View, BackHandler} from 'react-native';
+import {Animated, Text, TouchableOpacity, View} from 'react-native';
 import React, {useCallback, useRef, useState,useEffect} from 'react';
 import NavBar from '../../components/NavBar';
 import {useStackScreenStore} from '../../store/useStackScreenStore';
@@ -8,21 +8,13 @@ import useMapStore from '../../features/map/store/useMapStore';
 import locationTask from '../../controllers/GetCurrentLocation';
 import {addLocation} from '../../styles/AddLocationStyles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import polyline from '@mapbox/polyline';
-import Polyline from '../../controllers/NEMap/Polyline';
-
-import Schdule from '../../assets/image/svgIcons/schdule.svg';
-import Onway from '../../assets/image/svgIcons/onway.svg';
-
 import useRideSelectionStore from '../../store/useRideSelectionStore';
 import TripType from './TripType';
 import RideType from './RideType';
 import ScheduleContainer from './ScheduleContainer';
 import { rideType } from '../../constants/JsonData';
-import { utils } from '../../utils/Utils';
 import { rideEstimation } from '../../API/APICalls/RideAPICalls';
 import FullScreenLoader from '../../components/Loaders/FullScreenLoader';
-import VehicleListScreen from '../VehicleListScreen';
 import useMapStyleStore from '../../store/useMapStyleStore';
 import { colors } from '../../constants/constants';
 import Contactsheet from '../../components/Contactsheet';
@@ -39,7 +31,6 @@ const SearchLocation = () => {
     setDirectionPoints,
     setSearchUnit,
     directionPoints,
-    setGeometries,
   } = useMapStore();
 
   const {setSelectedTrip, selectedTrip, selectedRide, setSelectedRide, scheduleDateTime, setScheduleDateTime,vehicleList, setVehicleList, tripFor, setSelectedContact,setRideDistance,setRideDuration,rideDistance} =
@@ -47,7 +38,7 @@ const SearchLocation = () => {
 
   const [isHidden, setIsHidden] = useState(false);
   const [showTripFor, setShowTripFor] = useState(false);
-  const [selectedContent, setSelectedContent] = useState('');
+  const [selectedContent] = useState('');
   const [showScheduleContainer, setShowScheduleContainer] = useState(false);
 
   const bounceValue = useRef(new Animated.Value(1200)).current;
@@ -144,16 +135,6 @@ const SearchLocation = () => {
     estimationMutate(payload)
   };
 
-  const onRideTypePress = () => {
-    setSelectedContent('RideType');
-    _toggleSubview();
-  };
-
-  const onTripTypePress = () => {
-    setSelectedContent('TripType');
-    _toggleSubview();
-  };
-
   const onTripSelect = item => {
     setSelectedTrip(item);
     _toggleSubview();
@@ -199,9 +180,6 @@ const SearchLocation = () => {
   }
 
 
-const scheduleDate = scheduleDateTime?.date ? utils.formatDate(scheduleDateTime?.date) : ""
-const scheduleTime = scheduleDateTime?.time ? utils.timestampTo12HourFormat(scheduleDateTime?.time) : ""
-
   return (
     <>
       {isEstimationLoading && <FullScreenLoader />}
@@ -210,14 +188,6 @@ const scheduleTime = scheduleDateTime?.time ? utils.timestampTo12HourFormat(sche
     
   
       <View style={addLocation.rideSelectionContainer}>
-        <TouchableOpacity
-          style={addLocation.rideSelection}
-          onPress={() => onRideTypePress()}>
-          <Schdule />
-          <Text style={addLocation.rideSelectionTxt}>{selectedRide.name}{' '}{scheduleDate ? scheduleDate + "-" + scheduleTime : scheduleTime}
-          </Text>
-          {!scheduleDate && <Ionicons name={"chevron-down"} size={14} color={"white"} />}
-        </TouchableOpacity>
         {/* <TouchableOpacity
           style={addLocation.rideSelection}
           onPress={() => onTripTypePress()}>

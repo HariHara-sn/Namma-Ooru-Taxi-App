@@ -9,35 +9,50 @@
  *   values      – { vehicleType, make, model, year, fuelType, transmission, features, additionalInfo }
  *   onChange    – (field, value) => void
  */
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal, FlatList } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { colors } from '../../../constants/constants';
+import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
-  VEHICLE_TYPE_OPTIONS as LOCAL_VEHICLE_TYPES,
-  FUEL_TYPE_OPTIONS as LOCAL_FUEL_TYPES,
-  TRANSMISSION_OPTIONS as LOCAL_TRANSMISSION,
-  MAKES_IN_INDIA as LOCAL_MAKES,
-  MODELS_BY_MAKE as LOCAL_MODELS,
-  YEAR_OPTIONS,
-  ADVANCED_FEATURES as LOCAL_FEATURES,
-} from '../constants/vehicleData';
-import SearchablePickerModal from './SearchablePickerModal';
-import styles from '../styles/vehicleStyles';
+  Alert,
+  FlatList,
+  Modal,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import useOnboardingConfigStore from '../../../../common/store/useOnboardingConfigStore';
 import useUserStore from '../../../../common/store/useUserStore';
+import {colors} from '../../../constants/constants';
+import {
+  ADVANCED_FEATURES as LOCAL_FEATURES,
+  AUTOMATIC_SUBTYPES as LOCAL_AUTOMATIC_SUBTYPES,
+  FUEL_TYPE_OPTIONS as LOCAL_FUEL_TYPES,
+  MAKES_IN_INDIA as LOCAL_MAKES,
+  MODELS_BY_MAKE as LOCAL_MODELS,
+  TRANSMISSION_TYPES as LOCAL_TRANSMISSION_TYPES,
+  VEHICLE_TYPE_OPTIONS as LOCAL_VEHICLE_TYPES,
+  YEAR_OPTIONS,
+} from '../constants/vehicleData';
+import styles from '../styles/vehicleStyles';
+import SearchablePickerModal from './SearchablePickerModal';
 
-const ChipRow = ({ options, selected, onSelect }) => (
+const ChipRow = ({options, selected, onSelect}) => (
   <View style={styles.typeChipsRow}>
-    {options.map((opt) => (
+    {options.map(opt => (
       <TouchableOpacity
         key={opt.value}
-        style={[styles.typeChip, selected === opt.value && styles.typeChipSelected]}
+        style={[
+          styles.typeChip,
+          selected === opt.value && styles.typeChipSelected,
+        ]}
         onPress={() => onSelect(opt.value)}
-        activeOpacity={0.7}
-      >
-        <Text style={[styles.typeChipText, selected === opt.value && styles.typeChipTextSelected]}>
+        activeOpacity={0.7}>
+        <Text
+          style={[
+            styles.typeChipText,
+            selected === opt.value && styles.typeChipTextSelected,
+          ]}>
           {opt.label}
         </Text>
       </TouchableOpacity>
@@ -46,18 +61,18 @@ const ChipRow = ({ options, selected, onSelect }) => (
 );
 
 // Multi-select chip row — `selected` is an array
-const MultiChipRow = ({ options, selected = [], onToggle }) => (
+const MultiChipRow = ({options, selected = [], onToggle}) => (
   <View style={styles.typeChipsRow}>
-    {options.map((opt) => {
+    {options.map(opt => {
       const isOn = selected.includes(opt.value);
       return (
         <TouchableOpacity
           key={opt.value}
           style={[styles.typeChip, isOn && styles.typeChipSelected]}
           onPress={() => onToggle(opt.value)}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.typeChipText, isOn && styles.typeChipTextSelected]}>
+          activeOpacity={0.7}>
+          <Text
+            style={[styles.typeChipText, isOn && styles.typeChipTextSelected]}>
             {opt.label}
           </Text>
         </TouchableOpacity>
@@ -66,142 +81,240 @@ const MultiChipRow = ({ options, selected = [], onToggle }) => (
   </View>
 );
 
-const PickerTrigger = ({ value, placeholder, onPress }) => (
+const PickerTrigger = ({value, placeholder, onPress}) => (
   <TouchableOpacity
     style={[styles.input, styles.pickerTrigger]}
     onPress={onPress}
-    activeOpacity={0.7}
-  >
-    <Text style={[styles.pickerTriggerText, !value && styles.pickerTriggerPlaceholder]}>
+    activeOpacity={0.7}>
+    <Text
+      style={[
+        styles.pickerTriggerText,
+        !value && styles.pickerTriggerPlaceholder,
+      ]}>
       {value || placeholder}
     </Text>
     <Ionicons name="chevron-down-outline" size={18} color={colors.grey_dark} />
   </TouchableOpacity>
 );
 
-const VehicleFormFields = ({ values, onChange }) => {
-  const { t } = useTranslation();
+const getOptionLabel = (options, value) =>
+  options.find(option => option.value === value)?.label || value;
+
+const getTransmissionTypes = options =>
+  options.filter(option => ['manual', 'automatic'].includes(option.value));
+
+const VehicleFormFields = ({values, onChange}) => {
+  const {t} = useTranslation();
   const [makeVisible, setMakeVisible] = useState(false);
   const [modelVisible, setModelVisible] = useState(false);
   const [yearVisible, setYearVisible] = useState(false);
   const [featuresVisible, setFeaturesVisible] = useState(false);
   const [fuelTypeVisible, setFuelTypeVisible] = useState(false);
   const [transmissionVisible, setTransmissionVisible] = useState(false);
-  const { config, fetchConfig } = useOnboardingConfigStore();
-  const { userInfo, userRole } = useUserStore();
+  const [customFeature, setCustomFeature] = useState('');
+  const {config, fetchConfig} = useOnboardingConfigStore();
+  const {userInfo, userRole} = useUserStore();
 
   useEffect(() => {
     fetchConfig(userInfo?.token, userRole);
   }, []);
 
-  const VEHICLE_TYPE_OPTIONS = config?.VEHICLE_TYPE_OPTIONS ?? LOCAL_VEHICLE_TYPES;
+  const VEHICLE_TYPE_OPTIONS =
+    config?.VEHICLE_TYPE_OPTIONS ?? LOCAL_VEHICLE_TYPES;
   const FUEL_TYPE_OPTIONS = config?.FUEL_TYPE_OPTIONS ?? LOCAL_FUEL_TYPES;
-  const TRANSMISSION_OPTIONS = config?.TRANSMISSION_OPTIONS ?? LOCAL_TRANSMISSION;
+  const TRANSMISSION_TYPES = getTransmissionTypes(
+    config?.TRANSMISSION_TYPES ??
+      config?.TRANSMISSION_OPTIONS ??
+      LOCAL_TRANSMISSION_TYPES,
+  );
+  const AUTOMATIC_SUBTYPES =
+    config?.AUTOMATIC_SUBTYPES ?? LOCAL_AUTOMATIC_SUBTYPES;
   const MAKES_IN_INDIA = config?.MAKES_IN_INDIA ?? LOCAL_MAKES;
   const MODELS_BY_MAKE = config?.MODELS_BY_MAKE ?? LOCAL_MODELS;
   const ADVANCED_FEATURES = config?.ADVANCED_FEATURES ?? LOCAL_FEATURES;
 
-  const { vehicleType, make, model, year, fuelType, transmission, features, additionalInfo, maxSpeed } = values;
+  const {
+    vehicleType,
+    make,
+    model,
+    year,
+    fuelType,
+    transmission,
+    features,
+    additionalInfo,
+    maxSpeed,
+  } = values;
 
-  const toggleFeature = (val) => {
-    const current = Array.isArray(features) ? features : [];
-    const updated = current.includes(val)
-      ? current.filter((f) => f !== val)
-      : [...current, val];
-    onChange('features', updated);
+  const [tempTransmission, setTempTransmission] = useState([]);
+  const [tempFeatures, setTempFeatures] = useState([]);
+
+  const toggleTempFeature = val => {
+    setTempFeatures(prev =>
+      prev.includes(val) ? prev.filter(f => f !== val) : [...prev, val],
+    );
   };
 
-  const toggleTransmission = (val) => {
-    const current = Array.isArray(transmission) ? transmission : [];
-    const updated = current.includes(val)
-      ? current.filter((t) => t !== val)
-      : [...current, val];
-    onChange('transmission', updated);
+  const selectTransmissionType = val => {
+    setTempTransmission(val === 'automatic' ? ['automatic'] : [val]);
   };
+
+  const selectAutomaticSubtype = val => {
+    setTempTransmission(['automatic', val]);
+  };
+
+  const addCustomTempOption = (value, reset, setTempItems) => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return;
+    }
+    setTempItems(prev => {
+      const alreadyAdded = prev.some(
+        item => item.toLowerCase() === trimmed.toLowerCase(),
+      );
+      if (!alreadyAdded) {
+        return [...prev, trimmed];
+      }
+      return prev;
+    });
+    reset('');
+  };
+
+  const featureModalOptions = [
+    ...ADVANCED_FEATURES,
+    ...(Array.isArray(tempFeatures) ? tempFeatures : [])
+      .filter(item => !ADVANCED_FEATURES.some(opt => opt.value === item))
+      .map(item => ({label: item, value: item})),
+  ];
 
   return (
     <>
-      <Text style={styles.inputLabel}>{t('vehicle_type', 'Vehicle Type')} *</Text>
+      <Text style={styles.inputLabel}>
+        {t('vehicle_type', 'Vehicle Type')} *
+      </Text>
       <ChipRow
         options={VEHICLE_TYPE_OPTIONS}
         selected={vehicleType}
-        onSelect={(v) => onChange('vehicleType', v)}
+        onSelect={v => onChange('vehicleType', v)}
       />
 
-      <Text style={styles.inputLabel}>{t('make', 'Make')}</Text>
-      <PickerTrigger
-        value={make}
-        placeholder="Select make"
-        onPress={() => setMakeVisible(true)}
-      />
+      {!!vehicleType && (
+        <>
+          <Text style={styles.inputLabel}>{t('make', 'Make')} *</Text>
+          <PickerTrigger
+            value={make}
+            placeholder="Select make"
+            onPress={() => setMakeVisible(true)}
+          />
+        </>
+      )}
 
-      <Text style={styles.inputLabel}>{t('model', 'Model')}</Text>
-      <PickerTrigger
-        value={model}
-        placeholder="Select model"
-        onPress={() => setModelVisible(true)}
-      />
+      {!!make && (
+        <>
+          <Text style={styles.inputLabel}>{t('model', 'Model')} *</Text>
+          <PickerTrigger
+            value={model}
+            placeholder="Select model"
+            onPress={() => setModelVisible(true)}
+          />
+        </>
+      )}
 
-      <Text style={styles.inputLabel}>{t('year', 'Year')}</Text>
+      <Text style={styles.inputLabel}>{t('year', 'Year')} *</Text>
       <PickerTrigger
         value={year}
         placeholder="Select year"
         onPress={() => setYearVisible(true)}
       />
 
-      <Text style={styles.inputLabel}>{t('max_speed', 'Max Speed (km/h)')}</Text>
+      <Text style={styles.inputLabel}>
+        {t('speedLimit', 'Speed Limit (km/h)')} *
+      </Text>
       <TextInput
         style={[
           styles.input,
-          maxSpeed && Number(maxSpeed) < 40 && { borderColor: '#E53935', borderWidth: 1.5 },
+          maxSpeed &&
+            Number(maxSpeed) < 40 && {
+              borderColor: '#E53935',
+              borderWidth: 1.5,
+            },
         ]}
         value={maxSpeed}
-        onChangeText={(v) => onChange('maxSpeed', v.replace(/[^0-9]/g, ''))}
+        onChangeText={v => onChange('maxSpeed', v.replace(/[^0-9]/g, ''))}
         placeholder="Min 40 km/h"
         placeholderTextColor={colors.grey_dark}
         keyboardType="numeric"
         maxLength={3}
       />
       {!!maxSpeed && Number(maxSpeed) < 40 && (
-        <Text style={{ color: '#E53935', fontSize: 12, marginTop: -8, marginBottom: 8 }}>
-          {t('max_speed_min_error', 'Minimum allowed max speed is 40 km/h')}
+        <Text
+          style={{
+            color: '#E53935',
+            fontSize: 12,
+            marginTop: -8,
+            marginBottom: 8,
+          }}>
+          {t(
+            'speed_limit_min_error',
+            'The speed limit cannot be lower than 40 km/h',
+          )}
         </Text>
       )}
 
-      <Text style={styles.inputLabel}>{t('fuel_type', 'Fuel Type')}</Text>
+      {/* <Text style={styles.inputLabel}>{t('fuel_type', 'Fuel Type')}</Text>
       <PickerTrigger
         value={fuelType || null}
         placeholder="Select fuel type"
         onPress={() => setFuelTypeVisible(true)}
-      />
+      /> */}
 
-      <Text style={styles.inputLabel}>{t('transmission', 'Transmission')}</Text>
+      <Text style={styles.inputLabel}>
+        {t('transmission', 'Transmission (Vehicle Specification)')} *
+      </Text>
       <PickerTrigger
         value={
           Array.isArray(transmission) && transmission.length > 0
-            ? transmission.join(', ')
+            ? transmission
+                .map(value =>
+                  getOptionLabel(
+                    [...TRANSMISSION_TYPES, ...AUTOMATIC_SUBTYPES],
+                    value,
+                  ),
+                )
+                .join(', ')
             : null
         }
         placeholder="Select transmission"
-        onPress={() => setTransmissionVisible(true)}
+        onPress={() => {
+          setTempTransmission(Array.isArray(transmission) ? transmission : []);
+          setTransmissionVisible(true);
+        }}
       />
 
-      <Text style={styles.inputLabel}>{t('advanced_features', 'Advanced Features')}</Text>
+      <Text style={styles.inputLabel}>
+        {t('advanced_features', 'Advanced Features')} *
+      </Text>
       <PickerTrigger
         value={
           Array.isArray(features) && features.length > 0
-            ? `${features.length} feature${features.length > 1 ? 's' : ''} selected`
+            ? `${features.length} feature${
+                features.length > 1 ? 's' : ''
+              } selected`
             : null
         }
         placeholder="Select features"
-        onPress={() => setFeaturesVisible(true)}
+        onPress={() => {
+          setTempFeatures(Array.isArray(features) ? features : []);
+          setFeaturesVisible(true);
+        }}
       />
 
-      <Text style={styles.inputLabel}>{t('additional_info', 'Additional Info')}</Text>
+      <Text style={styles.inputLabel}>
+        {t('additional_info', 'Additional Info')}
+      </Text>
       <TextInput
         style={[styles.input, styles.inputMultiline]}
         value={additionalInfo}
-        onChangeText={(v) => onChange('additionalInfo', v)}
+        onChangeText={v => onChange('additionalInfo', v)}
         placeholder="Any other details about your vehicle"
         placeholderTextColor={colors.grey_dark}
         multiline
@@ -213,134 +326,236 @@ const VehicleFormFields = ({ values, onChange }) => {
         visible={makeVisible}
         title="Select Make"
         items={MAKES_IN_INDIA}
-        onSelect={(v) => { onChange('make', v); onChange('model', ''); }}
+        onSelect={v => {
+          onChange('make', v);
+          onChange('model', '');
+        }}
         onClose={() => setMakeVisible(false)}
       />
       <SearchablePickerModal
         visible={modelVisible}
         title="Select Model"
         items={MODELS_BY_MAKE[make] || ['Others']}
-        onSelect={(v) => onChange('model', v)}
+        onSelect={v => onChange('model', v)}
         onClose={() => setModelVisible(false)}
       />
       <SearchablePickerModal
         visible={yearVisible}
         title="Select Year"
         items={YEAR_OPTIONS}
-        onSelect={(v) => onChange('year', v)}
+        onSelect={v => onChange('year', v)}
         onClose={() => setYearVisible(false)}
       />
 
       {/* Single-select fuel type modal */}
-      <Modal
+      {/* <Modal
         visible={fuelTypeVisible}
         animationType="slide"
         transparent
-        onRequestClose={() => setFuelTypeVisible(false)}
-      >
+        onRequestClose={() => setFuelTypeVisible(false)}>
         <View style={styles.pickerOverlay}>
           <View style={styles.pickerSheet}>
             <View style={styles.pickerHeader}>
-              <Text style={styles.pickerTitle}>{t('fuel_type', 'Fuel Type')}</Text>
+              <Text style={styles.pickerTitle}>
+                {t('fuel_type', 'Fuel Type')}
+              </Text>
               <TouchableOpacity
                 onPress={() => setFuelTypeVisible(false)}
                 activeOpacity={0.7}
-                style={styles.pickerCloseBtn}
-              >
+                style={styles.pickerCloseBtn}>
                 <Ionicons name="close" size={22} color={colors.black} />
               </TouchableOpacity>
             </View>
             <FlatList
               data={FUEL_TYPE_OPTIONS}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => {
+              keyExtractor={item => item.value}
+              renderItem={({item}) => {
                 const isSelected = fuelType === item.value;
                 return (
                   <TouchableOpacity
                     style={[
                       styles.pickerItem,
-                      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-                      isSelected && { backgroundColor: '#F0EFFF', borderLeftWidth: 3, borderLeftColor: colors.black },
+                      {
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      },
+                      isSelected && {
+                        backgroundColor: '#F0EFFF',
+                        borderLeftWidth: 3,
+                        borderLeftColor: colors.black,
+                      },
                     ]}
-                    onPress={() => { onChange('fuelType', item.value); setFuelTypeVisible(false); }}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={[styles.pickerItemText, isSelected && { fontWeight: '600', color: colors.black }]}>
+                    onPress={() => {
+                      onChange('fuelType', item.value);
+                      setFuelTypeVisible(false);
+                    }}
+                    activeOpacity={0.7}>
+                    <Text
+                      style={[
+                        styles.pickerItemText,
+                        isSelected && {fontWeight: '600', color: colors.black},
+                      ]}>
                       {item.label}
                     </Text>
                     {isSelected && (
-                      <Ionicons name="checkmark-circle" size={20} color={colors.black} />
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={20}
+                        color={colors.black}
+                      />
                     )}
                   </TouchableOpacity>
                 );
               }}
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 8 }}
+              contentContainerStyle={{paddingBottom: 8}}
             />
             <TouchableOpacity
               style={styles.addBtn}
               onPress={() => setFuelTypeVisible(false)}
-              activeOpacity={0.8}
-            >
+              activeOpacity={0.8}>
               <Text style={styles.addBtnText}>{t('confirm', 'Confirm')}</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
-      {/* Multi-select transmission modal */}
+      {/* Transmission modal */}
       <Modal
         visible={transmissionVisible}
         animationType="slide"
         transparent
-        onRequestClose={() => setTransmissionVisible(false)}
-      >
+        onRequestClose={() => setTransmissionVisible(false)}>
         <View style={styles.pickerOverlay}>
           <View style={styles.pickerSheet}>
             <View style={styles.pickerHeader}>
-              <Text style={styles.pickerTitle}>{t('transmission', 'Transmission')}</Text>
+              <Text style={styles.pickerTitle}>
+                {t('transmission', 'Transmission')}
+              </Text>
               <TouchableOpacity
                 onPress={() => setTransmissionVisible(false)}
                 activeOpacity={0.7}
-                style={styles.pickerCloseBtn}
-              >
+                style={styles.pickerCloseBtn}>
                 <Ionicons name="close" size={22} color={colors.black} />
               </TouchableOpacity>
             </View>
             <FlatList
-              data={TRANSMISSION_OPTIONS}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => {
-                const isSelected = Array.isArray(transmission) && transmission?.includes(item.value);
+              data={TRANSMISSION_TYPES}
+              keyExtractor={item => item.value}
+              renderItem={({item}) => {
+                const isSelected =
+                  Array.isArray(tempTransmission) &&
+                  tempTransmission?.[0] === item.value;
                 return (
                   <TouchableOpacity
                     style={[
                       styles.pickerItem,
-                      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-                      isSelected && { backgroundColor: '#F0EFFF', borderLeftWidth: 3, borderLeftColor: colors.black },
+                      {
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      },
+                      isSelected && {
+                        backgroundColor: '#F0EFFF',
+                        borderLeftWidth: 3,
+                        borderLeftColor: colors.black,
+                      },
                     ]}
-                    onPress={() => toggleTransmission(item.value)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={[styles.pickerItemText, isSelected && { fontWeight: '600', color: colors.black }]}>
+                    onPress={() => selectTransmissionType(item.value)}
+                    activeOpacity={0.7}>
+                    <Text
+                      style={[
+                        styles.pickerItemText,
+                        isSelected && {fontWeight: '600', color: colors.black},
+                      ]}>
                       {item.label}
                     </Text>
                     {isSelected && (
-                      <Ionicons name="checkmark-circle" size={20} color={colors.black} />
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={20}
+                        color={colors.black}
+                      />
                     )}
                   </TouchableOpacity>
                 );
               }}
+              ListFooterComponent={
+                tempTransmission?.[0] === 'automatic' ? (
+                  <View>
+                    <Text style={[styles.inputLabel, {marginTop: 8}]}>
+                      {t('automatic_type', 'Automatic Type')}
+                    </Text>
+                    {AUTOMATIC_SUBTYPES.map(item => {
+                      const isSelected = tempTransmission?.[1] === item.value;
+                      return (
+                        <TouchableOpacity
+                          key={item.value}
+                          style={[
+                            styles.pickerItem,
+                            {
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginLeft: 20,
+                            },
+                            isSelected && {
+                              backgroundColor: '#F0EFFF',
+                              borderLeftWidth: 3,
+                              borderLeftColor: colors.black,
+                            },
+                          ]}
+                          onPress={() => selectAutomaticSubtype(item.value)}
+                          activeOpacity={0.7}>
+                          <Text
+                            style={[
+                              styles.pickerItemText,
+                              isSelected && {
+                                fontWeight: '600',
+                                color: colors.black,
+                              },
+                            ]}>
+                            {item.label}
+                          </Text>
+                          {isSelected && (
+                            <Ionicons
+                              name="checkmark-circle"
+                              size={20}
+                              color={colors.black}
+                            />
+                          )}
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                ) : null
+              }
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 8 }}
+              contentContainerStyle={{paddingBottom: 8}}
             />
             <TouchableOpacity
-              style={styles.addBtn}
-              onPress={() => setTransmissionVisible(false)}
-              activeOpacity={0.8}
-            >
+              style={[styles.addBtn, styles.pickerConfirmBtn]}
+              onPress={() => {
+                if (
+                  tempTransmission?.[0] === 'automatic' &&
+                  !tempTransmission?.[1]
+                ) {
+                  Alert.alert(
+                    t('error'),
+                    t(
+                      'automatic_type_required',
+                      'Please select an automatic type',
+                    ),
+                  );
+                  return;
+                }
+                onChange('transmission', tempTransmission);
+                setTransmissionVisible(false);
+              }}
+              activeOpacity={0.8}>
               <Text style={styles.addBtnText}>{t('confirm', 'Confirm')}</Text>
             </TouchableOpacity>
           </View>
@@ -352,53 +567,100 @@ const VehicleFormFields = ({ values, onChange }) => {
         visible={featuresVisible}
         animationType="slide"
         transparent
-        onRequestClose={() => setFeaturesVisible(false)}
-      >
+        onRequestClose={() => setFeaturesVisible(false)}>
         <View style={styles.pickerOverlay}>
           <View style={styles.pickerSheet}>
             <View style={styles.pickerHeader}>
-              <Text style={styles.pickerTitle}>{t('advanced_features', 'Advanced Features')}</Text>
+              <Text style={styles.pickerTitle}>
+                {t('advanced_features', 'Advanced Features')}
+              </Text>
               <TouchableOpacity
                 onPress={() => setFeaturesVisible(false)}
                 activeOpacity={0.7}
-                style={styles.pickerCloseBtn}
-              >
+                style={styles.pickerCloseBtn}>
                 <Ionicons name="close" size={22} color={colors.black} />
               </TouchableOpacity>
             </View>
             <FlatList
-              data={ADVANCED_FEATURES}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => {
-                const isSelected = Array.isArray(features) && features.includes(item.value);
+              data={featureModalOptions}
+              keyExtractor={item => item.value}
+              renderItem={({item}) => {
+                const isSelected =
+                  Array.isArray(tempFeatures) &&
+                  tempFeatures.includes(item.value);
                 return (
                   <TouchableOpacity
                     style={[
                       styles.pickerItem,
-                      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-                      isSelected && { backgroundColor: '#F0EFFF', borderLeftWidth: 3, borderLeftColor: colors.black },
+                      {
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      },
+                      isSelected && {
+                        backgroundColor: '#F0EFFF',
+                        borderLeftWidth: 3,
+                        borderLeftColor: colors.black,
+                      },
                     ]}
-                    onPress={() => toggleFeature(item.value)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={[styles.pickerItemText, isSelected && { fontWeight: '600', color: colors.black }]}>
+                    onPress={() => toggleTempFeature(item.value)}
+                    activeOpacity={0.7}>
+                    <Text
+                      style={[
+                        styles.pickerItemText,
+                        isSelected && {fontWeight: '600', color: colors.black},
+                      ]}>
                       {item.label}
                     </Text>
                     {isSelected && (
-                      <Ionicons name="checkmark-circle" size={20} color={colors.black} />
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={20}
+                        color={colors.black}
+                      />
                     )}
                   </TouchableOpacity>
                 );
               }}
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 8 }}
+              contentContainerStyle={{paddingBottom: 8}}
             />
+            <View style={styles.customFieldContainer}>
+              <TextInput
+                style={[styles.input, styles.customFieldInput]}
+                value={customFeature}
+                onChangeText={setCustomFeature}
+                placeholder={t(
+                  'custom_feature_placeholder',
+                  'Add custom feature',
+                )}
+                placeholderTextColor={colors.grey_dark}
+              />
+              <TouchableOpacity
+                style={styles.addCustomFieldBtn}
+                onPress={() =>
+                  addCustomTempOption(
+                    customFeature,
+                    setCustomFeature,
+                    setTempFeatures,
+                  )
+                }
+                activeOpacity={0.7}>
+                <Ionicons
+                  name="add-circle-outline"
+                  size={20}
+                  color={colors.black}
+                />
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity
-              style={styles.addBtn}
-              onPress={() => setFeaturesVisible(false)}
-              activeOpacity={0.8}
-            >
+              style={[styles.addBtn, styles.pickerConfirmBtn]}
+              onPress={() => {
+                onChange('features', tempFeatures);
+                setFeaturesVisible(false);
+              }}
+              activeOpacity={0.8}>
               <Text style={styles.addBtnText}>{t('confirm', 'Confirm')}</Text>
             </TouchableOpacity>
           </View>

@@ -29,6 +29,10 @@ import useRideMatching from '../../../notCustomer/hooks/useRideMatching';
 import {loginStyles} from '../../../notCustomer/styles/UserStyles';
 import useUserInfoStore from '../../store/useUserInfoStore';
 import useUserStore from '../../store/useUserStore';
+import {
+  isDevDriverBypassOtp,
+  isDevDriverBypassPhone,
+} from '../../utils/devDriverBypass';
 import {firebaselog_userLogin} from '../../utils/FirebaseAnalytics';
 // Utility function to mask phone number
 const maskPhoneNumber = phoneNumber => {
@@ -314,6 +318,11 @@ const OTPScreen = ({route}) => {
       if (navRole === 'customer') {
         verifyOTPMutate(payload);
       } else {
+        if (isDevDriverBypassPhone(loginPhoneNumber) && !isDevDriverBypassOtp(loginPhoneNumber, otpInput)) {
+          setOtpError(t('invalid_otp'));
+          showNotification(t('failed'), t('invalid_otp'), 'danger');
+          return;
+        }
         const sendToServer = {
           otp: otpInput,
           phone: `+${countryCode}${loginPhoneNumber}`,

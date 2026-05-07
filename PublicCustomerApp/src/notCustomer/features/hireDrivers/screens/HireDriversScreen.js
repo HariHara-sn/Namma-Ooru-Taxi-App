@@ -4,12 +4,9 @@ import { useTranslation } from 'react-i18next';
 import Geolocation from 'react-native-geolocation-service';
 import { useStackScreenStore } from '../../../store/useStackScreenStore';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors, Fonts } from '../../../constants/constants';
 
 import OneWayTrip from './OneWayTrip';
-import RoundTrip from './RoundTrip';
-import OutstationTrip from './OutstationTrip';
 import NEMap from '../../../../common/map/NeMap';
 import Marker from '../../../../common/map/Marker';
 import useLocationStore from '../../../store/useLocationStore';
@@ -59,7 +56,6 @@ const HireDriversScreen = () => {
     currentLocationName,
     setCurrentLocationName,
   } = useLocationStore();
-  const [activeTab, setActiveTab] = useState('oneWay');
   const [sourceLocation, setSourceLocation] = useState(getLocationLabel(currentLocationName, t('current_location', 'Current Location')));
   const [currentMapCenter, setCurrentMapCenter] = useState(null);
   const [mapHomeLocation, setMapHomeLocation] = useState(null);
@@ -196,15 +192,6 @@ const HireDriversScreen = () => {
     setSelectedInput(null);
   };
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'oneWay': return <OneWayTrip />;
-      case 'roundTrip': return <RoundTrip />;
-      case 'outstation': return <OutstationTrip />;
-      default: return null;
-    }
-  };
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1f222b" />
@@ -275,61 +262,8 @@ const HireDriversScreen = () => {
 
       {/* Bottom Sheet */}
       <View style={styles.bottomSheet}>
-        <View style={styles.banner}>
-          <Text style={styles.bannerText}>
-            {t('pickup_drop_diff', "in one way, pickup & drop are at 'different' locations in city")}
-          </Text>
-        </View>
-
-        <View style={styles.tabContainer}>
-          <TouchableOpacity 
-            style={styles.tab} 
-            onPress={() => setActiveTab('oneWay')}
-          >
-            <MaterialCommunityIcons 
-              name="ray-start-arrow" 
-              size={24} 
-              color={activeTab === 'oneWay' ? colors.black : '#999'} 
-            />
-            <Text style={[styles.tabText, activeTab === 'oneWay' && styles.activeTabText]}>
-              {t('one_way', 'One Way')}
-            </Text>
-            {activeTab === 'oneWay' && <View style={styles.activeIndicator} />}
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.tab} 
-            onPress={() => setActiveTab('roundTrip')}
-          >
-            <MaterialCommunityIcons 
-              name="sync" 
-              size={24} 
-              color={activeTab === 'roundTrip' ? colors.black : '#999'} 
-            />
-            <Text style={[styles.tabText, activeTab === 'roundTrip' && styles.activeTabText]}>
-              {t('round_trip', 'Round Trip')}
-            </Text>
-            {activeTab === 'roundTrip' && <View style={styles.activeIndicator} />}
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.tab} 
-            onPress={() => setActiveTab('outstation')}
-          >
-            <MaterialCommunityIcons 
-              name="highway" 
-              size={24} 
-              color={activeTab === 'outstation' ? colors.black : '#999'} 
-            />
-            <Text style={[styles.tabText, activeTab === 'outstation' && styles.activeTabText]}>
-              {t('outstation', 'Outstation')}
-            </Text>
-            {activeTab === 'outstation' && <View style={styles.activeIndicator} />}
-          </TouchableOpacity>
-        </View>
-
         <View style={styles.contentContainer}>
-          {renderContent()}
+          <OneWayTrip />
         </View>
       </View>
     </View>
@@ -407,46 +341,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     marginTop: -16, // Overlap the map slightly
     overflow: 'hidden',
-  },
-  banner: {
-    backgroundColor: '#e6f7ef', // Light green bg
-    paddingVertical: 8,
-    alignItems: 'center',
-  },
-  bannerText: {
-    fontFamily: Fonts.medium,
-    fontSize: 13,
-    color: '#00a86b',
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    position: 'relative',
-  },
-  tabText: {
-    fontFamily: Fonts.medium,
-    fontSize: 13,
-    color: '#999',
-    marginTop: 4,
-  },
-  activeTabText: {
-    color: colors.black,
-    fontFamily: Fonts.semi_bold,
-  },
-  activeIndicator: {
-    position: 'absolute',
-    bottom: -1,
-    left: '20%',
-    right: '20%',
-    height: 3,
-    backgroundColor: '#00a86b',
-    borderRadius: 3,
   },
   contentContainer: {
     flex: 1,

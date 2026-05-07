@@ -164,11 +164,11 @@ const GarageScreen = () => {
         />
 
         <DropdownField 
-          label="Transmission" 
+          label="Transmission (Vehicle Specification)" 
           options={TRANSMISSION_OPTIONS} 
           value={formData.transmission} 
           onSelect={(val) => handleChange('transmission', val)} 
-          placeholder="Select Transmission" 
+          placeholder="Select Transmission (Vehicle Specification)" 
           isMulti
         />
 
