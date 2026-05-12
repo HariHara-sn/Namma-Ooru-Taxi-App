@@ -268,15 +268,33 @@ const actingDriverTripSchemaPublicrides = Joi.object({
     .min(2)
     .required(),
   vehicleType: Joi.string().optional(),
-  pickupTime: Joi.number(),
   passangerCount: Joi.number().required(),
-  estimatedDistance: Joi.number().required(),
+  estimatedDistance: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
   estimatedDuration: Joi.number().required(),
   // Acting driver specifics
   isActingDriverTrip: Joi.boolean().valid(true).required(),
   actingDriverHours: Joi.number().allow(null).optional(),
   passangerVehicleId: Joi.string().required(),
   passangerVehicleType: Joi.string().required(),
+  // Duration fields
+  duration: Joi.number().optional(),
+  durationLabel: Joi.string().optional(),
+  durationStart: Joi.number().optional(),
+  durationEnd: Joi.number().optional(),
+  startDate: Joi.number().optional(),
+  endDate: Joi.number().optional(),
+  // Car specification
+  carSpecification: Joi.object({
+    type: Joi.string().optional(),
+    make: Joi.string().optional(),
+    model: Joi.string().optional(),
+    year: Joi.string().optional(),
+    regNo: Joi.string().optional(),
+    color: Joi.string().allow('').optional(),
+  }).optional(),
+  // Customer details
+  customerName: Joi.string().optional(),
+  customerPhone: Joi.string().optional(),
   // Booking details
   bookingFor: Joi.string().valid("MYSELF", "OTHERS").required(),
   bookingForName: Joi.string().allow("").optional(),

@@ -25,6 +25,10 @@ Router.post('/resendOTP', withTiming(passangerController, passangerController.pu
 Router.post('/bookTrip', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.publicridesBookTrip))
 Router.post('/bookActingDriverTrip', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.publicridesBookActingDriverTrip))
 Router.get('/getTrip', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.publicridesGetTrip))
+// Only one Trip details
+Router.get('/getActingDriverTrip', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.getActingDriverTrip))
+// All ActingDriver Trip details
+Router.get('/getActingDriverTrips', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.getActingDriverTrips))
 Router.get('/getTrips', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.publicridesGetTrips))
 Router.post('/getRideEstimation', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.publicridesGetRideEstimations))
 Router.get('/getUserStats', CheckPassangerAuthenticated, withTiming(passangerController, passangerController.publicridesGetUserStats))

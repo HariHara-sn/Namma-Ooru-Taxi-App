@@ -5,6 +5,17 @@ const Driver = require("../../Models/Driver");
 const Redis = require("../DB/Redis");
 const { ObjectId } = require('mongodb');
 const PublicRideRegionalOffices = require("../RegionalOffices/publicRideRegionalOffices");
+const Trip = require("../../Models/Trip");
+const Passanger = require("../../Models/Passanger");
+const OTP = require("../../Controllers/OTP");
+const RideStatus = require('../../Core/PublicRides/RideStatus');
+const { getUserSocketIds } = require("../../Services/WebsocketUtilities");
+const PushNotifiationService = require("../../Services/PushNotification/PushNotifiationService");
+const NOTPushNotifiationService = require("../../Services/PushNotification/NOTPushNotifiationService");
+const { sendTripDriverAssignedMessageWithOTP } = require("../../Services/PushNotification/publicRideCustomerNotification");
+const FareConfigs = require("../../Models/FareConfigs");
+const GeneratePresignedUrl = require("../../Controllers/GeneratePresignedUrl");
+const OTP_LENGTH = 4;
 
 module.exports = function (CLASS) {
      CLASS.prototype.verifyPublicRidesADOTP = async function (req, res) {
@@ -182,6 +193,81 @@ module.exports = function (CLASS) {
             return res.json({ success: true, message: `Driver modes updated successfully`, modes: updatedModes });
         } catch (err) {
             return this.handleError(err, res);
+        }
+    }
+
+    CLASS.prototype.acceptRideForActingDriver = async function (req, res) {
+        const driverId = req.driver.id;
+        try {
+            const tripId = req.body?.tripId;
+            if (!tripId) return res.status(400).json({ success: false, message: 'Trip ID is required' });
+
+            const driver = await Driver.getDriverWithId(driverId);
+            if (!driver) return res.status(400).json({ success: false, message: 'Driver not found' });
+
+            const trip = await Trip.getTripById(tripId);
+            if (!trip) return res.status(400).json({ success: false, message: 'Trip not found' });
+
+            if (!trip.publicRidesTrip) return res.status(400).json({ success: false, message: 'Trip is not a public rides trip' });
+            if (trip.status === RideStatus.CANCELLED) return res.status(400).json({ success: true, message: 'Trip is already cancelled', isCancelled: true });
+            
+            const passangerId = trip.passangerId;
+            const otp = OTP.generateOTP(OTP_LENGTH);
+            
+            const passanger = await Passanger.getPassangerWithId(passangerId);
+            if (!passanger) return res.status(400).json({ success: false, message: 'Passanger not found' });
+            
+            const tripTimeline = {
+                state: 'ACCEPTED',
+                timestamp: new Date().getTime(),
+            };
+            await Trip.assignDriverToTripwithTimeline(tripId, driverId, otp, tripTimeline);
+
+            const getMaxDistanceLimit = await FareConfigs.getMaxDistanceLimit(trip?.regionCode || 'default', trip?.vehicleType);
+            trip.maxDistanceLimit = getMaxDistanceLimit || null;
+
+            const driverInfo = {
+                driverName: driver.name,
+                driverPhone: driver.phone,
+                driverRating: driver.rating || null,
+                upiid: driver.bankDetails?.UPIID || null,
+                otp: otp,
+                driverLocaiton: driver.location
+            };
+   
+            if(driver?.documents?.driverPhoto){
+                const ImagePath = driver.documents.driverPhoto.replace(/^https:\/\/[^/]+\/?/, '');
+                const rjvw = new GeneratePresignedUrl()
+                driverInfo.driverPhoto = await rjvw.generatePresignedImg(ImagePath)
+                driverInfo.driverPhotoImg = ImagePath
+            }
+
+            const passangerSocketIds = await getUserSocketIds(passangerId);
+            const socketData = {
+                _id: trip._id,
+                driver: driverInfo,
+                otp,
+                tripStatus: "ACCEPTED",
+                tripData: trip
+            }
+            req.socketService.customerRideAssignHandler.emitDriverAllocated(passangerSocketIds, socketData);
+
+            if (passanger?.fcmToken) {
+                if(req.useNotPushNotification){
+                    await NOTPushNotifiationService.sendPushNotification(passanger.fcmToken.token, sendTripDriverAssignedMessageWithOTP(driver.name, otp), null, "high", { tripId: String(trip._id), "trip_status": 'ACCEPTED' });
+                }else{
+                    await PushNotifiationService.sendPushNotification(passanger.fcmToken.token, sendTripDriverAssignedMessageWithOTP(driver.name, otp), null, "high", { tripId: String(trip._id), "trip_status": 'ACCEPTED' });
+                }
+            }
+
+            const currentTrip = await Trip.getTripById(tripId);
+            if(!currentTrip) return res.status(400).json({ success: false, message: 'Trip not found' });
+            currentTrip.maxDistanceLimit = getMaxDistanceLimit || null;
+
+            return res.status(200).json({ success: true, message: 'Trip accepted successfully by acting driver', currentTrip: currentTrip });
+
+        } catch (error) {
+            return this.handleError(error, res)
         }
     }
 }

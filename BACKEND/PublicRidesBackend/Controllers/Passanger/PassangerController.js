@@ -17,6 +17,10 @@ class PassangerController extends Controller {
     this.publicridesBookActingDriverTrip =
       this.publicridesBookActingDriverTrip.bind(this);
     this.publicridesGetTrip = this.publicridesGetTrip.bind(this);
+    // Only one Trip details
+    this.getActingDriverTrip = this.getActingDriverTrip.bind(this);
+    // All ActingDriver Trip details
+    this.getActingDriverTrips = this.getActingDriverTrips.bind(this);
     this.publicridesGetTrips = this.publicridesGetTrips.bind(this);
     this.publicridesGetUserStats = this.publicridesGetUserStats.bind(this);
     this.publicridesUpdatePassangerProfile =
@@ -65,13 +69,13 @@ class PassangerController extends Controller {
     this.manageGarageUpdate = this.manageGarageUpdate.bind(this);
     this.manageGarageDelete = this.manageGarageDelete.bind(this);
     //TripType
-    this.bookActingDriverOnewayTrip =
-      this.bookActingDriverOnewayTrip.bind(this);
-    this.bookActingDriverRoundTrip = this.bookActingDriverRoundTrip.bind(this);
-    this.bookActingDriverOutstationTrip =
-      this.bookActingDriverOutstationTrip.bind(this);
-    this.bookActingDriverTripByType =
-      this.bookActingDriverTripByType.bind(this);
+    // this.bookActingDriverOnewayTrip =
+    //   this.bookActingDriverOnewayTrip.bind(this);
+    // this.bookActingDriverRoundTrip = this.bookActingDriverRoundTrip.bind(this);
+    // this.bookActingDriverOutstationTrip =
+    //   this.bookActingDriverOutstationTrip.bind(this);
+    // this.bookActingDriverTripByType =
+    //   this.bookActingDriverTripByType.bind(this);
   }
 }
 

@@ -11,11 +11,11 @@ const {
     actingDriverTripSchema
 } = require('../../Schemas/ActingDriverSchema');
 
-const TRIP_TYPES = {
-    ONEWAY: 'ONEWAY',
-    ROUNDTRIP: 'ROUNDTRIP',
-    OUTSTATION: 'OUTSTATION'
-};
+// const TRIP_TYPES = {
+//     ONEWAY: 'ONEWAY',
+//     ROUNDTRIP: 'ROUNDTRIP',
+//     OUTSTATION: 'OUTSTATION'
+// };
 
 function normalizeRegNo(regNo) {
     return String(regNo || '').trim().toUpperCase().replace(/\s+/g, '');
@@ -150,94 +150,94 @@ module.exports = function (CLASS) {
         }
     } 
 
-    CLASS.prototype.bookActingDriverOnewayTrip = async function (req, res) {
-        return this.bookActingDriverTripByType(req, res, TRIP_TYPES.ONEWAY);
-    }
+    // CLASS.prototype.bookActingDriverOnewayTrip = async function (req, res) {
+    //     return this.bookActingDriverTripByType(req, res, TRIP_TYPES.ONEWAY);
+    // }
 
-    CLASS.prototype.bookActingDriverRoundTrip = async function (req, res) {
-        return this.bookActingDriverTripByType(req, res, TRIP_TYPES.ROUNDTRIP);
-    }
+    // CLASS.prototype.bookActingDriverRoundTrip = async function (req, res) {
+    //     return this.bookActingDriverTripByType(req, res, TRIP_TYPES.ROUNDTRIP);
+    // }
 
-    CLASS.prototype.bookActingDriverOutstationTrip = async function (req, res) {
-        return this.bookActingDriverTripByType(req, res, TRIP_TYPES.OUTSTATION);
-    }
+    // CLASS.prototype.bookActingDriverOutstationTrip = async function (req, res) {
+    //     return this.bookActingDriverTripByType(req, res, TRIP_TYPES.OUTSTATION);
+    // }
 
-    CLASS.prototype.bookActingDriverTripByType = async function (req, res, tripType) {
-        try {
-            const [payload, error] = await this.validate(req.body, actingDriverTripSchema);
-            if (!payload) return res.status(400).json(error);
+    // CLASS.prototype.bookActingDriverTripByType = async function (req, res, tripType) {
+    //     try {
+    //         const [payload, error] = await this.validate(req.body, actingDriverTripSchema);
+    //         if (!payload) return res.status(400).json(error);
 
-            if (tripType === TRIP_TYPES.ROUNDTRIP && !payload.returnPickupTime) {
-                return res.status(400).json({ success: false, message: 'returnPickupTime is required for roundtrip' });
-            }
+    //         if (tripType === TRIP_TYPES.ROUNDTRIP && !payload.returnPickupTime) {
+    //             return res.status(400).json({ success: false, message: 'returnPickupTime is required for roundtrip' });
+    //         }
 
-            const passengerId = req.passanger.id;
-            const passenger = await Passanger.getPassangerWithId(passengerId);
-            if (!passenger) return res.status(400).json({ success: false, message: 'Passanger does not exists' });
+    //         const passengerId = req.passanger.id;
+    //         const passenger = await Passanger.getPassangerWithId(passengerId);
+    //         if (!passenger) return res.status(400).json({ success: false, message: 'Passanger does not exists' });
 
-            const garageVehicleId = payload.garageVehicleId || payload.passangerVehicleId;
-            const garageVehicle = await Garage.getPassengerVehicleById(passengerId, garageVehicleId);
-            if (!garageVehicle) {
-                return res.status(404).json({ success: false, message: 'Garage vehicle not found for this passenger' });
-            }
+    //         const garageVehicleId = payload.garageVehicleId || payload.passangerVehicleId;
+    //         const garageVehicle = await Garage.getPassengerVehicleById(passengerId, garageVehicleId);
+    //         if (!garageVehicle) {
+    //             return res.status(404).json({ success: false, message: 'Garage vehicle not found for this passenger' });
+    //         }
 
-            const regionalCode = payload?.regionCode === 'default' ? 'NOT' : (payload?.regionCode || 'NOT');
-            const offerCoupon = payload.offerCoupon || null;
-            const tripPayload = {
-                ...payload,
-                rideId: createRideId(regionalCode, tripType),
-                bookingTime: new Date().getTime(),
-                status: RideStatus.PENDING,
-                publicRidesTrip: true,
-                isActingDriverTrip: true,
-                actingDriverTripType: tripType,
-                passangerId: new ObjectId(passengerId),
-                createdBy: passengerId,
-                userId: passengerId,
-                passangerVehicleId: new ObjectId(garageVehicleId),
-                garageVehicleId: new ObjectId(garageVehicleId),
-                passangerVehicleType: garageVehicle.vehicleType,
-                vehicleType: garageVehicle.vehicleType,
-                passengerVehicle: buildVehicleSnapshot(garageVehicle),
-                otp: OTP.generateOTP(4)
-            };
+    //         const regionalCode = payload?.regionCode === 'default' ? 'NOT' : (payload?.regionCode || 'NOT');
+    //         const offerCoupon = payload.offerCoupon || null;
+    //         const tripPayload = {
+    //             ...payload,
+    //             rideId: createRideId(regionalCode, tripType),
+    //             bookingTime: new Date().getTime(),
+    //             status: RideStatus.PENDING,
+    //             publicRidesTrip: true,
+    //             isActingDriverTrip: true,
+    //             actingDriverTripType: tripType,
+    //             passangerId: new ObjectId(passengerId),
+    //             createdBy: passengerId,
+    //             userId: passengerId,
+    //             passangerVehicleId: new ObjectId(garageVehicleId),
+    //             garageVehicleId: new ObjectId(garageVehicleId),
+    //             passangerVehicleType: garageVehicle.vehicleType,
+    //             vehicleType: garageVehicle.vehicleType,
+    //             passengerVehicle: buildVehicleSnapshot(garageVehicle),
+    //             otp: OTP.generateOTP(4)
+    //         };
 
-            delete tripPayload.offerCoupon;
+    //         delete tripPayload.offerCoupon;
 
-            if (tripPayload.regionalOffice) {
-                tripPayload.regionalOffice = new ObjectId(tripPayload.regionalOffice);
-            }
+    //         if (tripPayload.regionalOffice) {
+    //             tripPayload.regionalOffice = new ObjectId(tripPayload.regionalOffice);
+    //         }
 
-            if (Array.isArray(passenger.notificationPreferences) && passenger.notificationPreferences.length > 0) {
-                tripPayload.passengerNotificationPreferences = passenger.notificationPreferences;
-            }
+    //         if (Array.isArray(passenger.notificationPreferences) && passenger.notificationPreferences.length > 0) {
+    //             tripPayload.passengerNotificationPreferences = passenger.notificationPreferences;
+    //         }
 
-            const trip = await Trip.addTrip(tripPayload);
-            const tripDetails = await Trip.getTripById(trip?.insertedId);
+    //         const trip = await Trip.addTrip(tripPayload);
+    //         const tripDetails = await Trip.getTripById(trip?.insertedId);
 
-            if (trip?.insertedId) {
-                await Passanger.updatePassangerLatestTripId(passengerId, trip.insertedId);
-            }
+    //         if (trip?.insertedId) {
+    //             await Passanger.updatePassangerLatestTripId(passengerId, trip.insertedId);
+    //         }
 
-            if (offerCoupon) {
-                const { fareService } = FareEngineInterface.getServices();
-                const coupon = await fareService.verifyAndApplyCoupon({
-                    tripId: String(trip?.insertedId),
-                    couponCode: offerCoupon,
-                    fare: tripDetails?.minFare || 0,
-                    regionCode: payload?.regionCode,
-                });
-                if (!coupon?.success) console.error('Acting driver coupon not applied');
-            }
+    //         if (offerCoupon) {
+    //             const { fareService } = FareEngineInterface.getServices();
+    //             const coupon = await fareService.verifyAndApplyCoupon({
+    //                 tripId: String(trip?.insertedId),
+    //                 couponCode: offerCoupon,
+    //                 fare: tripDetails?.minFare || 0,
+    //                 regionCode: payload?.regionCode,
+    //             });
+    //             if (!coupon?.success) console.error('Acting driver coupon not applied');
+    //         }
 
-            return res.json({
-                success: true,
-                message: 'Acting driver trip booked successfully',
-                tripId: trip?.insertedId,
-                trip: tripDetails
-            });
-        } catch (err) {
-            return this.handleError(err, res);
-        }
-    }
+    //         return res.json({
+    //             success: true,
+    //             message: 'Acting driver trip booked successfully',
+    //             tripId: trip?.insertedId,
+    //             trip: tripDetails
+    //         });
+    //     } catch (err) {
+    //         return this.handleError(err, res);
+    //     }
+    // }
 }

@@ -61,6 +61,7 @@ class DriverController extends Controller {
         this.updateDrivingExperience = this.updateDrivingExperience.bind(this)
         this.updateActingDriverPreferredWorkLocation = this.updateActingDriverPreferredWorkLocation.bind(this)
         this.updateDriverMode = this.updateDriverMode.bind(this)
+        this.acceptRideForActingDriver = this.acceptRideForActingDriver.bind(this)
     }
 
    

@@ -683,10 +683,26 @@ module.exports = function (CLASS) {
       payload.passangerId = new ObjectId(passangerId);
       payload.createdBy = passangerId;
       payload.userId = passangerId;
+
+      // Convert estimatedDistance from string to number if needed
+      if (typeof payload.estimatedDistance === 'string') {
+        payload.estimatedDistance = parseFloat(payload.estimatedDistance);
+      }
+
+      // Handle carSpecification - store it as passengerVehicleInfo
+      if (payload.carSpecification) {
+        payload.passengerVehicleInfo = payload.carSpecification;
+      }
+
       delete payload.offerCoupon;
 
       if (payload.regionalOffice) {
         payload.regionalOffice = new ObjectId(payload.regionalOffice);
+      }
+
+      // Convert passenger vehicle ID to ObjectId
+      if (payload.passangerVehicleId) {
+        payload.passangerVehicleId = new ObjectId(payload.passangerVehicleId);
       }
 
       const passanger = await Passanger.getPassangerWithId(passangerId);
@@ -703,6 +719,74 @@ module.exports = function (CLASS) {
           passanger.notificationPreferences;
       }
 
+      // Validate trip overlap: new trip must end at least 1 hour before existing trips
+          // const newTripEndTime = payload.endDate || payload.durationEnd;
+          // if (newTripEndTime) {
+          //   const filter = { 
+          //     passangerId: new ObjectId(passangerId),
+          //     status: { $in: [RideStatus.PENDING, RideStatus.ACCEPTED, RideStatus.PICKEDUP] }
+          //   };
+          //   const { trips: existingTrips } = await Trip.getTripsForPassanger(filter, 1, 100);
+            
+          //   for (const existingTrip of existingTrips) {
+          //     const existingTripEndTime = existingTrip.endDate || existingTrip.durationEnd;
+          //     if (existingTripEndTime) {
+          //       const timeDifference = existingTripEndTime - newTripEndTime;
+          //       const oneHourInMs = 60 * 60 * 1000; // 1 hour in milliseconds
+                
+          //       // If new trip ends after existing trip, or within 1 hour before existing trip
+          //       if (timeDifference < oneHourInMs) {
+          //         return res.status(400).json({
+          //           success: false,
+          //           message: "Cannot create new trip. New trip must end at least 1 hour before the existing trip.",
+          //           existingTripEndTime: existingTripEndTime,
+          //           newTripEndTime: newTripEndTime
+          //         });
+          //       }
+          //     }
+          //   }
+          // }
+          const oneHourInMs = 60 * 60 * 1000;
+          const newStart = payload.startDate || payload.durationStart;
+          const newEnd   = payload.endDate   || payload.durationEnd;
+
+          const filter = { 
+            passangerId: new ObjectId(passangerId),
+            status: { $in: [RideStatus.PENDING, RideStatus.ACCEPTED, RideStatus.PICKEDUP] }
+          };
+
+          const { trips: existingTrips } = await Trip.getTripsForPassanger(filter, 1, 100);
+
+          for (const trip of existingTrips) {
+            const existingStart = trip.startDate || trip.durationStart;
+            const existingEnd   = trip.endDate   || trip.durationEnd;
+
+            if (!existingStart || !existingEnd) continue;
+            // New trip ends at least 1 hour before existing trip starts
+            const newEndBeforeExistingStart = newEnd <= existingStart - oneHourInMs;
+            // New trip starts at least 1 hour after existing trip ends
+            const newStartAfterExistingEnd  = newStart >= existingEnd + oneHourInMs;
+
+            // If new trip ends before existing starts, or new trip starts after existing ends
+            if (newEndBeforeExistingStart || newStartAfterExistingEnd) {
+              continue;
+            }
+
+            // If new trip overlaps existing trip, then it's not allowed
+            return res.status(400).json({
+              success: false,
+              message: "Trip overlaps with another trip or does not meet the required 1-hour buffer.",
+              existingTrip: {
+                start: existingStart,
+                end: existingEnd
+              },
+              newTrip: {
+                start: newStart,
+                end: newEnd
+              }
+            });
+          }   
+
       const otp = OTP.generateOTP(4);
       payload.otp = otp;
 
@@ -716,6 +800,32 @@ module.exports = function (CLASS) {
         );
       }
 
+      // Calculate fare using FareEngine
+      let fareDetails = null;
+      try {
+        const { tripFareService } = FareEngineInterface.getServices();
+        const farePayload = {
+          tripId: String(trip?.insertedId),
+          distance: payload.estimatedDistance || 0,
+          duration: payload.estimatedDuration || 0,
+          waitTime: 0,
+          zone: "all",
+          regionCode: regionalCode,
+          coupons: [],
+          driverId: null,
+          finalFare: false, // Pre-final fare for estimation
+        };
+        
+        const fareResult = await tripFareService.calculatePreFinalFareFromTrip(farePayload);
+        if (fareResult.success) {
+          fareDetails = fareResult;
+          TripDetails.fareDetails = fareResult;
+          TripDetails.minFare = fareResult.breakdown?.total || fareResult.fare || 0;
+        }
+      } catch (fareError) {
+        console.error("Fare calculation error:", fareError);
+      }
+
       if (OfferCoupon) {
         const { fareService } = FareEngineInterface.getServices();
         const coupon = await fareService.verifyAndApplyCoupon({
@@ -725,6 +835,33 @@ module.exports = function (CLASS) {
           regionCode: payload?.regionCode,
         });
         if (!coupon?.success) console.error("Acting driver coupon not applied");
+        
+        // Recalculate fare with coupon
+        if (coupon.success && fareDetails) {
+          try {
+            const { tripFareService } = FareEngineInterface.getServices();
+            const farePayload = {
+              tripId: String(trip?.insertedId),
+              distance: payload.estimatedDistance || 0,
+              duration: payload.estimatedDuration || 0,
+              waitTime: 0,
+              zone: "all",
+              regionCode: regionalCode,
+              coupons: [coupon.coupon],
+              driverId: null,
+              finalFare: false,
+            };
+            
+            const fareResult = await tripFareService.calculatePreFinalFareFromTrip(farePayload);
+            if (fareResult.success) {
+              fareDetails = fareResult;
+              TripDetails.fareDetails = fareResult;
+              TripDetails.minFare = fareResult.breakdown?.total || fareResult.fare || 0;
+            }
+          } catch (fareError) {
+            console.error("Fare recalculation with coupon error:", fareError);
+          }
+        }
       }
 
       return res.json({
@@ -732,6 +869,7 @@ module.exports = function (CLASS) {
         message: "Acting driver trip booked successfully",
         tripId: trip?.insertedId,
         trip: TripDetails,
+        fareDetails: fareDetails,
       });
     } catch (err) {
       return this.handleError(err, res);
@@ -809,6 +947,177 @@ module.exports = function (CLASS) {
         success: true,
         trip: null,
         message: "No ongoing trip found",
+      });
+    } catch (err) {
+      return this.handleError(err, res);
+    }
+  };
+// Only one Trip details
+  CLASS.prototype.getActingDriverTrip = async function (req, res) {
+    const passangerId = req.passanger.id;
+    try {
+      const PassengerDetails = await Passanger.getPassangerWithId(passangerId);
+      let trip = null;
+      if (PassengerDetails?.latestTripId) {
+        trip = await Trip.getTripById(PassengerDetails?.latestTripId);
+
+        if (!trip)
+          return res.json({
+            success: true,
+            trip: null,
+            message: "No ongoing trip found",
+          });
+
+        if (trip.status === RideStatus.PENDING) {
+          return res.json({ success: true, trip, assignDriver: null });
+        }
+
+        if (
+          trip.status === RideStatus.ACCEPTED ||
+          trip.status === RideStatus.PICKEDUP ||
+          trip.status === RideStatus.COMPLETED ||
+          trip.status === RideStatus.DROPPED ||
+          trip.status === RideStatus.DIVERGED ||
+          trip.status === RideStatus.CANCELLED
+        ) {
+          const driver = await Driver.getDriverWithId(trip.driverId);
+          if (!driver)
+            return res.json({ success: true, trip, assignDriver: null });
+          
+          const driverInfo = {
+            driverName: driver.name,
+            driverPhone: driver.phone,
+            driverRating: driver.rating || null,
+            upiid: driver.bankDetails?.UPIID || null,
+            driverLocation: driver.location,
+          };
+
+          if (driver?.documents?.driverPhoto) {
+            driverInfo.driverPhoto = driver?.documents?.driverPhoto;
+          }
+
+          const paymentdetails =
+            await PublicRidesPayment.getPaymentDetailsByTrip(trip._id);
+
+          if (paymentdetails?.fareDetails) {
+            trip.fareDetails = paymentdetails.fareDetails;
+            trip.passengerPaymentStatus = paymentdetails.passengerPaymentStatus;
+          }
+          if (paymentdetails?.customerInvoice) {
+            trip.customerInvoice = paymentdetails.customerInvoice;
+          }
+
+          const getMaxDistanceLimit = await FareConfigs.getMaxDistanceLimit(
+            trip?.regionCode || "default",
+            trip?.vehicleType,
+          );
+          trip.maxDistanceLimit = getMaxDistanceLimit || null;
+
+          return res.json({ success: true, trip, assignDriver: driverInfo });
+        }
+      }
+      return res.json({
+        success: true,
+        trip: null,
+        message: "No ongoing trip found",
+      });
+    } catch (err) {
+      return this.handleError(err, res);
+    }
+  };
+// all ActingDriver Trip details
+  CLASS.prototype.getActingDriverTrips = async function (req, res) {
+    let { startTime, endTime, status, page, limit } = req.query;
+    const passangerId = req.passanger.id;
+
+    page = parseInt(page, 10) || 1;
+    limit = parseInt(limit, 10) || 10;
+
+    try {
+      if (startTime) {
+        startTime = parseInt(startTime, 10);
+      }
+
+      if (endTime) {
+        endTime = parseInt(endTime, 10);
+      }
+
+      const filter = { 
+        passangerId: new ObjectId(passangerId),
+        isActingDriverTrip: true
+      };
+
+      if (startTime || endTime) {
+        filter.bookingTime = {};
+        if (startTime && !Number.isNaN(startTime)) {
+          filter.bookingTime.$gte = startTime;
+        }
+        if (endTime && !Number.isNaN(endTime)) {
+          filter.bookingTime.$lte = endTime;
+        }
+      }
+
+      if (status) {
+        filter.status = status;
+      }
+
+      const { trips, totalCount } = await Trip.getTripsForPassanger(
+        filter,
+        page,
+        limit,
+      );
+
+      const tripsWithDriverInfo = await Promise.all(
+        trips.map(async (trip) => {
+          let supplierInfo = null;
+          if (trip.driverId) {
+            const driver = await Driver.getDriverWithId(trip.driverId);
+            if (driver) {
+              const driverInfo = {
+                driverName: driver.name,
+                driverPhone: driver.phone,
+                driverRating: driver.rating || null,
+                upiid: driver.bankDetails?.UPIID || null,
+                driverLocation: driver.location,
+              };
+
+              if (driver?.documents?.driverPhoto) {
+                driverInfo.driverPhoto = driver.documents.driverPhoto;
+              }
+
+              trip.driverInfo = driverInfo;
+              supplierInfo = {
+                name: driver.name,
+                phone: driver.phone,
+                email: driver.email,
+                state: driver.state,
+                address: driver.homeLocation?.addressName,
+              };
+            }
+          }
+
+          const paymentdetails =
+            await PublicRidesPayment.getPaymentDetailsByTrip(trip._id);
+
+          if (paymentdetails?.fareDetails) {
+            trip.fareDetails = paymentdetails?.fareDetails;
+            if (paymentdetails?.invoiceId) {
+              trip.fareDetails.invoiceId = paymentdetails?.invoiceId;
+              trip.fareDetails.invoicedAt = paymentdetails?.createdAt;
+            }
+          }
+
+          trip.supplierInfo = supplierInfo;
+          return trip;
+        })
+      );
+
+      return res.json({
+        success: true,
+        trips: tripsWithDriverInfo,
+        totalCount,
+        page,
+        limit,
       });
     } catch (err) {
       return this.handleError(err, res);

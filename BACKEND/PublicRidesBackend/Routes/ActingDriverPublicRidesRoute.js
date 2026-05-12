@@ -11,5 +11,6 @@ Router.post('/verifyADOTP', withTiming(driverController, driverController.verify
 Router.post('/updateDrivingExperience', CheckDriverAuthenticated, withTiming(driverController, driverController.updateDrivingExperience))
 Router.post('/updatePreferredWorkLocation', CheckDriverAuthenticated, withTiming(driverController, driverController.updateActingDriverPreferredWorkLocation))
 Router.post('/updateDriverMode', CheckDriverAuthenticated, withTiming(driverController, driverController.updateDriverMode))
+Router.post('/acceptRideForActingDriver', CheckDriverAuthenticated, withTiming(driverController, driverController.acceptRideForActingDriver))
 
 module.exports = Router

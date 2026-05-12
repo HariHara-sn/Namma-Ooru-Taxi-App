@@ -23,6 +23,7 @@ const { sendTripRequestMessage } = require("../../Services/PushNotification/Mess
 //         socketService.socketInstance.customerRideAssignHandler.emitPassangerTripFareUpdate(passangerSocketIds, socketData)
 //     }
 // }
+
 async function assignDrivers() {
     
     try {

@@ -149,6 +149,10 @@ module.exports = function (CLASS) {
             // console.log(getMaxDistanceLimit, "Max Distance Limit for the trip");
           
             // await Driver.updateDriver(driverId, { tripStatus: "ONGOING" })
+            // if (!driver.ownVehicleInfo) {
+            //     return res.status(400).json({ success: false, message: 'Driver has no vehicle assigned. Please assign a vehicle to the driver before accepting rides.' });
+            // }
+
             const driverInfo = {
                 driverName: driver.name,
                 driverPhone: driver.phone,
@@ -159,7 +163,7 @@ module.exports = function (CLASS) {
                 vehicleColor: driver.ownVehicleInfo.color,
                 vehicleNumber: driver.ownVehicleInfo.regNo,
                 otp: otp,
-                upiid: driver.bankDetails.UPIID,
+                upiid: driver.bankDetails?.UPIID || null,
                 driverLocaiton: driver.location
             };
    
